@@ -5,6 +5,7 @@ function MovieList() {
     return (
         <>
             <div>
+                Hello World
             </div>
         </>
     )
