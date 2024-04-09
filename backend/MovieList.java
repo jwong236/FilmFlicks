@@ -32,12 +32,14 @@ public class MovieList extends HttpServlet {
         String loginPasswd = "andy";
         String loginUrl = "jdbc:mysql://localhost:3307/moviedb";
 
-        // Set response mime type
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
 
         // Get the PrintWriter for writing response
         PrintWriter out = response.getWriter();
+
+        // Set response mime type
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -51,7 +53,7 @@ public class MovieList extends HttpServlet {
             ResultSet resultSet = statement.executeQuery(query);
 
             //holds the json strings
-            List<String> jsonArr = new ArrayList<>();
+            List<Map<String, String>> jsonArr = new ArrayList<>();
 
             while (resultSet.next()) {
                 //gets the individual columns for each row and makes them individual strings
@@ -73,24 +75,36 @@ public class MovieList extends HttpServlet {
                 data.put("genres", genres);
                 data.put("stars", stars);
 
-                //jackson api used for turn the hashmap of strings into a string structured like json
-                ObjectMapper objMap = new ObjectMapper();
 
-                //structures json so that each object is seperated like normal json struct
-                objMap.enable(SerializationFeature.INDENT_OUTPUT);
-                ObjectWriter objWrite = objMap.writerWithDefaultPrettyPrinter();
 
-                //turns into json string
-                String jsonString = objWrite.writeValueAsString(data);
-
-                //adds into array of json strings
-                jsonArr.add(jsonString);
+                //adds each map into an array
+                jsonArr.add(data);
 
             }
 
+            //jackson api used for turn the hashmap of strings into a string structured like json
+            ObjectMapper objMap = new ObjectMapper();
+
+            //structures json so that each object is seperated like normal json struct
+            objMap.enable(SerializationFeature.INDENT_OUTPUT);
+            ObjectWriter objWrite = objMap.writerWithDefaultPrettyPrinter();
+
+            //turns into json string
+            String jsonString = objWrite.writeValueAsString(jsonArr);
+
             //adds the json array to the response body to send back to client that requested it
-            out.print(jsonArr);
-            out.flush();
+
+            out.print(jsonString);
+//            String contentType = response.getContentType();
+//            if (contentType != null && contentType.startsWith("application/json")) {
+//                System.out.println("Response is JSON");
+//            } else {
+//                System.out.println("Content type: " + contentType);
+//                System.out.println("Response is not JSON");
+//            }
+            //out.flush();
+
+
 
         } catch (Exception e) {
             /*
@@ -111,6 +125,7 @@ public class MovieList extends HttpServlet {
 
 
     }
+
 
 
 }
