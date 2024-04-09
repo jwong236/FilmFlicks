@@ -19,7 +19,6 @@ function MovieList() {
                 if (mounted){
                     setMovieData(data);
                     console.log(data);
-                    mounted=false;
                 }
 
 
@@ -34,6 +33,7 @@ function MovieList() {
             mounted = false;
         }
     }, []);
+
 
 
 
