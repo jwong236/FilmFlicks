@@ -9,10 +9,14 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+
+
 // This annotation maps this Java Servlet Class to a URL
 @WebServlet("/stars")
 public class StarServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+
+
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Change this to your own mysql username and password

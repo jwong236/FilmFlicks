@@ -21,16 +21,29 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.List;
 
+import javax.sql.DataSource;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import jakarta.servlet.ServletConfig;
+
 // This annotation maps this Java Servlet Class to a URL
 @WebServlet("/movielist")
 public class MovieList extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    // Create a dataSource which registered in web.
+    private DataSource dataSource;
+
+    public void init(ServletConfig config) {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Change this to your own mysql username and password
-        String loginUser = "root";
-        String loginPasswd = "andy";
-        String loginUrl = "jdbc:mysql://localhost:3307/moviedb";
+
 
 
         // Get the PrintWriter for writing response
@@ -41,10 +54,9 @@ public class MovieList extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            // create database connection
-            Connection connection = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+        try (Connection connection = dataSource.getConnection()){
+
+
             // declare statement
             Statement statement = connection.createStatement();
             // prepare query
@@ -52,7 +64,7 @@ public class MovieList extends HttpServlet {
             // execute query
             ResultSet resultSet = statement.executeQuery(query);
 
-            //holds the json strings
+            //holds the json string hashmaps
             List<Map<String, String>> jsonArr = new ArrayList<>();
 
             while (resultSet.next()) {
@@ -62,6 +74,10 @@ public class MovieList extends HttpServlet {
                 String director = resultSet.getString("director");
                 String genres = resultSet.getString("genres");
                 String stars = resultSet.getString("stars");
+
+
+                System.out.println(stars);
+
 
                 //used to map the strings to their keys to create a json structure
                 Map<String, String> data = new LinkedHashMap<>();
@@ -92,17 +108,20 @@ public class MovieList extends HttpServlet {
             //turns into json string
             String jsonString = objWrite.writeValueAsString(jsonArr);
 
-            //adds the json array to the response body to send back to client that requested it
 
+            //close database connection when done
+            resultSet.close();
+            statement.close();
+
+            //the json string will be our json response
             out.print(jsonString);
-//            String contentType = response.getContentType();
-//            if (contentType != null && contentType.startsWith("application/json")) {
-//                System.out.println("Response is JSON");
-//            } else {
-//                System.out.println("Content type: " + contentType);
-//                System.out.println("Response is not JSON");
-//            }
-            //out.flush();
+
+            response.setStatus(200);
+
+            //flush out the buffer just in case
+            out.flush();
+
+
 
 
 
@@ -117,6 +136,8 @@ public class MovieList extends HttpServlet {
              * This can help you debug your program after deploying it on AWS.
              */
             request.getServletContext().log("Error: ", e);
+
+
 
             out.print(e.getMessage());
             out.flush();
