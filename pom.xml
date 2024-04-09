@@ -30,7 +30,7 @@
   </dependencies>
   <build>
     <finalName>fabFlix</finalName>
-    <sourceDirectory>src</sourceDirectory>
+    <sourceDirectory>backend</sourceDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
