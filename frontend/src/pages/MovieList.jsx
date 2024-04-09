@@ -4,8 +4,8 @@ function MovieList() {
 
     return (
         <>
-            <div>
-                Hello World
+            <div className="text-red-600 text-3xl">
+                MOVIE LIST PAGE
             </div>
         </>
     )
