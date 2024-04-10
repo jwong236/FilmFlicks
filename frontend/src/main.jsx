@@ -11,7 +11,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     {/*<App />*/}
       <BrowserRouter>
           <Routes>
-              <Route path="/" element={<MovieList/>} />
+              <Route exact path="/" element={<MovieList/>} />
+              <Route exact path="/movielist" element={<MovieList/>} />
               <Route path="/singlestar" element={<SingleStar/>} />
 
           </Routes>
