@@ -61,11 +61,6 @@ public class MovieList extends HttpServlet {
             Statement statement = connection.createStatement();
             // prepare query
             String query = "SELECT m.title, m.year, m.director, r.rating, " +
-//                                "SUBSTRING_INDEX( " +
-//                                    "(SELECT GROUP_CONCAT(g.name SEPARATOR ', ')  " +
-//                                    "FROM genres g " +
-//                                    "JOIN genres_in_movies gm ON gm.genreId = g.id  " +
-//                                    "WHERE gm.movieId = m.id), ', ', 3) AS genres, " +
                                 "(SELECT GROUP_CONCAT(g.name SEPARATOR ', ')  " +
                                 "FROM genres g  " +
                                 "JOIN genres_in_movies gm ON gm.genreId = g.id  " +

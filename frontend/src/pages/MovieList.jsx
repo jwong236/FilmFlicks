@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react'
+import { Link } from "react-router-dom";
 
 function MovieList() {
     const [movieData, setMovieData] = useState(null);
@@ -54,13 +55,22 @@ function MovieList() {
                     <tbody>
                         {movieData.map((elem, index) => {
                             const bgColor = index % 2 === 0 ? "bg-gray-100" : "bg-white";
+                            const starArray = elem.stars.split(',');
+                            const firstStar = starArray[0];
+                            const secondStar = starArray[1];
+                            const thirdStar = starArray[2];
                             return (
                                 <tr key={index} className={bgColor}>
                                     <td className="border border-black px-4 py-2">{elem.title}</td>
                                     <td className="border border-black px-4 py-2">{elem.year}</td>
                                     <td className="border border-black px-4 py-2">{elem.director}</td>
                                     <td className="border border-black px-4 py-2">{elem.genres}</td>
-                                    <td className="border border-black px-4 py-2">{elem.stars}</td>
+                                    <td className="border border-black px-4 py-2">
+                                        <Link to={`/singlestar?name=${encodeURIComponent(firstStar)}`}>{firstStar} </Link>
+                                        <>, <Link to={`/singlestar?name=${encodeURIComponent(secondStar)}`}>{secondStar} </Link></>
+                                        <>,<Link to={`/singlestar?name=${encodeURIComponent(thirdStar)}`}>{thirdStar}</Link> </>
+
+                                    </td>
                                     <td className="border border-black px-4 py-2">{elem.rating}</td>
                                 </tr>
                             );
