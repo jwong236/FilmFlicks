@@ -55,10 +55,12 @@ function MovieList() {
                     <tbody>
                         {movieData.map((elem, index) => {
                             const bgColor = index % 2 === 0 ? "bg-gray-100" : "bg-white";
-                            const starArray = elem.stars.split(',');
+                            const starArray = elem.stars.split(', ');
                             const firstStar = starArray[0];
                             const secondStar = starArray[1];
                             const thirdStar = starArray[2];
+                            console.log(firstStar);
+                            console.log(secondStar);
                             return (
                                 <tr key={index} className={bgColor}>
                                     <td className="border border-black px-4 py-2">{elem.title}</td>

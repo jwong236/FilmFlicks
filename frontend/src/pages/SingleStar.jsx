@@ -47,15 +47,17 @@ function SingleStar() {
     }, []);
 
 
-
-
+    console.log("name " + starData.name);
+    console.log("birthyear " + starData.birthYear);
+    const birthYear = starData.birthYear === null ? "N/A" : starData.birthYear;
+    console.log(birthYear);
     return (
         <>
             <h1>
                 STAR
             </h1>
             <div>NAME: {starData.name}</div>
-            <div>YEAR: {starData.birthYear}</div>
+            <div>YEAR: {birthYear}</div>
             <div>MOVIES: {starData.movieTitles}</div>
         </>
     );
