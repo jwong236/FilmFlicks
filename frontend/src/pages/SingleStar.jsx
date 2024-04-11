@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import {useLocation} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 
 function SingleStar() {
     const [starData, setStarData] = useState({
@@ -52,10 +52,17 @@ function SingleStar() {
     const birthYear = starData.birthYear === null ? "N/A" : starData.birthYear;
     console.log(birthYear);
     return (
+
         <>
+            <div>
+                <Link to={"/"}>
+                    HOME
+                </Link>
+            </div>
             <h1>
                 STAR
             </h1>
+
             <div>NAME: {starData.name}</div>
             <div>YEAR: {birthYear}</div>
             <div>MOVIES: {starData.movieTitles}</div>
