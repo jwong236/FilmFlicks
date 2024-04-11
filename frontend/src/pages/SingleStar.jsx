@@ -18,11 +18,13 @@ function SingleStar() {
         let mounted = true;
         async function fetchStarData(){
             try{
-                const response = await fetch('http://localhost:8080/fabFlix_war/singlestar/Jason%20Bognacki');
+                const response = await fetch(`http://localhost:8080/fabFlix_war/singlestar?name=${encodeURIComponent(name)}`);
 
+                console.log(response);
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }
+
 
                 const data = await response.json();
 
@@ -30,6 +32,7 @@ function SingleStar() {
                     setStarData(data);
                 }
 
+                console.log(data);
 
             }catch(error){
                 console.error('Error fetching data: ', error);
