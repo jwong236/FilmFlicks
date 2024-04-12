@@ -23,7 +23,7 @@ export default function MovieCard(props) {
 
                         </CardContent>
                     </Box>
-                    <Box sx={{ color: '#803D33', height: '100%', aspectRatio: 1, borderRadius: '5rem', border: '0.25rem solid #803D33', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem'}}>8.8</Box>
+                    <Box sx={{ color: '#803D33', height: '100%', aspectRatio: 1, borderRadius: '5rem', border: '0.25rem solid #803D33', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem'}}>{props.rating}</Box>
                 </Box>
                 <Box sx={{display: "flex", width: "100%",  justifyContent: 'space-around'}}>
                     <Typography>
