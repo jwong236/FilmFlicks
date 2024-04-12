@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import {Link, useLocation} from "react-router-dom";
 import {Button} from "@mui/material";
+import MovieCard from "../components/MovieCard.jsx";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function SingleMovie() {
     const [movieData, setMovieData] = useState({
@@ -25,6 +27,7 @@ export default function SingleMovie() {
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }
+                console.error(response.title);
                 const data = await response.json();
                 if (mounted){
                     setMovieData(data[0]);
@@ -39,7 +42,7 @@ export default function SingleMovie() {
         return ()=>{
             mounted = false;
         }
-    }, []);
+    }, [title]);
 
     const handleClick = () => {
         console.log("Hello")
@@ -47,23 +50,25 @@ export default function SingleMovie() {
 
     return (
         <>
-            <Button component={Link} to='/' variant='contained' disableElevation sx={{backgroundColor: '#646CFF', "&:hover": {
-                    backgroundColor: 'pink'
-                }}}onClick={handleClick}>
+            <Button component={Link} to='/' disableElevation startIcon={<ArrowBackIcon />} sx={{color: '#646CFF', position: 'absolute', left: 16, top: 16, "&:hover": {
+                    color: '#8086FF', backgroundColor: 'white'
+                }}} onClick={handleClick}>
                 Home
             </Button>
-            <h1>{movieData.title}</h1>
-            <div>YEAR: {movieData.year}</div>
-            <div>DIRECTOR: {movieData.director}</div>
-            <div>GENRES: {movieData.genres.join(', ')}</div> {}
-            <div>STARS:
-                {movieData.stars.map((star, index) => (
-                    <React.Fragment key={star}>
-                        {index > 0 && ', '}
-                        <Link to={`/singlestar?name=${encodeURIComponent(star)}`}>{star}</Link>
-                    </React.Fragment>
-                ))}
-            </div>
+            <MovieCard title={movieData.title} year={"test"} director={"test"} rating={"test"} stars={"test"} genre={"test"}/>
+            {/*<MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genre={movieData.genre}/>*/}
+            {/*<h1>{movieData.title}</h1>*/}
+            {/*<div>YEAR: {movieData.year}</div>*/}
+            {/*<div>DIRECTOR: {movieData.director}</div>*/}
+            {/*<div>GENRES: {movieData.genres.join(', ')}</div> {}*/}
+            {/*<div>STARS:*/}
+            {/*    {movieData.stars.map((star, index) => (*/}
+            {/*        <React.Fragment key={star}>*/}
+            {/*            {index > 0 && ', '}*/}
+            {/*            <Link to={`/singlestar?name=${encodeURIComponent(star)}`}>{star}</Link>*/}
+            {/*        </React.Fragment>*/}
+            {/*    ))}*/}
+            {/*</div>*/}
         </>
     );
 
