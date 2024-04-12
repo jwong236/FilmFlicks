@@ -49,7 +49,8 @@ public class SingleMovie extends HttpServlet {
                 "    m.year, \n" +
                 "    m.director,\n" +
                 "    GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS genres,\n" +
-                "    GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS stars\n" +
+                "    GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS stars,\n" +
+                "    r.rating\n" +
                 "FROM \n" +
                 "    movies m\n" +
                 "LEFT JOIN \n" +
@@ -60,10 +61,13 @@ public class SingleMovie extends HttpServlet {
                 "    stars_in_movies sm ON m.id = sm.movieId\n" +
                 "LEFT JOIN \n" +
                 "    stars s ON sm.starId = s.id\n" +
+                "LEFT JOIN\n" +
+                "    ratings r ON m.id = r.movieId\n" +
                 "WHERE \n" +
                 "    m.title = ?\n" +
                 "GROUP BY \n" +
-                "    m.id;";
+                "    m.id, r.rating;";
+
 
 
 
@@ -87,7 +91,7 @@ public class SingleMovie extends HttpServlet {
                 List<String> starList = (stars != null && !stars.isEmpty()) ? Arrays.asList(stars.split(", ")) : new ArrayList<>();
                 extractedRows.put("genres", genreList);
                 extractedRows.put("stars", starList);
-
+                extractedRows.put("rating", queryResults.getString("rating"));
                 data.add(extractedRows);
             }
 
