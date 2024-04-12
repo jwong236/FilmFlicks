@@ -1,7 +1,8 @@
-import {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Link, useLocation} from "react-router-dom";
+import {Button} from "@mui/material";
 
-function SingleMovie() {
+export default function SingleMovie() {
     const [movieData, setMovieData] = useState({
         title: "default title",
         year: "default year",
@@ -40,19 +41,30 @@ function SingleMovie() {
         }
     }, []);
 
+    const handleClick = () => {
+        console.log("Hello")
+    }
+
     return (
         <>
-            <div>
-                <Link to={"/"}>HOME</Link>
-            </div>
+            <Button component={Link} to='/' variant='contained' disableElevation sx={{backgroundColor: '#646CFF', "&:hover": {
+                    backgroundColor: 'pink'
+                }}}onClick={handleClick}>
+                Home
+            </Button>
             <h1>{movieData.title}</h1>
             <div>YEAR: {movieData.year}</div>
             <div>DIRECTOR: {movieData.director}</div>
             <div>GENRES: {movieData.genres.join(', ')}</div> {}
-            <div>STARS: {movieData.stars.join(', ')}</div> {}
+            <div>STARS:
+                {movieData.stars.map((star, index) => (
+                    <React.Fragment key={star}>
+                        {index > 0 && ', '}
+                        <Link to={`/singlestar?name=${encodeURIComponent(star)}`}>{star}</Link>
+                    </React.Fragment>
+                ))}
+            </div>
         </>
     );
 
 }
-
-export default SingleMovie

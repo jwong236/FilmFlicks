@@ -63,7 +63,11 @@ function MovieList() {
                             console.log(secondStar);
                             return (
                                 <tr key={index} className={bgColor}>
-                                    <td className="border border-black px-4 py-2">{elem.title}</td>
+                                    <td className="border border-black px-4 py-2">
+                                        <Link to={`/singlemovie?title=${encodeURIComponent(elem.title)}`}>
+                                            {elem.title}
+                                        </Link>
+                                    </td>
                                     <td className="border border-black px-4 py-2">{elem.year}</td>
                                     <td className="border border-black px-4 py-2">{elem.director}</td>
                                     <td className="border border-black px-4 py-2">{elem.genres}</td>

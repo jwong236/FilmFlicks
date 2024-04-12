@@ -6,6 +6,7 @@ import SingleMovie from '../src/pages/SingleMovie.jsx'
 import SingleStar from '../src/pages/SingleStar.jsx'
 import Example from '../src/pages/Example.jsx'
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
+
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
