@@ -3,10 +3,11 @@ import {Link, useLocation} from "react-router-dom";
 
 function SingleMovie() {
     const [movieData, setMovieData] = useState({
-        id: "0",
         title: "default title",
         year: "default year",
-        director: "default director"
+        director: "default director",
+        genres: ["genre1"],
+        stars: ["star1"]
 
     });
 
@@ -40,20 +41,15 @@ function SingleMovie() {
     }, []);
 
     return (
-
         <>
             <div>
-                <Link to={"/"}>
-                    HOME
-                </Link>
+                <Link to={"/"}>HOME</Link>
             </div>
-            <h1>
-                {movieData.title}
-            </h1>
-
-            <div>MOVIEID: {movieData.id}</div>
+            <h1>{movieData.title}</h1>
             <div>YEAR: {movieData.year}</div>
             <div>DIRECTOR: {movieData.director}</div>
+            <div>GENRES: {movieData.genres.join(', ')}</div> {}
+            <div>STARS: {movieData.stars.join(', ')}</div> {}
         </>
     );
 
