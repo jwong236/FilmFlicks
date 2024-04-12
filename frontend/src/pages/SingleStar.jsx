@@ -47,10 +47,19 @@ function SingleStar() {
     }, []);
 
 
-    console.log("name " + starData.name);
-    console.log("birthyear " + starData.birthYear);
+    // console.log("name " + starData.name);
+    // console.log("birthyear " + starData.birthYear);
     const birthYear = starData.birthYear === null ? "N/A" : starData.birthYear;
-    console.log(birthYear);
+    let movieArr = [];
+    if (starData.movieTitles.includes(',')){
+        movieArr = starData.movieTitles.split(', ');
+        console.log(movieArr);
+    }
+    else{
+        movieArr.push(starData.movieTitles);
+        console.log("one movie title");
+    }
+
     return (
 
         <>
@@ -65,7 +74,14 @@ function SingleStar() {
 
             <div>NAME: {starData.name}</div>
             <div>YEAR: {birthYear}</div>
-            <div>MOVIES: {starData.movieTitles}</div>
+            {/*<div>MOVIES: {starData.movieTitles}</div>*/}
+            <div>
+                {movieArr.map((elem, index) => {
+                    return (
+                        <Link key = {index} to={"/"}> {elem}</Link>
+                    )
+                })}
+            </div>
         </>
     );
 
