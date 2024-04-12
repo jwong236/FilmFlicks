@@ -40,10 +40,8 @@ public class Example extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         // Prepare the SQL query
-        String query = "SELECT director, COUNT(*) as total_movies, MAX(release_date) AS latest_movie_date " +
-                "FROM movies " +
-                "GROUP BY director " +
-                "ORDER BY total_movies DESC, latest_movie_date DESC " +
+        String query = "SELECT director\n" +
+                "FROM movies\n" +
                 "LIMIT 20";
 
         // Connect to db and query to get results
@@ -69,6 +67,7 @@ public class Example extends HttpServlet {
             // Log and set status
             out.print(dataJson);
             response.setStatus(HttpServletResponse.SC_OK);
+            queryResults.close();
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.print("{\"error\": \"Error fetching director data.\"}");
