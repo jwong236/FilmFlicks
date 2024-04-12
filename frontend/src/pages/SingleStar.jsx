@@ -76,11 +76,13 @@ function SingleStar() {
             <div>YEAR: {birthYear}</div>
             {/*<div>MOVIES: {starData.movieTitles}</div>*/}
             <div>
-                {movieArr.map((elem, index) => {
-                    return (
-                        <Link key = {index} to={"/"}> {elem}</Link>
-                    )
-                })}
+                {movieArr.map((elem, index) => (
+                    <div key={index}>
+                        <Link to={`/singlemovie?title=${encodeURIComponent(elem)}`}>
+                            {elem}
+                        </Link>
+                    </div>
+                ))}
             </div>
         </>
     );
