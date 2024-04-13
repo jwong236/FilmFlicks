@@ -1,5 +1,4 @@
 import {Box, Card, CardHeader, CardContent, Chip, Typography} from '@mui/material'
-import movieList from "../pages/MovieList.jsx";
 export default function MovieCard(props) {
     const bull = (
         <Box
@@ -27,17 +26,18 @@ export default function MovieCard(props) {
                 </Box>
                 <Box sx={{display: "flex", width: "100%",  justifyContent: 'space-around'}}>
                     <Typography>
-                        {props.stars}
+                        {props.stars[0]}
                     </Typography>
                     <Typography>
-                        {props.stars}
+                        {props.stars[1]}
                     </Typography>
                     <Typography>
-                        {props.stars}
+                        {props.stars[2]}
                     </Typography>
                 </Box>
+
                 <Box sx={{display: "flex", width: "100%", paddingLeft: '1rem'}}>
-                    <Chip label='Action' sx={{color: "#803D33", backgroundColor: '#E5BEB8'}}/>
+                    <Chip label={props.genres} sx={{color: "#803D33", backgroundColor: '#E5BEB8'}}/>
                 </Box>
             </Box>
 

@@ -55,7 +55,7 @@ export default function SingleMovie() {
                 }}} onClick={handleClick}>
                 Home
             </Button>
-            <MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genre={movieData.genres}/>
+            <MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genres={movieData.genres}/>
             {/*<MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genre={movieData.genre}/>*/}
             {/*<h1>{movieData.title}</h1>*/}
             {/*<div>YEAR: {movieData.year}</div>*/}

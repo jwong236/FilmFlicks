@@ -1,35 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+/**
+ * The App component serves as the main layout for the application.
+ * It sets up the routing for the application using the Routes and Route components from 'react-router-dom'.
+ */
+import { createTheme, ThemeProvider, CssBaseline, Box } from '@mui/material';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import MovieList from './pages/MovieList';
+import SingleMovie from './pages/SingleMovie';
+import SingleStar from './pages/SingleStar';
+
+const theme = createTheme({
+    components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    backgroundColor: '#F6F6F6',
+                    '#root': {
+                        maxWidth: '1280px',
+                        margin: '0 auto',
+                        padding: '2rem',
+                        height: '100%',
+                    },
+                },
+            },
+        },
+    },
+});
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Box sx={{ minHeight: '100vh' }}>
+                <Routes>
+                    <Route path="/" element={<MovieList />} />
+                    <Route path="/movielist" element={<MovieList />} />
+                    <Route path="/singlemovie" element={<SingleMovie />} />
+                    <Route path="/singlestar" element={<SingleStar />} />
+                </Routes>
+            </Box>
+        </ThemeProvider>
+    );
 }
 
-export default App
+export default App;
