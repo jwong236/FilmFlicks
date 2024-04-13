@@ -1,5 +1,6 @@
-import {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Link, useLocation} from "react-router-dom";
+import HomeButton from "../components/HomeButton.jsx";
 
 function SingleStar() {
     const [starData, setStarData] = useState({
@@ -63,18 +64,14 @@ function SingleStar() {
     return (
 
         <>
-            <div>
-                <Link to={"/"}>
-                    HOME
-                </Link>
-            </div>
+            <HomeButton/>
             <h1>
                 STAR
             </h1>
 
             <div>NAME: {starData.name}</div>
             <div>YEAR: {birthYear}</div>
-            {/*<div>MOVIES: {starData.movieTitles}</div>*/}
+            {}
             <div>
                 {movieArr.map((elem, index) => (
                     <div key={index}>

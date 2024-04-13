@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {Link, useLocation} from "react-router-dom";
 import {Button} from "@mui/material";
 import MovieCard from "../components/MovieCard.jsx";
+import HomeButton from "../components/HomeButton.jsx";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function SingleMovie() {
@@ -27,7 +28,6 @@ export default function SingleMovie() {
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }
-                console.error(response.title);
                 const data = await response.json();
                 if (mounted){
 
@@ -45,17 +45,9 @@ export default function SingleMovie() {
         }
     }, [title]);
 
-    const handleClick = () => {
-        console.log("Hello")
-    }
-
     return (
         <>
-            <Button component={Link} to='/' disableElevation startIcon={<ArrowBackIcon />} sx={{color: '#646CFF', position: 'absolute', left: 16, top: 16, "&:hover": {
-                    color: '#8086FF', backgroundColor: 'white'
-                }}} onClick={handleClick}>
-                Home
-            </Button>
+            <HomeButton/>
             <MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genres={movieData.genres}/>
             {/*<MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genre={movieData.genre}/>*/}
             {/*<h1>{movieData.title}</h1>*/}

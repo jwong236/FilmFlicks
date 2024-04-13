@@ -17,11 +17,24 @@ export default function MovieCard(props) { // title, year, director, genres, sta
                     <Box sx={{display: "flex", flexDirection: "column",  alignItems: "flex-start", paddingLeft: '1rem'}}>
                         <CardHeader
                             title={
-                                <MuiLink component={RouterLink} to={`/singlemovie?title=${encodeURIComponent(props.title)}`} style={{ textDecoration: 'none', color: '#803D33' }}>
+                                <MuiLink
+                                    component={RouterLink}
+                                    to={`/singlemovie?title=${encodeURIComponent(props.title)}`}
+                                    sx={{
+                                        textDecoration: 'none',
+                                        color: '#803D33',
+                                        '&:hover': {
+                                            color: '#4D0A00',
+                                            textDecoration: 'underline'
+                                        }
+                                    }}
+                                >
                                     {props.title}
                                 </MuiLink>
                             }
-                            sx={{ padding: 0 }}
+                            sx={{
+                                padding: 0
+                            }}
                         />
                         <CardContent sx={{padding: 0}}>
                             <Typography sx={{color: '#803D33'}}>
@@ -32,17 +45,35 @@ export default function MovieCard(props) { // title, year, director, genres, sta
                     </Box>
                     <Box sx={{ color: '#803D33', height: '100%', aspectRatio: 1, borderRadius: '5rem', border: '0.25rem solid #803D33', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem'}}>{props.rating}</Box>
                 </Box>
-                <Box sx={{display: "flex", width: "100%", justifyContent: 'space-around'}}>
+                <Box sx={{ display: "flex", width: "100%", paddingLeft: '1rem', flexWrap: 'wrap' }}>
                     {props.stars.map((star, index) => (
-                        <Typography key={index}>
-                            <MuiLink component={RouterLink} to={`/singlestar?name=${encodeURIComponent(star)}`} style={{ textDecoration: 'none', color: '#803D33' }}>
-                                {star}
-                            </MuiLink>
-                            {index < props.stars.length}
-                        </Typography>
+                        <Chip
+                            key={index}
+                            label={
+                                <MuiLink
+                                    component={RouterLink}
+                                    to={`/singlestar?name=${encodeURIComponent(star)}`}
+                                    sx={{
+                                        textDecoration: 'none',
+                                        color: '#803D33',
+                                        '&:hover': {
+                                            color: '#791A0B', // Same color in-case I want to change it later
+                                            fontWeight: 'bold',
+                                            textDecoration: 'underline'
+                                        }
+                                    }}
+                                >
+                                    {star}
+                                </MuiLink>
+                            }
+                            sx={{
+                                marginRight: '8px',
+                                marginBottom: '8px',
+                                backgroundColor: '#E5BEB8'
+                            }}
+                        />
                     ))}
                 </Box>
-
                 <Box sx={{ display: "flex", width: "100%", paddingLeft: '1rem', flexWrap: "wrap" }}>
                     {props.genres.map((genre, index) => (
                         <Chip
