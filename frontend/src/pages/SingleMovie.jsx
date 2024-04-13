@@ -30,6 +30,7 @@ export default function SingleMovie() {
                 console.error(response.title);
                 const data = await response.json();
                 if (mounted){
+
                     setMovieData(data[0]);
                 }
             }catch(error){
