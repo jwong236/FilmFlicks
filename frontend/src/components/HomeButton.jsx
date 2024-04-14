@@ -15,14 +15,10 @@ export default function HomeButton(props) {
             disableElevation
             startIcon={<ArrowBackIcon />}
             sx={{
-                color: '#646CFF',
                 position: 'absolute',
                 left: 16,
                 top: 16,
-                "&:hover": {
-                    color: '#8086FF',
-                    backgroundColor: 'white'
-                }
+                color: 'info.dark'
             }}
             onClick={handleClick}
         >

@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import {Link, useLocation} from "react-router-dom";
-import {Button} from "@mui/material";
+import {Box, Container} from "@mui/material";
 import MovieCard from "../components/MovieCard.jsx";
 import HomeButton from "../components/HomeButton.jsx";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import popcorn from '../assets/popcorn.png'
 
 export default function SingleMovie() {
     const [movieData, setMovieData] = useState({
@@ -46,23 +46,23 @@ export default function SingleMovie() {
     }, [title]);
 
     return (
-        <>
-            <HomeButton/>
-            <MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genres={movieData.genres}/>
-            {/*<MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genre={movieData.genre}/>*/}
-            {/*<h1>{movieData.title}</h1>*/}
-            {/*<div>YEAR: {movieData.year}</div>*/}
-            {/*<div>DIRECTOR: {movieData.director}</div>*/}
-            {/*<div>GENRES: {movieData.genres.join(', ')}</div> {}*/}
-            {/*<div>STARS:*/}
-            {/*    {movieData.stars.map((star, index) => (*/}
-            {/*        <React.Fragment key={star}>*/}
-            {/*            {index > 0 && ', '}*/}
-            {/*            <Link to={`/singlestar?name=${encodeURIComponent(star)}`}>{star}</Link>*/}
-            {/*        </React.Fragment>*/}
-            {/*    ))}*/}
-            {/*</div>*/}
-        </>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                height: '100vh',
+                backgroundColor: '#f1f1f1',
+                padding: 3,
+                backgroundImage: `url(${popcorn})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                }}>
+                <HomeButton/>
+                <Box sx={{width: '30%'}}>
+                    <MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genres={movieData.genres} link={false}/>
+                </Box>
+            </Box>
     );
 
 }

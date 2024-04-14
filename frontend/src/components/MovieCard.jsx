@@ -11,41 +11,48 @@ export default function MovieCard(props) { // title, year, director, genres, sta
     );
 
     return (
-        <Card sx={{ width: '100%', height: '80vh', backgroundColor: '#F8E6AE', borderRadius: '1rem', display: 'flex', flexDirection: 'column',  justifyContent: 'flex-end'}}>
+        <Card sx={{ width: '100%', height: '80vh', backgroundColor: 'secondary.main', borderRadius: '1rem', display: 'flex', flexDirection: 'column',  justifyContent: 'flex-end'}}>
             <Box sx={{display: "flex", flexDirection: "column", height: '50%', justifyContent: 'space-around'}}>
                 <Box sx={{display: "flex", width: "100%",  justifyContent: 'space-between'}}>
-                    <Box sx={{display: "flex", flexDirection: "column",  alignItems: "flex-start", paddingLeft: '1rem'}}>
+                    <Box sx={{display: "flex", flexDirection: "column",  alignItems: "flex-start", paddingLeft: '1rem', minHeight: '5rem'}}>
                         <CardHeader
-                            title={
+                            title={ props.link ?
                                 <MuiLink
                                     component={RouterLink}
                                     to={`/singlemovie?title=${encodeURIComponent(props.title)}`}
                                     sx={{
                                         textDecoration: 'none',
-                                        color: '#803D33',
+                                        color: 'primary.main',
                                         '&:hover': {
-                                            color: '#4D0A00',
-                                            textDecoration: 'underline'
+                                            color: 'primary.dark',
+                                            textDecoration: 'underline',
                                         }
                                     }}
                                 >
                                     {props.title}
-                                </MuiLink>
+                                </MuiLink> : props.title
                             }
                             sx={{
-                                padding: 0
+                                padding: 0,
+                                color: 'primary.main',
                             }}
                         />
                         <CardContent sx={{padding: 0}}>
-                            <Typography sx={{color: '#803D33'}}>
+                            <Typography
+                                sx={(theme) => ({
+                                    color: 'primary.main',
+                                    [theme.breakpoints.only("md")]: {
+                                        fontSize:"0.75rem",
+                                    },
+                                })}>
                                 {props.year}{bull}{props.director}
                             </Typography>
 
                         </CardContent>
                     </Box>
-                    <Box sx={{ color: '#803D33', height: '100%', aspectRatio: 1, borderRadius: '5rem', border: '0.25rem solid #803D33', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem'}}>{props.rating}</Box>
+                    <Box sx={{ color: 'primary.main', height: '100%', aspectRatio: 1, borderRadius: '5rem', border: '0.25rem solid #803D33', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem'}}>{props.rating}</Box>
                 </Box>
-                <Box sx={{ display: "flex", width: "100%", paddingLeft: '1rem', flexWrap: 'wrap' }}>
+                <Box sx={{ display: "flex", maxWidth: "90%", padding: '0 1rem', flexWrap: 'wrap', gap: '8px' }}>
                     {props.stars.map((star, index) => (
                         <Chip
                             key={index}
@@ -55,11 +62,10 @@ export default function MovieCard(props) { // title, year, director, genres, sta
                                     to={`/singlestar?name=${encodeURIComponent(star)}`}
                                     sx={{
                                         textDecoration: 'none',
-                                        color: '#803D33',
+
                                         '&:hover': {
-                                            color: '#791A0B', // Same color in-case I want to change it later
-                                            fontWeight: 'bold',
-                                            textDecoration: 'underline'
+                                            color: 'secondary.dark', // Same color in-case I want to change it later
+                                            textDecoration: 'none'
                                         }
                                     }}
                                 >
@@ -67,9 +73,11 @@ export default function MovieCard(props) { // title, year, director, genres, sta
                                 </MuiLink>
                             }
                             sx={{
-                                marginRight: '8px',
-                                marginBottom: '8px',
-                                backgroundColor: '#E5BEB8'
+                                backgroundColor: 'secondary.dark',
+                                "&:hover" : {
+                                    backgroundColor: 'primary.main',
+                                    transition: '0.3s'
+                                }
                             }}
                         />
                     ))}
@@ -79,7 +87,7 @@ export default function MovieCard(props) { // title, year, director, genres, sta
                         <Chip
                             key={index}
                             label={`#${genre}`}
-                            sx={{ color: "#803D33", backgroundColor: '#E5BEB8', marginRight: '8px', marginBottom: '8px' }}
+                            sx={{ color: 'primary.main', backgroundColor: 'primary.light', marginRight: '8px', marginBottom: '8px' }}
                         />
                     ))}
                 </Box>

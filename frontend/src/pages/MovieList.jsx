@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react'
 import MovieCard from '../components/MovieCard';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import popcorn from '../assets/popcorn.png'
 
 function MovieList() {
     const [movieData, setMovieData] = useState([]);
@@ -31,11 +32,19 @@ function MovieList() {
     }, []);
 
     return (
-        <Box sx={{ flexGrow: 1, padding: 3 }}>
+        <Box sx={{
+            padding: 3,
+            backgroundImage: `url(${popcorn})`,
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed',
+            minHeight: '100vh',
+            width: '100%',
+        }}>
             <Grid container spacing={3}>
                 {movieData.length > 0 ? (
                     movieData.map((movie, index) => (
-                        <Grid item xs={12} sm={6} md={5} lg={3} key={index}>
+                        <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={index}>
                             <MovieCard
                                 title={movie.title}
                                 year={movie.year}
@@ -43,6 +52,7 @@ function MovieList() {
                                 genres={movie.genres.split(", ")}
                                 stars={movie.stars.split(", ")}
                                 rating={movie.rating}
+                                link={true}
                             />
                         </Grid>
                     ))
