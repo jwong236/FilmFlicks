@@ -20,3 +20,5 @@ services:
     command: ["--general-log=ON"] #enable logging
 volumes:
   my-db:
+
+
