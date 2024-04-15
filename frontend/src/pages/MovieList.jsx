@@ -5,14 +5,22 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import popcorn from '../assets/popcorn.png'
 
+// async function fetchEnv(){
+//     return await import.meta.env.VITE_HOST;
+// }
+
+const HOST = import.meta.env.VITE_HOST;
+
 function MovieList() {
     const [movieData, setMovieData] = useState([]);
+    //host = await fetchEnv()
 
     useEffect(() => {
         let mounted = true;
         async function fetchMovieData(){
             try{
-                const response = await fetch('http://localhost:8080/fabFlix_war/movielist');
+                console.log(HOST);
+                const response = await fetch(`http://${HOST}:8080/fabFlix_war/movielist`);
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }

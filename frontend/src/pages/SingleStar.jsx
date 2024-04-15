@@ -5,6 +5,8 @@ import StarCard from "../components/StarCard.jsx";
 import {Box}  from '@mui/material'
 import popcorn from "../assets/popcorn.png";
 
+const HOST = import.meta.env.VITE_HOST;
+
 function SingleStar() {
     const [starData, setStarData] = useState({
         name: "",
@@ -22,7 +24,7 @@ function SingleStar() {
         let mounted = true;
         async function fetchStarData(){
             try{
-                const response = await fetch(`http://localhost:8080/fabFlix_war/singlestar?name=${encodeURIComponent(name)}`);
+                const response = await fetch(`http://${HOST}:8080/fabFlix_war/singlestar?name=${encodeURIComponent(name)}`);
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }

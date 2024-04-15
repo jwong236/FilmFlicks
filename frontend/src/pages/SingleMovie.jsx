@@ -5,6 +5,8 @@ import MovieCard from "../components/MovieCard.jsx";
 import HomeButton from "../components/HomeButton.jsx";
 import popcorn from '../assets/popcorn.png'
 
+const HOST = import.meta.env.VITE_HOST;
+
 export default function SingleMovie() {
     const [movieData, setMovieData] = useState({
         title: "default title",
@@ -23,7 +25,7 @@ export default function SingleMovie() {
         let mounted = true;
         async function fetchMovieData(){
             try{
-                const response = await fetch(`http://localhost:8080/fabFlix_war/singlemovie?title=${encodeURIComponent(title)}`);
+                const response = await fetch(`http://${HOST}:8080/fabFlix_war/singlemovie?title=${encodeURIComponent(title)}`);
 
                 if (!response.ok) {
                     console.error('response is not status 200');

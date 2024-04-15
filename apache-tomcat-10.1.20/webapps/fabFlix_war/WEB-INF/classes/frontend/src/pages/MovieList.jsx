@@ -4,6 +4,10 @@ import MovieCard from '../components/MovieCard';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import popcorn from '../assets/popcorn.png'
+import dotenv from 'dotenv';
+
+const HOST = process.env.HOST;
+console.log(HOST);
 
 function MovieList() {
     const [movieData, setMovieData] = useState([]);
@@ -12,7 +16,7 @@ function MovieList() {
         let mounted = true;
         async function fetchMovieData(){
             try{
-                const response = await fetch('http://localhost:8080/fabFlix_war/movielist');
+                const response = await fetch(`http://${HOST}:8080/fabFlix_war/movielist`);
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }
