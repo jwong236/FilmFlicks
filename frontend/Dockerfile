@@ -8,12 +8,10 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 8081
-
 RUN npm run build
 
-ENTRYPOINT ["npm", "run"]
-CMD ["start"]
+#ENTRYPOINT []
+CMD ["npm", "run", "start"]
 
 
 
