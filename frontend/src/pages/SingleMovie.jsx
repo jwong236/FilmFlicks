@@ -25,7 +25,7 @@ export default function SingleMovie() {
         let mounted = true;
         async function fetchMovieData(){
             try{
-                const response = await fetch(`http://${HOST}:8080/fabFlix_war/singlemovie?title=${encodeURIComponent(title)}`);
+                const response = await fetch(`http://${HOST}:8080/fabFlix/singlemovie?title=${encodeURIComponent(title)}`);
 
                 if (!response.ok) {
                     console.error('response is not status 200');

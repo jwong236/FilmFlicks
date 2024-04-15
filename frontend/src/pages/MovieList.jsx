@@ -20,7 +20,7 @@ function MovieList() {
         async function fetchMovieData(){
             try{
                 console.log(HOST);
-                const response = await fetch(`http://${HOST}:8080/fabFlix_war/movielist`);
+                const response = await fetch(`http://${HOST}:8080/fabFlix/movielist`);
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }

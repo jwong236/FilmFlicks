@@ -24,7 +24,7 @@ function SingleStar() {
         let mounted = true;
         async function fetchStarData(){
             try{
-                const response = await fetch(`http://${HOST}:8080/fabFlix_war/singlestar?name=${encodeURIComponent(name)}`);
+                const response = await fetch(`http://${HOST}:8080/fabFlix/singlestar?name=${encodeURIComponent(name)}`);
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }
