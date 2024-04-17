@@ -54,9 +54,9 @@ public class Login extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         //response.addHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
-        try (Connection connection = dataSource.getConnection()){
+        try {
 
-
+            Connection connection = dataSource.getConnection();
             // prepare query
             String query = "SELECT * FROM customers c WHERE c.email = ? and c.password = ?";
             // declare statement
@@ -70,25 +70,38 @@ public class Login extends HttpServlet {
             // execute query
             ResultSet resultSet = preparedStatement.executeQuery(query);
 
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            Map<String,String> jsonResponse= new HashMap<>();
 
             //null means failure
             if (resultSet.next()){
-                response.setStatus(404);
-                out.print("Login Failure");
+
+                jsonResponse.put("status" , "success");
+                jsonResponse.put("message" , "login successful");
+
+                response.setStatus(HttpServletResponse.SC_OK);
             }else{
-                response.setStatus(200);
-                out.println("Login Success");
+
+                //add email into cookie
+                jsonResponse.put("status" , "fail");
+                jsonResponse.put("message" , "login fail");
+
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
 
+            String jsonString = objectMapper.writeValueAsString(jsonResponse);
+            out.print(jsonString);
             //flush out the buffer just in case
             out.flush();
+            connection.close();
 
 
 
         } catch (Exception e) {
             /*
              * After you deploy the WAR file through tomcat manager webpage,
-             *   there's no console to see the print messages.
+             *   there's no console to see the print messages.~~
              * Tomcat append all the print messages to the file: tomcat_directory/logs/catalina.out
              *
              * To view the last n lines (for example, 100 lines) of messages you can use:
