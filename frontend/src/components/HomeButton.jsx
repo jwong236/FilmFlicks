@@ -9,7 +9,7 @@ export default function HomeButton(props) {
     };
 
     return (
-        <Button
+        <Button variant="contained"
             component={Link}
             to='/'
             disableElevation
@@ -18,7 +18,11 @@ export default function HomeButton(props) {
                 position: 'absolute',
                 left: 16,
                 top: 16,
-                color: 'info.dark'
+                color: 'secondary.light',
+                backgroundColor: 'info.light',
+                '&:hover': {
+                    backgroundColor: 'info.main',
+                }
             }}
             onClick={handleClick}
         >

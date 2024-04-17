@@ -22,16 +22,6 @@ const colorTheme = createTheme({
 
 const theme = createTheme(colorTheme, {
     components: {
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    "&.MuiButtonBase-root:hover": {
-                        color: colorTheme.palette.info.light,
-                        backgroundColor: 'transparent'
-                    },
-                }
-            }
-        },
         MuiChip: {
             styleOverrides: {
                 root: {

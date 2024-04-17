@@ -30,10 +30,10 @@ export default function StarCard(props) {
                 <Typography variant="h3" color="secondary.main" sx={{ textAlign: 'center', mb: 2 }}>
                     STAR CARD
                 </Typography>
-                <Typography variant="h5" color="secondary.main" sx={{ mb: 1 }}>
+                <Typography variant="h5" color="secondary.main" sx={{ textAlign: 'center', mb: 1 }}>
                     NAME: {props.name}
                 </Typography>
-                <Typography variant="h5" color="secondary.main" sx={{ mb: 2 }}>
+                <Typography variant="h5" color="secondary.main" sx={{ textAlign: 'center', mb: 2 }}>
                     DOB: {props.birthYear}
                 </Typography>
                 <Box sx={{

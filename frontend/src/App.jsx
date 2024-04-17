@@ -5,7 +5,7 @@
 import { createTheme, ThemeProvider, CssBaseline, Box } from '@mui/material';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import theme from './ theme'
+import theme from './theme'
 import MovieList from './pages/MovieList';
 import SingleMovie from './pages/SingleMovie';
 import SingleStar from './pages/SingleStar';
