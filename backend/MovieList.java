@@ -16,10 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.List;
+import java.util.*;
 
 import javax.sql.DataSource;
 import javax.naming.InitialContext;
@@ -37,6 +34,7 @@ public class MovieList extends HttpServlet {
     public void init(ServletConfig config) {
         try {
             dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+            System.out.println("hello");
         } catch (NamingException e) {
             e.printStackTrace();
         }
@@ -90,6 +88,7 @@ public class MovieList extends HttpServlet {
             // execute query
             ResultSet resultSet = statement.executeQuery(query);
 
+//            System.out.println(resultSet);
             //holds the json string hashmaps
             List<Map<String, String>> jsonArr = new ArrayList<>();
 
@@ -102,6 +101,7 @@ public class MovieList extends HttpServlet {
                 String genres = resultSet.getString("genres");
                 String stars = resultSet.getString("stars");
 
+                System.out.println(movieTitle);
 
 
 
@@ -124,6 +124,9 @@ public class MovieList extends HttpServlet {
                 jsonArr.add(data);
 
             }
+
+
+            System.out.println(jsonArr);
 
             //jackson api used for turn the hashmap of strings into a string structured like json
             ObjectMapper objMap = new ObjectMapper();
