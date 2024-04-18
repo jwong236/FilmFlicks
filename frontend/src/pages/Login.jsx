@@ -7,6 +7,8 @@ const HOST = import.meta.env.VITE_HOST;
 export default function MovieList() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [result, setResult] = useState('');
+
 
     const handleLogin = async () => {
         try {
@@ -19,7 +21,12 @@ export default function MovieList() {
                 body: JSON.stringify({ email, password }) // Not sure if this is necessary
             });
             const data = await response.json();
-            console.log('Login successful:', data);
+
+            if (data.status == "success"){
+                setResult('Login Successful!');
+            }else{
+                setResult('Incorrect Password!');
+            }
         } catch (error) {
             console.error('Login error:', error);
         }
@@ -146,7 +153,7 @@ export default function MovieList() {
                             display: 'flex',
                             flexDirection: 'row',
                             alignItems: 'center',
-                            paddingBottom: '30%'
+                            paddingBottom: '10%'
                         }}>
                             <Checkbox sx={{
                                 paddingLeft: '5%',
@@ -158,6 +165,20 @@ export default function MovieList() {
                                 color: 'secondary.light',
                             }}>
                                 Remember Me
+                            </Typography>
+                        </Box>
+                        <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                            paddingBottom: '10%',
+                            paddingLeft: '5%',
+                            fontWeight: '800'
+                        }}>
+                            <Typography sx={{
+                                color: 'secondary.light',
+                            }}>
+                                {result}
                             </Typography>
                         </Box>
                     </Box>
