@@ -6,16 +6,17 @@ import { createTheme, ThemeProvider, CssBaseline, Box } from '@mui/material';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import theme from './theme'
+
 import MovieList from './pages/MovieList';
 import SingleMovie from './pages/SingleMovie';
 import SingleStar from './pages/SingleStar';
 
-import Login from './pages/SingleStar';
-import Homepage from './pages/SingleStar';
+import Login from './pages/Login';
+import Homepage from './pages/Homepage';
 
-import ShoppingCart from './pages/SingleStar';
-import PaymentInfo from './pages/SingleStar';
-import Confirmation from './pages/SingleStar';
+import ShoppingCart from './pages/ShoppingCart';
+import PaymentInfo from './pages/PaymentInfo';
+import Confirmation from './pages/Confirmation';
 
 function App() {
     return (
