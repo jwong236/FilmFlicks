@@ -52,8 +52,8 @@ public class MovieList extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         //response.addHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
-        try (Connection connection = dataSource.getConnection()){
-
+        try{
+            Connection connection = dataSource.getConnection();
 
             // declare statement
             Statement statement = connection.createStatement();
@@ -142,7 +142,7 @@ public class MovieList extends HttpServlet {
             //close database connection when done
             resultSet.close();
             statement.close();
-
+            connection.close();
             //the json string will be our json response
             out.print(jsonString);
 
