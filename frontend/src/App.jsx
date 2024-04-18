@@ -10,6 +10,13 @@ import MovieList from './pages/MovieList';
 import SingleMovie from './pages/SingleMovie';
 import SingleStar from './pages/SingleStar';
 
+import Login from './pages/SingleStar';
+import Homepage from './pages/SingleStar';
+
+import ShoppingCart from './pages/SingleStar';
+import PaymentInfo from './pages/SingleStar';
+import Confirmation from './pages/SingleStar';
+
 function App() {
     return (
         <ThemeProvider theme={theme}>
@@ -17,9 +24,17 @@ function App() {
             {/*<Box sx={{ minHeight: '100vh', display: 'flex',  justifyContent: 'center', alignItems: 'center', }}>*/}
                 <Routes>
                     <Route path="/" element={<MovieList />} />
+
                     <Route path="/movielist" element={<MovieList />} />
                     <Route path="/singlemovie" element={<SingleMovie />} />
                     <Route path="/singlestar" element={<SingleStar />} />
+
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/homepage" element={<Homepage />} />
+
+                    <Route path="/shoppingcart" element={<ShoppingCart />} />
+                    <Route path="/paymentinfo" element={<PaymentInfo />} />
+                    <Route path="/confirmation" element={<Confirmation />} />
                 </Routes>
             {/*</Box>*/}
         </ThemeProvider>

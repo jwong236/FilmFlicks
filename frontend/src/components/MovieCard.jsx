@@ -23,6 +23,7 @@ export default function MovieCard(props) { // title, year, director, genres, sta
                                     sx={{
                                         textDecoration: 'none',
                                         color: 'primary.main',
+                                        fontWeight: 'bold',
                                         '&:hover': {
                                             color: 'primary.dark',
                                             textDecoration: 'underline',
