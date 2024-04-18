@@ -1,54 +1,224 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container } from "@mui/material";
+import { Box, Typography, Button, Checkbox, TextField } from "@mui/material";
+import singlepopcorn from '../assets/singlepopcorn.png'
 
 const HOST = import.meta.env.VITE_HOST;
 
 export default function MovieList() {
-    const [titles, setTitles] = useState([]);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    useEffect(() => {
-        async function fetchMovieTitles() {
-            try {
-                const response = await fetch(`http://${HOST}:8080/fabFlix/templateendpoint`); // Replace login with confirmation when ready
-                if (!response.ok) {
-                    console.error('Response is not status 200');
-                    return;
-                }
-                const data = await response.json();
-                setTitles(data.map(movie => movie.title));
-            } catch (error) {
-                console.error('Error fetching movie titles: ', error);
-            }
+    const handleLogin = async () => {
+        try {
+            console.log('Button clicked, received email: %s and password: %s', email, password);
+            const response = await fetch(`http://${HOST}:8080/fabFlix/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }) // Not sure if this is necessary
+            });
+            const data = await response.json();
+            console.log('Login successful:', data);
+        } catch (error) {
+            console.error('Login error:', error);
         }
+    };
 
-        fetchMovieTitles();
-    }, []);
 
     return (
-        <Container>
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            backgroundColor: 'black', // Make sure it isnt showing
+            height: '100vh',
+            width: '100vw'
+        }}>
             <Box sx={{
                 display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '100%',
-                minHeight: '100vh',
-                backgroundColor: '#f1f1f1',
-                padding: 3
+                backgroundColor: '#FFFFF4',
+                height: '100vh',
+                flex: '2',
+                backgroundImage: `url(${singlepopcorn})`,
+
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center'
             }}>
-                {titles.length > 0 ? (
-                    <Box sx={{ width: '60%', backgroundColor: 'white', padding: 2, borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-                        <h2>Template Webpage</h2>
-                        <ul>
-                            {titles.map((title, index) => (
-                                <li key={index}>{title}</li>
-                            ))}
-                        </ul>
-                    </Box>
-                ) : (
-                    <p>No titles found</p>
-                )}
             </Box>
-        </Container>
+            <Box sx={{
+                display: 'flex',
+                backgroundColor: 'info.light',
+                height: '100vh',
+                flex:'1'
+
+            }}>
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                }}>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        paddingTop: '5%',
+                        paddingBottom: '2%',
+                    }}>
+                        <Typography variant = "h1" component = "h1" color = "secondary.light">
+                            MovieApp
+                        </Typography>
+                        <Typography variant = "h3" component = "h3" color = "secondary.light">
+                            Login
+                        </Typography>
+                    </Box>
+                    <Box sx={{
+                        style: 'flex',
+                        width: '100%',
+                    }}>
+                        <Box>
+                            <Typography sx={{
+                                color: "secondary.light",
+                                marginLeft: '5%',
+                                paddingTop: '2%',
+                            }}>
+                                Email Address
+                            </Typography>
+                            <TextField
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                sx={{
+                                    width: '100%',
+                                    paddingLeft: '5%',
+                                    paddingRight: '5%',
+                                    '& .MuiInputBase-root': {
+                                        height: '2rem',
+                                        backgroundColor: '#f6f6f6',
+                                        '& input': {
+                                            height: '100%'
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: 'info.main',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: 'info.dark',
+                                        }
+                                    }
+                                }}
+                            />
+                        </Box>
+                        <Box>
+                            <Typography sx={{
+                                color: "secondary.light",
+                                marginLeft: '5%',
+                                paddingTop: '2%',
+                            }}>
+                                Password
+                            </Typography>
+                            <TextField
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                sx={{
+                                    paddingBottom: '2%',
+                                    width: '100%',
+                                    paddingLeft: '5%',
+                                    paddingRight: '5%',
+                                    '& .MuiInputBase-root': {
+                                        height: '2rem',
+                                        backgroundColor: '#f6f6f6',
+                                        '& input': {
+                                            height: '100%',
+                                            padding: '0 14px',
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: 'info.main',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: 'info.dark',
+                                        }
+                                    }
+                                }}
+                            />
+                        </Box>
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingBottom: '30%'
+                        }}>
+                            <Checkbox sx={{
+                                paddingLeft: '5%',
+                                color: 'white'
+                            }}>
+
+                            </Checkbox>
+                            <Typography sx={{
+                                color: 'secondary.light',
+                            }}>
+                                Remember Me
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <Button
+                        onClick={handleLogin}
+                        sx={{
+                        borderRadius: '20px',
+                        backgroundColor: '#FF907E',
+                        color: 'secondary.light',
+                        fontWeight: 'bold',
+                        fontSize: '1.2rem',
+                        marginLeft: '5%',
+                        marginRight: '5%',
+                        '&:hover': {
+                            backgroundColor: 'primary.main',
+                            transform: 'scale(1.05)'
+                        }
+                    }}>
+                        Log In
+                    </Button>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}>
+                        <Typography sx={{
+                            color: 'secondary.light',
+                            marginLeft: '5%',
+                            textDecoration: 'underline',
+                            paddingTop: '1%'
+
+                        }}>
+                            Forgot Your Password?
+                        </Typography>
+                    </Box>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '100%',
+                        flexGrow: '1',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                        <Typography sx={{
+                            color: 'secondary.light',
+                        }}>
+                            UCI CS122b
+                        </Typography>
+                        <Typography sx={{
+                            color: 'secondary.light',
+                        }}>
+                            Created by Andy Phu
+                        </Typography>
+                        <Typography sx={{
+                            color: 'secondary.light',
+                        }}>
+                            and Jacob Wong
+                        </Typography>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
     );
 }
