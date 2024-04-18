@@ -30,7 +30,7 @@ public class LoginFilter implements Filter {
         }
 
         // Redirect to login page if the "user" attribute doesn't exist in session
-        if (httpRequest.getSession().getAttribute("user") == null) {
+        if (httpRequest.getSession().getAttribute("email") == null) {
             httpResponse.sendRedirect("Login.jsx");
         } else {
             chain.doFilter(request, response);
@@ -43,6 +43,7 @@ public class LoginFilter implements Filter {
          Always allow your own login related requests(html, js, servlet, etc..)
          You might also want to allow some CSS files, etc..
          */
+        System.out.println("request uri " + requestURI);
         return allowedURIs.stream().anyMatch(requestURI.toLowerCase()::endsWith);
     }
 
@@ -50,12 +51,16 @@ public class LoginFilter implements Filter {
     //these should not need authentication each time these are requested indirectly
     //essential without auth, login should not need to login to login
     public void init(FilterConfig fConfig) {
-        allowedURIs.add("Login.jsx");
-        allowedURIs.add("App.jsx");
+        allowedURIs.add("login.jsx");
+        allowedURIs.add("app.jsx");
         allowedURIs.add("main.jsx");
         allowedURIs.add("index.html");
         allowedURIs.add("index.js");
-        allowedURIs.add("fabFlix/login");
+        allowedURIs.add("login");
+        allowedURIs.add("/fabFlix/");
+        allowedURIs.add("movielist");
+
+
     }
 
 }

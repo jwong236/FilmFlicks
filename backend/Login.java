@@ -1,10 +1,12 @@
 //import com.google.gson.JsonArray;
 //import com.google.gson.JsonObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -15,6 +17,7 @@ import java.sql.PreparedStatement;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.*;
 
@@ -22,6 +25,8 @@ import javax.sql.DataSource;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import jakarta.servlet.ServletConfig;
+
+
 
 // This annotation maps this Java Servlet Class to a URL
 @WebServlet("/login")
@@ -31,19 +36,39 @@ public class Login extends HttpServlet {
     // Create a dataSource which registered in web.
     private DataSource dataSource;
 
+
     public void init(ServletConfig config) {
         try {
             dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
-            System.out.println("hello");
+            System.out.println("LOGIN");
         } catch (NamingException e) {
             e.printStackTrace();
         }
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        StringBuilder requestBody = new StringBuilder();
 
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        String email = "";
+        String password = "";
+
+        try(BufferedReader reader = request.getReader()){
+            String line ;
+            while ((line = reader.readLine()) != null){
+                requestBody.append(line);
+            }
+        }catch(IOException e){
+            System.out.println("reading error");
+            e.printStackTrace();
+        }
+
+        String requestString = requestBody.toString();
+        System.out.println("request string " + requestString);
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = objectMapper.readValue(requestString, User.class);
+
+        System.out.println("email " +user.getEmail());
+        System.out.println("password " +user.getPassword());
 
 
         // Get the PrintWriter for writing response
@@ -58,19 +83,18 @@ public class Login extends HttpServlet {
 
             Connection connection = dataSource.getConnection();
             // prepare query
-            String query = "SELECT * FROM customers c WHERE c.email = ? and c.password = ?";
+            String query = "SELECT c.id FROM customers c WHERE c.email = ? AND c.password = ?";
             // declare statement
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
 
-            preparedStatement.setString(1,email);
-            preparedStatement.setString(2,password);
+            preparedStatement.setString(1,user.getEmail());
+            preparedStatement.setString(2,user.getPassword());
 
 
             // execute query
-            ResultSet resultSet = preparedStatement.executeQuery(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            ObjectMapper objectMapper = new ObjectMapper();
 
             Map<String,String> jsonResponse= new HashMap<>();
 
@@ -79,6 +103,8 @@ public class Login extends HttpServlet {
 
                 jsonResponse.put("status" , "success");
                 jsonResponse.put("message" , "login successful");
+
+                request.getSession().setAttribute("user", new Email(user.getEmail()));
 
                 response.setStatus(HttpServletResponse.SC_OK);
             }else{
@@ -99,15 +125,7 @@ public class Login extends HttpServlet {
 
 
         } catch (Exception e) {
-            /*
-             * After you deploy the WAR file through tomcat manager webpage,
-             *   there's no console to see the print messages.~~
-             * Tomcat append all the print messages to the file: tomcat_directory/logs/catalina.out
-             *
-             * To view the last n lines (for example, 100 lines) of messages you can use:
-             *   tail -100 catalina.out
-             * This can help you debug your program after deploying it on AWS.
-             */
+
             request.getServletContext().log("Error: ", e);
 
 
