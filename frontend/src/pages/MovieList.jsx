@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react'
+import { useNavigate } from 'react-router-dom';
 
 import MovieCard from '../components/MovieCard';
 import Grid from '@mui/material/Grid';
@@ -15,6 +16,10 @@ function MovieList() {
     const [movieData, setMovieData] = useState([]);
     //host = await fetchEnv()
 
+    //for redirections
+    const navigate = useNavigate();
+
+
     useEffect(() => {
         let mounted = true;
         async function fetchMovieData(){
@@ -25,7 +30,15 @@ function MovieList() {
                     console.error('response is not status 200');
                 }
                 const data = await response.json();
+                if (data.message == "login"){
+                    console.log("REDIRECTION FROM MOVIE LIST");
+                    navigate('/login')
+                }
+
+                console.log("no need to login");
+
                 if (mounted){
+                    console.log(data);
                     setMovieData(data);
                 }
             }catch(error){

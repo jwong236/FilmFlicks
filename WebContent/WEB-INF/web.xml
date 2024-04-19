@@ -8,26 +8,49 @@
     </welcome-file-list>
 
     <!-- CORS filter configuration -->
-    <filter>
-        <filter-name>CorsFilter</filter-name>
-        <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
-        <init-param>
-            <param-name>cors.allowed.origins</param-name>
-            <param-value>*</param-value>
-        </init-param>
-        <init-param>
-            <param-name>cors.allowed.methods</param-name>
-            <param-value>GET, POST, PUT, DELETE, OPTIONS</param-value>
-        </init-param>
-        <init-param>
-            <param-name>cors.allowed.headers</param-name>
-            <param-value>Content-Type, Authorization</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>CorsFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+<!--    <filter>-->
+<!--        <filter-name>CorsFilter</filter-name>-->
+<!--        <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>-->
+<!--        <init-param>-->
+<!--            <param-name>cors.allowed.origins</param-name>-->
+<!--            <param-value>http://localhost:8081</param-value>-->
+<!--        </init-param>-->
+<!--        <init-param>-->
+<!--            <param-name>cors.allowed.methods</param-name>-->
+<!--            <param-value>GET, POST, PUT, DELETE</param-value>-->
+<!--        </init-param>-->
+<!--        <init-param>-->
+<!--            <param-name>cors.allowed.credentials</param-name>-->
+<!--            <param-value>true</param-value>-->
+<!--        </init-param>-->
+<!--        <init-param>-->
+<!--            <param-name>cors.allowed.headers</param-name>-->
+<!--            <param-value>Content-Type, Authorization</param-value>-->
+<!--        </init-param>-->
+<!--    </filter>-->
+<!--    <filter-mapping>-->
+<!--        <filter-name>CorsFilter</filter-name>-->
+<!--        <url-pattern>/*</url-pattern>-->
+<!--    </filter-mapping>-->
+
+
+<!--    <filter>-->
+<!--        <filter-name>CorsFilter</filter-name>-->
+<!--        <filter-class>backend.Cors</filter-class>-->
+<!--    </filter>-->
+<!--    <filter-mapping>-->
+<!--        <filter-name>CorsFilter</filter-name>-->
+<!--        <url-pattern>/*</url-pattern>-->
+<!--    </filter-mapping>-->
+
+<!--    <filter>-->
+<!--        <filter-name>LoginFilter</filter-name>-->
+<!--        <filter-class>backend.LoginFilter</filter-class>-->
+<!--    </filter>-->
+<!--    <filter-mapping>-->
+<!--        <filter-name>LoginFilter</filter-name>-->
+<!--        <url-pattern>/*</url-pattern>-->
+<!--    </filter-mapping>-->
 
 
 </web-app>

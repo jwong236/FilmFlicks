@@ -3,6 +3,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -19,8 +20,13 @@ public class LoginFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
+        PrintWriter out = response.getWriter();
 
-        System.out.println("LoginFilter: " + httpRequest.getRequestURI());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+
+        //System.out.println("LoginFilter: " + httpRequest.getRequestURI());
 
         // Check if this URL is allowed to access without logging in
         if (this.isUrlAllowedWithoutLogin(httpRequest.getRequestURI())) {
@@ -29,12 +35,20 @@ public class LoginFilter implements Filter {
             return;
         }
 
+        out.flush();
         // Redirect to login page if the "user" attribute doesn't exist in session
-        if (httpRequest.getSession().getAttribute("email") == null) {
-            httpResponse.sendRedirect("Login.jsx");
+        if (httpRequest.getSession().getId() == null) {
+            //System.out.println("redirection to login ");
+            //sends json to the jsx files so that when they receive the message as login then redirect
+            out.print("{\"message\": \"login\"}");
         } else {
+            System.out.println("navigate past the login");
             chain.doFilter(request, response);
+            System.out.println(response);
+            out.print("{\"message\": \"no_login\"}");
         }
+
+        out.flush();
     }
 
     private boolean isUrlAllowedWithoutLogin(String requestURI) {
@@ -44,6 +58,9 @@ public class LoginFilter implements Filter {
          You might also want to allow some CSS files, etc..
          */
         System.out.println("request uri " + requestURI);
+        if ((requestURI.equals("/fabFlix/movielist")) || (requestURI.equals("/fabFlix/") ) ){
+            return true;
+        }
         return allowedURIs.stream().anyMatch(requestURI.toLowerCase()::endsWith);
     }
 
@@ -58,7 +75,7 @@ public class LoginFilter implements Filter {
         allowedURIs.add("index.js");
         allowedURIs.add("login");
         allowedURIs.add("/fabFlix/");
-        allowedURIs.add("movielist");
+        //allowedURIs.add("movielist");
 
 
     }

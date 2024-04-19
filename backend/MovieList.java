@@ -75,14 +75,6 @@ public class MovieList extends HttpServlet {
                         "LIMIT 20; ";
 
 
-//            String query = "SELECT m.title, m.year, m.director, r.rating " +
-//                    "FROM movies m " +
-//                    "JOIN ratings r ON r.movieId = m.id " +
-//                    "JOIN stars_in_movies sm ON sm.movieId = m.id " +
-//                    "JOIN stars s ON sm.starId = s.id " +
-//                    "GROUP BY m.id, m.title, m.year, m.director, r.rating " +
-//                    "ORDER BY r.rating DESC " +
-//                    "LIMIT 20";
 
 
             // execute query

@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import jakarta.servlet.ServletConfig;
-
+import jakarta.servlet.http.HttpSession;
 
 
 // This annotation maps this Java Servlet Class to a URL
@@ -66,9 +66,9 @@ public class Login extends HttpServlet {
         System.out.println("request string " + requestString);
         ObjectMapper objectMapper = new ObjectMapper();
         User user = objectMapper.readValue(requestString, User.class);
-
-        System.out.println("email " +user.getEmail());
-        System.out.println("password " +user.getPassword());
+//
+//        System.out.println("email " +user.getEmail());
+//        System.out.println("password " +user.getPassword());
 
 
         // Get the PrintWriter for writing response
@@ -104,7 +104,22 @@ public class Login extends HttpServlet {
                 jsonResponse.put("status" , "success");
                 jsonResponse.put("message" , "login successful");
 
-                request.getSession().setAttribute("user", new Email(user.getEmail()));
+                HttpSession session = request.getSession(false);
+                System.out.println("http session: " + session);
+
+                //System.out.println(sessionEmail);
+
+
+
+                if (session == null){
+//                    request.getSession().setAttribute("email", new Email(user.getEmail()));
+//                    response.setHeader("Set-Cookie", "JSESSIONID=" + request.getSession().getId() + "; Path=/fabFlix");
+                    session = request.getSession();
+                    response.setHeader("Set-Cookie", "JSESSIONID=" + session.getId() + "; Path=/fabFlix");
+                    System.out.println("new email is used for login");
+                }else{
+                    System.out.println("recurring email is used : " + request.getSession().getId());
+                }
 
                 response.setStatus(HttpServletResponse.SC_OK);
             }else{

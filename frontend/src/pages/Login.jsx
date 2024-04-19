@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import {useNavigate} from "react-router-dom";
 import { Box, Typography, Button, Checkbox, TextField } from "@mui/material";
 import singlepopcorn from '../assets/singlepopcorn.png'
 
@@ -9,6 +10,7 @@ export default function MovieList() {
     const [password, setPassword] = useState('');
     const [result, setResult] = useState('');
 
+    const navigate = new useNavigate();
 
     const handleLogin = async () => {
         try {
@@ -18,12 +20,14 @@ export default function MovieList() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({ email, password }) // Not sure if this is necessary
             });
             const data = await response.json();
 
             if (data.status == "success"){
                 setResult('Login Successful!');
+                navigate('/movielist');
             }else{
                 setResult('Incorrect Password!');
             }
