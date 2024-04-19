@@ -34,7 +34,7 @@ public class MovieList extends HttpServlet {
     public void init(ServletConfig config) {
         try {
             dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
-            System.out.println("hello");
+            System.out.println("movie list");
         } catch (NamingException e) {
             e.printStackTrace();
         }
@@ -93,7 +93,7 @@ public class MovieList extends HttpServlet {
                 String genres = resultSet.getString("genres");
                 String stars = resultSet.getString("stars");
 
-                System.out.println(movieTitle);
+                //System.out.println(movieTitle);
 
 
 
@@ -118,7 +118,7 @@ public class MovieList extends HttpServlet {
             }
 
 
-            System.out.println(jsonArr);
+            //System.out.println(jsonArr);
 
             //jackson api used for turn the hashmap of strings into a string structured like json
             ObjectMapper objMap = new ObjectMapper();

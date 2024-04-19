@@ -25,12 +25,16 @@ function MovieList() {
         async function fetchMovieData(){
             try{
                 console.log(HOST);
-                const response = await fetch(`http://${HOST}:8080/fabFlix/movielist`);
+                const response = await fetch(`http://${HOST}:8080/fabFlix/movielist`, {
+                    credentials: 'include' // Include cookies in the request
+                });
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }
                 const data = await response.json();
-                if (data.message == "login"){
+                console.log(data);
+
+                if (data.status === 401){
                     console.log("REDIRECTION FROM MOVIE LIST");
                     navigate('/login')
                 }
@@ -42,7 +46,7 @@ function MovieList() {
                     setMovieData(data);
                 }
             }catch(error){
-                console.error('Error fetching data: ', error);
+                console.error('Error fetching data:', error);
             }
         }
 

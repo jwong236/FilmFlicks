@@ -23,9 +23,9 @@ export default function MovieList() {
                 credentials: 'include',
                 body: JSON.stringify({ email, password }) // Not sure if this is necessary
             });
-            const data = await response.json();
-
-            if (data.status == "success"){
+            const data = await response;
+            console.log(data.status);
+            if (data.status === 200){
                 setResult('Login Successful!');
                 navigate('/movielist');
             }else{

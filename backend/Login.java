@@ -15,9 +15,8 @@ import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.core.type.TypeReference;
+
 
 import java.util.*;
 
@@ -62,18 +61,15 @@ public class Login extends HttpServlet {
             e.printStackTrace();
         }
 
+
+        //turn the parameters of the post request into a user class
+        //containing email and password
         String requestString = requestBody.toString();
         System.out.println("request string " + requestString);
         ObjectMapper objectMapper = new ObjectMapper();
         User user = objectMapper.readValue(requestString, User.class);
-//
-//        System.out.println("email " +user.getEmail());
-//        System.out.println("password " +user.getPassword());
 
-
-        // Get the PrintWriter for writing response
         PrintWriter out = response.getWriter();
-
         // Set response mime type
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -96,13 +92,9 @@ public class Login extends HttpServlet {
             ResultSet resultSet = preparedStatement.executeQuery();
 
 
-            Map<String,String> jsonResponse= new HashMap<>();
 
             //null means failure
             if (resultSet.next()){
-
-                jsonResponse.put("status" , "success");
-                jsonResponse.put("message" , "login successful");
 
                 HttpSession session = request.getSession(false);
                 System.out.println("http session: " + session);
@@ -112,27 +104,31 @@ public class Login extends HttpServlet {
 
 
                 if (session == null){
+                    System.out.println("SESSION IS NULL IN LOGIN JAVA");
 //                    request.getSession().setAttribute("email", new Email(user.getEmail()));
 //                    response.setHeader("Set-Cookie", "JSESSIONID=" + request.getSession().getId() + "; Path=/fabFlix");
                     session = request.getSession();
-                    response.setHeader("Set-Cookie", "JSESSIONID=" + session.getId() + "; Path=/fabFlix");
-                    System.out.println("new email is used for login");
+//                    response.setHeader("Set-Cookie", "JSESSIONID=" + session.getId() + "; Path=/fabFlix");
+                    session.setAttribute("email", new Email(user.getEmail()));
+
+                    Email emailObj = (Email)session.getAttribute("email");
+
+                    System.out.println("new email is used for login: " + emailObj.emailGetter());
                 }else{
-                    System.out.println("recurring email is used : " + request.getSession().getId());
+                    System.out.println("SESSION IS NOT NULL IN LOGIN JAVA");
+                    Email emailObj = (Email)session.getAttribute("email");
+                    System.out.println("recurring email is used : " + emailObj.emailGetter());
                 }
 
                 response.setStatus(HttpServletResponse.SC_OK);
             }else{
 
                 //add email into cookie
-                jsonResponse.put("status" , "fail");
-                jsonResponse.put("message" , "login fail");
-
+                System.out.println("WRONG PASSWORD");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
 
-            String jsonString = objectMapper.writeValueAsString(jsonResponse);
-            out.print(jsonString);
+
             //flush out the buffer just in case
             out.flush();
             connection.close();
