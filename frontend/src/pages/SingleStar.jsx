@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Link, useLocation} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import HomeButton from "../components/HomeButton.jsx";
 import StarCard from "../components/StarCard.jsx";
 import {Box}  from '@mui/material'
@@ -19,18 +19,30 @@ function SingleStar() {
     const search_params = new URLSearchParams(location.search);
     const name = search_params.get('name');
     //console.log(name);
+    const navigate = useNavigate();
 
     useEffect(() => {
         let mounted = true;
         async function fetchStarData(){
             try{
-                const response = await fetch(`http://${HOST}:8080/fabFlix/singlestar?name=${encodeURIComponent(name)}`);
+                const response = await fetch(`http://${HOST}:8080/fabFlix/singlestar?name=${encodeURIComponent(name)}`,{
+                    credentials: 'include'
+                });
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }
-                const data = await response.json();
-                if (mounted){
-                    setStarData(data[0]);
+
+                console.log("DATA AS TEXT IN SINGLE STAR LIST " + response.text);
+
+                if (response.status === 401){
+                    console.log("REDIRECTION FROM MOVIE LIST");
+                    navigate('/login')
+                }else{
+                    const jsonData = await response.json();
+                    console.log("no need to login");
+                    if (mounted){
+                        setStarData(jsonData[0]);
+                    }
                 }
             }catch(error){
                 console.error('Error fetching data: ', error);

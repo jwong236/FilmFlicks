@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Link, useLocation} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {Box, Container} from "@mui/material";
 import MovieCard from "../components/MovieCard.jsx";
 import HomeButton from "../components/HomeButton.jsx";
@@ -20,21 +20,34 @@ export default function SingleMovie() {
     const location = useLocation();
     const search_params = new URLSearchParams(location.search);
     const title = search_params.get('title');
+    const navigate = useNavigate();
 
     useEffect(() => {
         let mounted = true;
         async function fetchMovieData(){
             try{
-                const response = await fetch(`http://${HOST}:8080/fabFlix/singlemovie?title=${encodeURIComponent(title)}`);
+                const response = await fetch(`http://${HOST}:8080/fabFlix/singlemovie?title=${encodeURIComponent(title)}`,{
+                    credentials: 'include'
+                });
 
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }
-                const data = await response.json();
-                if (mounted){
 
-                    setMovieData(data[0]);
+                console.log("DATA AS TEXT IN MOVIE LIST " + response.text);
+
+                if (response.status === 401){
+                    console.log("REDIRECTION FROM MOVIE LIST");
+                    navigate('/login')
+                }else{
+                    const jsonData = await response.json();
+                    console.log("no need to login");
+                    if (mounted){
+                        console.log(jsonData);
+                        setMovieData(jsonData[0]);
+                    }
                 }
+
             }catch(error){
                 console.error('Error fetching data: ', error);
             }
