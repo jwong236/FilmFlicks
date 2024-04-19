@@ -32,19 +32,7 @@ public class LoginFilter implements Filter {
         response.setCharacterEncoding("UTF-8");
 
 
-        //System.out.println("LoginFilter: " + httpRequest.getRequestURI());
 
-//        String url = httpRequest.getRequestURL().toString();
-//        System.out.println("request URL: " + url);
-//        Pattern pattern = Pattern.compile(":8080");
-//        Matcher matcher = pattern.matcher(url);
-//
-//
-//        //bypas for access on teh server side
-//        if (matcher.find()){
-//            chain.doFilter(request, response);
-//            return;
-//        }
         // Check if this URL is allowed to access without logging in
         if (this.isUrlAllowedWithoutLogin(httpRequest.getRequestURI())) {
             // Keep default action: pass along the filter chain
@@ -52,20 +40,9 @@ public class LoginFilter implements Filter {
             return;
         }
 
-//        Cookie[] cookies = httpRequest.getCookies();
-//
-//        String jEmail;
-//        if (cookies != null) {
-//            for (Cookie cookie : cookies) {
-//                if (cookie.getName().equals("JSESSIONID")) {
-//                    Email jsessionId = (Email) cookie.getAttribute("email");
-//                    break;
-//                }
-//            }
-//        }
 
 //        System.out.println("cookie value " + jsessionId.getEmail());
-        HttpSession session = httpRequest.getSession();
+        HttpSession session = httpRequest.getSession(false);
 
         //System.out.println("CHECK TO SEE IF EMAIL EXISTS " + httpRequest.getSession().getAttribute("email"));
         // Redirect to login page if the "user" attribute doesn't exist in session

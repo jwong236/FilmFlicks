@@ -31,20 +31,21 @@ function MovieList() {
                 if (!response.ok) {
                     console.error('response is not status 200');
                 }
-                const data = await response.json();
-                console.log(data);
+                console.log("DATA AS TEXT IN MOVIE LIST " + response.text);
 
-                if (data.status === 401){
+                if (response.status === 401){
                     console.log("REDIRECTION FROM MOVIE LIST");
                     navigate('/login')
+                }else{
+                    const jsonData = await response.json();
+                    console.log("no need to login");
+                    if (mounted){
+                        console.log(jsonData);
+                        setMovieData(jsonData);
+                    }
                 }
 
-                console.log("no need to login");
 
-                if (mounted){
-                    console.log(data);
-                    setMovieData(data);
-                }
             }catch(error){
                 console.error('Error fetching data:', error);
             }
