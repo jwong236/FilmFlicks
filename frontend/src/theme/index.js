@@ -22,6 +22,25 @@ const colorTheme = createTheme({
 
 const theme = createTheme(colorTheme, {
     components: {
+        MuiFormControl:{
+            styleOverrides:{
+                root: {
+                    '& .MuiInputBase-root': {
+                        height: '2rem',
+                        backgroundColor: '#f6f6f6',
+                        '& input': {
+                            height: '100%'
+                        },
+                        '&:hover fieldset': {
+                            borderColor: colorTheme.palette.info.main,
+                        },
+                        '&.Mui-focused fieldset': {
+                            borderColor: colorTheme.palette.info.dark,
+                        }
+                    }
+                }
+            }
+        },
         MuiChip: {
             styleOverrides: {
                 root: {
