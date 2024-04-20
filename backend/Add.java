@@ -1,0 +1,169 @@
+//import com.google.gson.JsonArray;
+//import com.google.gson.JsonObject;
+import com.fasterxml.jackson.core.type.TypeReference;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+
+import java.util.*;
+
+import javax.sql.DataSource;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpSession;
+
+
+// This annotation maps this Java Servlet Class to a URL
+@WebServlet("/add")
+public class Add extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    // Create a dataSource which registered in web.
+    private DataSource dataSource;
+
+
+    public void init(ServletConfig config) {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+            System.out.println("ADD");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        StringBuilder requestBody = new StringBuilder();
+
+
+        String movieTitle = "";
+
+        try(BufferedReader reader = request.getReader()){
+            String line ;
+            while ((line = reader.readLine()) != null){
+                requestBody.append(line);
+            }
+        }catch(IOException e){
+            System.out.println("reading error");
+            e.printStackTrace();
+        }
+
+
+        //turn the parameters of the post request into a user class
+        //containing email and password
+        String requestString = requestBody.toString();
+        System.out.println("request string " + requestString);
+        ObjectMapper objectMapper = new ObjectMapper();
+        MovieObject movieObject = objectMapper.readValue(requestString, MovieObject.class);
+
+        //get the movie title
+        System.out.println("movieTitle " + movieObject.getMovieTitle());
+
+        //get the session, check if it exists, if it is on this section it exists
+        //set attribute movieMap : hashmap that contains movieTitle -> Movie Objects (price, quantity)
+
+
+
+
+
+
+
+
+
+
+
+//        PrintWriter out = response.getWriter();
+//        // Set response mime type
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//
+//        try {
+//
+//            Connection connection = dataSource.getConnection();
+//            // prepare query
+//            String query = "SELECT c.id FROM customers c WHERE c.email = ? AND c.password = ?";
+//            // declare statement
+//            PreparedStatement preparedStatement = connection.prepareStatement(query);
+//
+//
+//            preparedStatement.setString(1,user.getEmail());
+//            preparedStatement.setString(2,user.getPassword());
+//
+//
+//            // execute query
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//
+//
+//
+//            //null means failure
+//            if (resultSet.next()){
+//
+//                HttpSession session = request.getSession(false);
+//                System.out.println("http session: " + session);
+//
+//                //System.out.println(sessionEmail);
+//
+//
+//
+//                if (session == null){
+//                    System.out.println("SESSION IS NULL IN LOGIN JAVA");
+////                    request.getSession().setAttribute("email", new Email(user.getEmail()));
+////                    response.setHeader("Set-Cookie", "JSESSIONID=" + request.getSession().getId() + "; Path=/fabFlix");
+//                    session = request.getSession();
+////                    response.setHeader("Set-Cookie", "JSESSIONID=" + session.getId() + "; Path=/fabFlix");
+//                    session.setAttribute("email", new Email(user.getEmail()));
+//
+//                    Email emailObj = (Email)session.getAttribute("email");
+//
+//                    System.out.println("new email is used for login: " + emailObj.emailGetter());
+//                }else{
+//                    System.out.println("SESSION IS NOT NULL IN LOGIN JAVA");
+//                    Email emailObj = (Email)session.getAttribute("email");
+//                    System.out.println("recurring email is used : " + emailObj.emailGetter());
+//                }
+//
+//                response.setStatus(HttpServletResponse.SC_OK);
+//            }else{
+//
+//                //add email into cookie
+//                System.out.println("WRONG PASSWORD");
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            }
+//
+//
+//            //flush out the buffer just in case
+//            out.flush();
+//            connection.close();
+//
+//
+//
+//        } catch (Exception e) {
+//
+//            request.getServletContext().log("Error: ", e);
+//
+//
+//
+//            out.print(e.getMessage());
+//            out.flush();
+//        }
+
+
+
+    }
+
+
+
+}
