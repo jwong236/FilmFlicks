@@ -3,13 +3,13 @@ import { Box, Container } from "@mui/material";
 
 const HOST = import.meta.env.VITE_HOST;
 
-export default function MovieList() {
+export default function Homepage() {
     const [titles, setTitles] = useState([]);
 
     useEffect(() => {
         async function fetchMovieTitles() {
             try {
-                const response = await fetch(`http://${HOST}:8080/fabFlix/templateendpoint`); // Replace templateendpoint with homepage when ready
+                const response = await fetch(`http://${HOST}:8080/fabFlix/homepage`);
                 if (!response.ok) {
                     console.error('Response is not status 200');
                     return;
