@@ -71,7 +71,7 @@ CREATE TABLE ratings (
 
 
 CREATE TABLE movie_prices (
-  movieId VARCHAR(10) NOT NULL PRIMARY KEY,
-  price DECIMAL(10,2) NOT NULL,
-  FOREIGN KEY (movieId) REFERENCES movies(id)
+    movieId VARCHAR(10) NOT NULL PRIMARY KEY,
+    price DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (movieId) REFERENCES movies(id)
 );

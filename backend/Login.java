@@ -92,10 +92,9 @@ public class Login extends HttpServlet {
             ResultSet resultSet = preparedStatement.executeQuery();
 
 
-
+//            System.out.println("result set " + resultSet);
             //null means failure
             if (resultSet.next()){
-
                 HttpSession session = request.getSession(false);
                 System.out.println("http session: " + session);
 
@@ -122,10 +121,23 @@ public class Login extends HttpServlet {
 
                 response.setStatus(HttpServletResponse.SC_OK);
             }else{
+                System.out.println("CHECKING IF EMAIL/PW WRONG");
+                String emailQuery = "SELECT * FROM customers c WHERE c.email = ?";
+                PreparedStatement emailPrepStatement = connection.prepareStatement(emailQuery);
 
-                //add email into cookie
-                System.out.println("WRONG PASSWORD");
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                emailPrepStatement.setString(1, user.getEmail());
+
+                ResultSet emailResult = emailPrepStatement.executeQuery();
+
+                System.out.println("EMAIL RESULT: " + emailResult);
+                //wrong pw
+                if(emailResult.next()){
+                    System.out.println("WRONG PASSWORD");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                }else{
+                    System.out.println("WRONG EMAIL");
+                    response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+                }
             }
 
 

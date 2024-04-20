@@ -29,7 +29,11 @@ export default function MovieList() {
                 setResult('Login Successful!');
                 navigate('/movielist');
             }else{
-                setResult('Incorrect Password!');
+                if(data.status === 401){
+                    setResult('Incorrect Password!');
+                }else if (data.status === 406){
+                    setResult('Account Does Not Exist!');
+                }
             }
         } catch (error) {
             console.error('Login error:', error);
@@ -103,19 +107,6 @@ export default function MovieList() {
                                     width: '100%',
                                     paddingLeft: '5%',
                                     paddingRight: '5%',
-                                    '& .MuiInputBase-root': {
-                                        height: '2rem',
-                                        backgroundColor: '#f6f6f6',
-                                        '& input': {
-                                            height: '100%'
-                                        },
-                                        '&:hover fieldset': {
-                                            borderColor: 'info.main',
-                                        },
-                                        '&.Mui-focused fieldset': {
-                                            borderColor: 'info.dark',
-                                        }
-                                    }
                                 }}
                             />
                         </Box>
@@ -136,20 +127,6 @@ export default function MovieList() {
                                     width: '100%',
                                     paddingLeft: '5%',
                                     paddingRight: '5%',
-                                    '& .MuiInputBase-root': {
-                                        height: '2rem',
-                                        backgroundColor: '#f6f6f6',
-                                        '& input': {
-                                            height: '100%',
-                                            padding: '0 14px',
-                                        },
-                                        '&:hover fieldset': {
-                                            borderColor: 'info.main',
-                                        },
-                                        '&.Mui-focused fieldset': {
-                                            borderColor: 'info.dark',
-                                        }
-                                    }
                                 }}
                             />
                         </Box>
