@@ -59,8 +59,7 @@ public class LoginFilter implements Filter {
         allowedURIs.add("login");
         allowedURIs.add("/fabFlix/");
         allowedURIs.add("movielist");
-
-
+        allowedURIs.add("homepage");
     }
 
 }
