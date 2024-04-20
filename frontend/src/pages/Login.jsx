@@ -29,7 +29,11 @@ export default function MovieList() {
                 setResult('Login Successful!');
                 navigate('/movielist');
             }else{
-                setResult('Incorrect Password!');
+                if(data.status === 401){
+                    setResult('Incorrect Password!');
+                }else if (data.status === 406){
+                    setResult('Account Does Not Exist!');
+                }
             }
         } catch (error) {
             console.error('Login error:', error);
