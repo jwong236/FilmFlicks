@@ -23,6 +23,9 @@ public class MovieSession {
     public void increase(){
         this.quantity += 1;
     }
+    public void decrease(){
+        this.quantity -= 1;
+    }
 
     public double getPrice(){
         return this.price;
