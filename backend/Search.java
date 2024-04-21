@@ -19,8 +19,8 @@ import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebServlet("/homepage")
-public class Homepage extends HttpServlet {
+@WebServlet("/search")
+public class Search extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private DataSource dataSource;
 
@@ -65,6 +65,7 @@ public class Homepage extends HttpServlet {
         List<String> queryParts = new ArrayList<>();
         List<Object> parameters = new ArrayList<>();
 
+        // Used LIKE predicate here to enable substring search for titles directors and stars
         if (title != null && !title.isEmpty()) {
             queryParts.add("LOWER(m.title) LIKE ?");
             parameters.add("%" + title.toLowerCase() + "%");
@@ -94,18 +95,33 @@ public class Homepage extends HttpServlet {
     }
 
     private String buildFullQuery(String whereClause) {
-        // Insert where clause into query
-        return "SELECT m.title, m.year, m.director, " +
-                "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS genres, " +
-                "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS stars " +
-                "FROM movies m " +
-                "LEFT JOIN genres_in_movies gm ON m.id = gm.movieId " +
-                "LEFT JOIN genres g ON gm.genreId = g.id " +
-                "LEFT JOIN stars_in_movies sm ON m.id = sm.movieId " +
-                "LEFT JOIN stars s ON sm.starId = s.id " +
+        return "SELECT " +
+                "    m.title AS title, " +
+                "    m.year AS year, " +
+                "    m.director AS director, " +
+                "    GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS Genres, " +
+                "    GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS Stars, " +
+                "    r.rating AS rating, " +
+                "    r.numVotes AS numvotes " +
+                "FROM " +
+                "    movies m " +
+                "LEFT JOIN " +
+                "    genres_in_movies gm ON m.id = gm.movieId " +
+                "LEFT JOIN " +
+                "    genres g ON g.id = gm.genreId " +
+                "LEFT JOIN " +
+                "    stars_in_movies sm ON m.id = sm.movieId " +
+                "LEFT JOIN " +
+                "    stars s ON s.id = sm.starId " +
+                "LEFT JOIN " +
+                "    ratings r ON m.id = r.movieId " +
                 "WHERE " + whereClause +
-                " GROUP BY m.id, m.title, m.year, m.director";
+                " GROUP BY " +
+                "    m.id, m.title, m.year, m.director, r.rating, r.numVotes " +
+                "ORDER BY " +
+                "    m.title ASC;";
     }
+
 
     private List<Movie> executeSearchQuery(Connection connection, String query, List<Object> parameters) throws SQLException {
         // Executes the full query
@@ -132,6 +148,8 @@ public class Homepage extends HttpServlet {
             movie.setDirector(resultSet.getString("director"));
             movie.setGenres(Arrays.asList(resultSet.getString("genres").split(", ")));
             movie.setStars(Arrays.asList(resultSet.getString("stars").split(", ")));
+            movie.setRating(resultSet.getDouble("rating"));
+            movie.setNumVotes(resultSet.getInt("numvotes"));
             movies.add(movie);
         }
         return movies;
