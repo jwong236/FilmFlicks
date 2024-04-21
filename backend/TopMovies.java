@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -24,8 +23,8 @@ import javax.naming.NamingException;
 import jakarta.servlet.ServletConfig;
 
 // This annotation maps this Java Servlet Class to a URL
-@WebServlet("/movielist")
-public class MovieList extends HttpServlet {
+@WebServlet("/topmovies")
+public class TopMovies extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // Create a dataSource which registered in web.

@@ -48,7 +48,6 @@ public class BrowseCharacter extends HttpServlet {
             return;
         }
 
-        // Modify the query to include all needed fields
         String query = character.equals("*") ?
                 "SELECT m.title AS Title, m.year AS Year, m.director AS Director, " +
                         "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS Genres, " +
