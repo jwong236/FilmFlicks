@@ -73,7 +73,7 @@ public class Add extends HttpServlet {
 
         String title =  movieObject.getMovieTitle();
         //get the movie title
-        System.out.println("movieTitle " + title);
+        //System.out.println("movieTitle " + title);
 
 
         double price = 0.0;
@@ -82,19 +82,19 @@ public class Add extends HttpServlet {
 
         //if the session exists, get the movieMap
         if (session != null){
-            System.out.println("session exists");
+            //System.out.println("session exists");
             HashMap<String, MovieSession> movieMap = (HashMap<String, MovieSession>) session.getAttribute("movieMap");
 
             //if a map exists already increase the quantity
             if (movieMap != null){
-                System.out.println("map already exists");
+                //System.out.println("map already exists");
                 //map exists but the title is in increase
                 if (movieMap.containsKey(title)){
-                    System.out.println("quantity increase");
+                    //System.out.println("quantity increase");
                     movieMap.get(title).increase();
                 }else{
                     //not in then create new key value pair and make a price
-                    System.out.println("new movie added into cart");
+                    //System.out.println("new movie added into cart");
                     movieMap.put(title, new MovieSession(title, 1));
 
                     //add price into db
@@ -104,7 +104,7 @@ public class Add extends HttpServlet {
                 }
             }else{
                 //if there already isnt a movie map then set one and generate price for
-                System.out.println("empty cart now has 1 item ");
+                //System.out.println("empty cart now has 1 item ");
                 movieMap = new HashMap<>();
 
                 movieMap.put(title, new MovieSession(title, 1));

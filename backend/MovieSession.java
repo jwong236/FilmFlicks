@@ -35,5 +35,8 @@ public class MovieSession {
         return this.quantity;
     }
 
+    public double getTotal(){
+        return (this.quantity * this.price);
+    }
 
 }

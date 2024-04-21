@@ -4,26 +4,32 @@ import { Box, Container } from "@mui/material";
 const HOST = import.meta.env.VITE_HOST;
 
 export default function MovieList() {
-    // const [titles, setTitles] = useState([]);
-    //
-    // useEffect(() => {
-    //     async function fetchMovieTitles() {
-    //         try {
-    //             const response = await fetch(`http://${HOST}:8080/fabFlix/add`); // Replace shoppingcart with confirmation when ready
-    //             if (!response.ok) {
-    //                 console.error('Response is not status 200');
-    //                 return;
-    //             }
-    //             const data = await response.json();
-    //             setTitles(data.map(movie => movie.title));
-    //         } catch (error) {
-    //             console.error('Error fetching movie titles: ', error);
-    //         }
-    //     }
-    //
-    //     fetchMovieTitles();
-    // }, []);
-    //
+    const [total, setTotal] = useState(0);
+
+    useEffect(() => {
+
+
+        totalPrice();
+    }, []);
+
+    async function totalPrice() {
+        try {
+            console.log("attempting to get total price");
+            const response = await fetch(`http://${HOST}:8080/fabFlix/totalPrice`,{
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                console.error('Response is not status 200');
+                return;
+            }
+            const data = await response.json();
+            console.log("TOTAL : " + data.total);
+            setTotal(data.total);
+        } catch (error) {
+            console.error('Error Calculating Total Price: ', error);
+        }
+    }
+
     async function addToCart(){
         try {
             const response = await fetch(`http://${HOST}:8080/fabFlix/add`,{
@@ -47,6 +53,7 @@ export default function MovieList() {
                 const jsonData = await response.json();
                 console.log("no need to login");
                 console.log("response from add: ", jsonData);
+                totalPrice();
 
             }
         } catch (error) {
@@ -80,6 +87,42 @@ export default function MovieList() {
                 }else if (response.status === 200){
                     const jsonData = await response.json();
                     console.log("response from add: ", jsonData);
+                    totalPrice();
+                }
+            }
+        } catch (error) {
+            console.error('Error decreasing from cart: ', error);
+        }
+    }
+
+
+    async function deleteFromCart(){
+        try {
+            const response = await fetch(`http://${HOST}:8080/fabFlix/delete`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ "movieTitle": "Bigfoot"}),
+                credentials: 'include'
+            }); // Replace shoppingcart with confirmation when ready
+            if (!response.ok) {
+                console.error('response is not status 200');
+            }
+
+            console.log("DATA AS TEXT IN MOVIE LIST " + response.text);
+
+            if (response.status === 401){
+                console.log("REDIRECTION FROM MOVIE LIST");
+                navigate('/login')
+            }else{
+                console.log("no need to login");
+                if (response.status === 405){
+                    console.log("cant decrement 1 or movie doesnt exist");
+                }else if (response.status === 200){
+                    const jsonData = await response.json();
+                    console.log("response from add: ", jsonData);
+                    totalPrice();
                 }
             }
         } catch (error) {
@@ -119,6 +162,12 @@ export default function MovieList() {
             <button onClick={decrease}>
                 subtract
             </button>
+            <button onClick={deleteFromCart}>
+                delete
+            </button>
+            <p>
+                Total: {total}
+            </p>
         </Container>
     );
 }
