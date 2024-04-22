@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {Box, Button, Chip, InputAdornment, TextField, useTheme} from "@mui/material";
+import {
+    Box, Button, Chip, InputAdornment, TextField, Typography, useTheme, Select, MenuItem, FormControl, InputLabel
+} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Background from '../components/Background.jsx';
@@ -15,6 +17,8 @@ export default function MovieList() {
     const [director, setDirector] = useState("");
     const [star, setStar] = useState("");
     const [movies, setMovies] = useState([]);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [sortRule, setSortRule] = useState(10);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -24,6 +28,14 @@ export default function MovieList() {
             return;
         }
         navigate('/movielist', { state: { title, year, director, star } });
+    };
+
+    const handlePageDropDown = (event) => {
+        setItemsPerPage(event.target.value);
+    };
+
+    const handleSortDropDown = (event) => {
+        setSortRule(event.target.value);
     };
 
     useEffect(() => {
@@ -87,7 +99,7 @@ export default function MovieList() {
                         flexDirection: 'row',
                         width: '100%',
                         paddingTop: '1rem',
-                        paddingBottom: '1rem',
+                        paddingBottom: '.5rem',
                         justifyContent: 'center',
                         alignItems: 'center',
                         gap: '1rem',
@@ -178,11 +190,63 @@ export default function MovieList() {
                     </Box>
                     <Box sx={{
                         display: 'flex',
+                        width: '95%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingBottom: '.5rem'
+                    }}>
+                        <Typography variant='h4' component='h4' color='primary.dark' sx={{
+                            fontWeight: 'bold',
+                        }}>
+                            Results
+                        </Typography>
+                        <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
+                        }}>
+                            <Typography sx={{ color: 'primary.dark' }}>
+                                Movies Per Page:
+                            </Typography>
+                            <FormControl variant="outlined" size="small">
+                                <Select
+                                    value={itemsPerPage}
+                                    onChange={handlePageDropDown}
+                                    sx={{ minWidth: '5rem' }}
+                                >
+                                    <MenuItem value={10}>10</MenuItem>
+                                    <MenuItem value={25}>25</MenuItem>
+                                    <MenuItem value={50}>50</MenuItem>
+                                    <MenuItem value={100}>100</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <Typography sx={{ color: 'primary.dark' }}>
+                                Sort By:
+                            </Typography>
+                            <FormControl variant="outlined" size="small">
+                                <Select
+                                    value={sortRule}
+                                    onChange={handleSortDropDown}
+                                    sx={{ minWidth: '5rem' }}
+                                >
+                                    <MenuItem value={10}>10</MenuItem>
+                                    <MenuItem value={25}>25</MenuItem>
+                                    <MenuItem value={50}>50</MenuItem>
+                                    <MenuItem value={100}>100</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <Button variant="contained" sx={{color: 'secondary.light'}}>
+                                Update
+                            </Button>
+                        </Box>
+                    </Box>
+                    <Box sx={{
+                        display: 'flex',
                         flexGrow: 1,
                         width: '95%',
                         overflowY: 'auto',
                         overflowX: 'auto',
-
+                        flexDirection: 'row'
                     }}>
                         <MovieListTable data = {movies} />
                     </Box>
@@ -215,7 +279,6 @@ export default function MovieList() {
                             Next
                         </Button>
                     </Box>
-
                 </Box>
             </Background>
         </Box>
