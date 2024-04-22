@@ -97,6 +97,7 @@ public class LoginFilter implements Filter {
         allowedURIs.add("/subtract");
         allowedURIs.add("/totalPrice");
         allowedURIs.add("/delete");
+        allowedURIs.add("/payment");
         //allowedURIs.add("movielist");
 
 

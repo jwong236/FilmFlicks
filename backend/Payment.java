@@ -139,28 +139,35 @@ public class Payment extends HttpServlet {
 
                     //map has to exist for the shopping cart to be added into the sales table
                     if (movieMap != null){
-                        //System.out.println("map already exists");
+                        System.out.println("INSERTING ALL ITEMS IN SHOPPING CART INTO THE DB");
                         for (String title : movieMap.keySet()) {
                             MovieSession movieObj = movieMap.get(title);
+                            int quantity = movieObj.getQuantity();
                             String movieId = movieObj.getId();
                             LocalDate saleDate = movieObj.getSaleDate();
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
                             String formattedSaleDate = saleDate.format(formatter);
 
+                            //quantity of item will be distinguished by same customerId and movieId but diff sale id
 
-                            PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
-                            insertStatement.setString(1, customerId);
-                            insertStatement.setString(2, movieId);
-                            insertStatement.setString(3, formattedSaleDate);
+                            if(quantity > 1){
+                                for (int i = 0; i < quantity; i++){
+                                    PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+                                    insertStatement.setString(1, customerId);
+                                    insertStatement.setString(2, movieId);
+                                    insertStatement.setString(3, formattedSaleDate);
 
-                            int rowsInserted = insertStatement.executeUpdate();
+                                    int rowsInserted = insertStatement.executeUpdate();
 
-                            if (rowsInserted > 0) {
-                                System.out.println("INSERT SUCCESS: " + movieId);
-                            } else {
-                                System.out.println("INSERT FAIL: " + movieId);
+                                    if (rowsInserted > 0) {
+                                        System.out.println("INSERT SUCCESS (id) + " + (i+1) + ": " + movieId);
+                                    } else {
+                                        System.out.println("INSERT FAIL: " + movieId);
+                                    }
+                                }
                             }
+
                         }
                     }else{
                         System.out.println("no movie map exists : no inserting into the sales table");

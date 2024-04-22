@@ -1,53 +1,83 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Container } from "@mui/material";
+import React, { useState } from 'react';
+import {Box, Container, TextField, Button } from "@mui/material";
 
 const HOST = import.meta.env.VITE_HOST;
 
-export default function MovieList() {
-    const [titles, setTitles] = useState([]);
+export default function PaymentInfo() {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [creditCardNumber, setCreditCardNumber] = useState('');
+    const [expiration, setExpiration] = useState('');
+    const [total, setTotal] = useState(0);
 
-    useEffect(() => {
-        async function fetchMovieTitles() {
-            try {
-                const response = await fetch(`http://${HOST}:8080/fabFlix/templateendpoint`); // Replace paymentinfo with confirmation when ready
-                if (!response.ok) {
-                    console.error('Response is not status 200');
-                    return;
-                }
-                const data = await response.json();
-                setTitles(data.map(movie => movie.title));
-            } catch (error) {
-                console.error('Error fetching movie titles: ', error);
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            // Perform validation if needed
+
+            // Send payment data to server
+            const response = await fetch(`http://${HOST}:8080/fabFlix/payment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName,
+                    lastName,
+                    creditCardNumber,
+                    expiration,
+                    total
+                }),
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                console.error('Payment failed');
+                return;
             }
-        }
 
-        fetchMovieTitles();
-    }, []);
+            if (response.status === 200){
+                console.log("PAYMENT SUCCESS!");
+            }else{
+                console.error('Payment failed from backend');
+            }
+        } catch (error) {
+            console.error('Error processing payment: ', error);
+        }
+    };
 
     return (
         <Container>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '100%',
-                minHeight: '100vh',
-                backgroundColor: '#f1f1f1',
-                padding: 3
-            }}>
-                {titles.length > 0 ? (
-                    <Box sx={{ width: '60%', backgroundColor: 'white', padding: 2, borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-                        <h2>Template Webpage</h2>
-                        <ul>
-                            {titles.map((title, index) => (
-                                <li key={index}>{title}</li>
-                            ))}
-                        </ul>
-                    </Box>
-                ) : (
-                    <p>No titles found</p>
-                )}
+            <Box mt={4}>
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        label="First Name"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+
+                    />
+                    <TextField
+                        label="Last Name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                    />
+                    <TextField
+                        label="Credit Card Number"
+                        value={creditCardNumber}
+                        onChange={(e) => setCreditCardNumber(e.target.value)}
+                        required
+                    />
+                    <TextField
+                        label="Expiration Date"
+                        type="date"
+                        value={expiration}
+                        onChange={(e) => setExpiration(e.target.value)}
+                        required
+                        InputLabelProps={{ shrink: true }}
+                    />
+                    <Button type="submit">Submit Payment</Button>
+                </form>
             </Box>
         </Container>
     );
