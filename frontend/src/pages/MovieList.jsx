@@ -1,77 +1,177 @@
-import {useEffect, useState} from 'react'
-
-import MovieCard from '../components/MovieCard';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import popcorn from '../assets/popcorn.png'
-
-// async function fetchEnv(){
-//     return await import.meta.env.VITE_HOST;
-// }
+import React, { useEffect, useState } from 'react';
+import {Box, Button, Chip, InputAdornment, TextField, Typography, useTheme} from "@mui/material";
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Background from '../components/Background.jsx';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import SearchIcon from "@mui/icons-material/Search.js";
 
 const HOST = import.meta.env.VITE_HOST;
+export default function MovieList() {
+    const [title, setTitle] = useState("");
+    const [year, setYear] = useState("");
+    const [director, setDirector] = useState("");
+    const [star, setStar] = useState("");
+    const [movies, setMovies] = useState([]);
+    const location = useLocation();
+    const navigate = useNavigate();
 
-function MovieList() {
-    const [movieData, setMovieData] = useState([]);
-    //host = await fetchEnv()
+    const handleSearch = () => {
+        navigate('/movielist', { state: { title, year, director, star } });
+    };
 
     useEffect(() => {
-        let mounted = true;
-        async function fetchMovieData(){
-            try{
-                console.log(HOST);
-                const response = await fetch(`http://${HOST}:8080/fabFlix/movielist`);
-                if (!response.ok) {
-                    console.error('response is not status 200');
-                }
-                const data = await response.json();
-                if (mounted){
-                    setMovieData(data);
-                }
-            }catch(error){
-                console.error('Error fetching data: ', error);
-            }
-        }
+        const fetchData = async () => {
+            let endpoint = `http://${HOST}:8080/fabFlix/`;
+            let params = {};
 
-        fetchMovieData();
-        return ()=>{
-            mounted = false;
-        }
-    }, []);
+            if (location.state.title || location.state.year || location.state.director || location.state.star) {
+                endpoint += 'search';
+                params = { ...location.state };
+            } else if (location.state.genre) {
+                endpoint += 'browse/genre';
+                params = { genre: location.state.genre };
+            } else if (location.state.character) {
+                endpoint += 'browse/character';
+                params = { character: location.state.character };
+            }
+
+            try {
+                const response = await axios.get(endpoint, { params });
+                console.log("Received:", response.data);
+                setMovies(response.data.slice(0, 20)); // Temporarily only accept 20
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
+            }
+        };
+        fetchData();
+    }, [location.state]);
+
+    const theme = useTheme();
+    const textFieldStyle = {
+        "& .MuiInputBase-input": {
+            color: theme.palette.primary.dark,
+        },
+        "& .MuiInputBase-root": {
+            backgroundColor: theme.palette.secondary.light,
+        },
+    };
 
     return (
         <Box sx={{
-            padding: 3,
-            backgroundImage: `url(${popcorn})`,
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'fixed',
-            minHeight: '100vh',
-            width: '100%',
+            display: 'flex',
+            height: '100vh',
+            width: '100vw',
+            flexDirection: 'column'
         }}>
-            <Grid container spacing={3}>
-                {movieData.length > 0 ? (
-                    movieData.map((movie, index) => (
-                        <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={index}>
-                            <MovieCard
-                                title={movie.title}
-                                year={movie.year}
-                                director={movie.director}
-                                genres={movie.genres.split(", ")}
-                                stars={movie.stars.split(", ")}
-                                rating={movie.rating}
-                                link={true}
-                            />
-                        </Grid>
-                    ))
-                ) : (
-                    <Box sx={{ width: '100%', textAlign: 'center' }}>
-                        Loading movies...
+            <Navbar />
+            <Background sx={{ justifyContent: 'center', alignItems: 'center'}}>
+                <Box sx={{
+                    display: 'flex',
+                    backgroundColor: 'info.light',
+                    width: '95vw',
+                    height: '85vh',
+                    borderRadius: '20px',
+                    flexDirection: 'column'
+                }}>
+                    <Box sx={{
+                        alignSelf: 'flex-start',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        width: '100%',
+                        paddingTop: '1rem',
+                        paddingBottom: '1rem',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: '1rem',
+                    }}>
+                        <TextField
+                            placeholder="Title"
+                            value={title}
+                            onChange={e => setTitle(e.target.value)}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                ...textFieldStyle,
+                                width: '30vw',
+                                minWidth: '8rem'
+                            }}
+                        />
+                        <TextField
+                            placeholder="Year"
+                            value={year}
+                            onChange={e => setYear(e.target.value)}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                ...textFieldStyle,
+                                width: '6vw',
+                                minWidth: '6rem'
+                            }}
+                        />
+                        <TextField
+                            placeholder="Director"
+                            value={director}
+                            onChange={e => setDirector(e.target.value)}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                ...textFieldStyle,
+                                width: '15vw',
+                                minWidth: '15rem'
+                            }}
+                        />
+                        <TextField
+                            placeholder="Star"
+                            value={star}
+                            onChange={e => setStar(e.target.value)}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                ...textFieldStyle,
+                                width: '15vw',
+                                minWidth: '15rem'
+                            }}
+                        />
+                        <Button
+                            onClick={handleSearch}
+                            sx={{
+                                backgroundColor: '#FF907E',
+                                color: 'secondary.light',
+                                fontWeight: 'bold',
+                                fontSize: '1rem',
+
+                                '&:hover': {
+                                    backgroundColor: 'primary.main',
+                                    transform: 'scale(1.05)'
+                                }
+                            }}>
+                            Search
+                        </Button>
                     </Box>
-                )}
-            </Grid>
+                </Box>
+            </Background>
         </Box>
     );
 }
-
-export default MovieList
