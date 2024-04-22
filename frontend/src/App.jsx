@@ -15,6 +15,7 @@ import Login from './pages/Login';
 import Homepage from './pages/Homepage';
 import MovieList from './pages/MovieList';
 
+
 import ShoppingCart from './pages/ShoppingCart';
 import PaymentInfo from './pages/PaymentInfo';
 import Confirmation from './pages/Confirmation';
@@ -25,7 +26,7 @@ function App() {
             <CssBaseline />
             {/*<Box sx={{ minHeight: '100vh', display: 'flex',  justifyContent: 'center', alignItems: 'center', }}>*/}
                 <Routes>
-                    <Route path="/" element={<TopMovies />} />
+                    <Route path="/" element={<Homepage />} />
 
                     <Route path="/topmovies" element={<TopMovies />} />
                     <Route path="/singlemovie" element={<SingleMovie />} />
