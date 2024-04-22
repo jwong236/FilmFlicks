@@ -13,10 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -48,8 +45,6 @@ public class BrowseGenre extends HttpServlet {
             return;
         }
 
-        List<Map<String, Object>> movies = new ArrayList<>();
-
         String query = "SELECT m.title AS Title, m.year AS Year, m.director AS Director, " +
                 "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS Genres, " +
                 "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS Stars, " +
@@ -65,19 +60,20 @@ public class BrowseGenre extends HttpServlet {
                 "ORDER BY m.title ASC";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+            PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, genre);
 
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                Map<String, Object> movie = new LinkedHashMap<>();
-                movie.put("title", rs.getString("Title"));
-                movie.put("year", rs.getInt("Year"));
-                movie.put("director", rs.getString("Director"));
-                movie.put("genres", rs.getString("Genres"));
-                movie.put("stars", rs.getString("Stars"));
-                movie.put("rating", rs.getDouble("Rating"));
-                movie.put("numVotes", rs.getInt("NumVotes"));
+            ResultSet resultSet = statement.executeQuery();
+            List<Movie> movies = new ArrayList<>();
+            while (resultSet.next()) {
+                Movie movie = new Movie();
+                movie.setTitle(resultSet.getString("title"));
+                movie.setYear(resultSet.getInt("year"));
+                movie.setDirector(resultSet.getString("director"));
+                movie.setGenres(Arrays.asList(resultSet.getString("genres").split(", ")));
+                movie.setStars(Arrays.asList(resultSet.getString("stars").split(", ")));
+                movie.setRating(resultSet.getDouble("rating"));
+                movie.setNumVotes(resultSet.getInt("numvotes"));
                 movies.add(movie);
             }
 

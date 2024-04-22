@@ -13,10 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -76,8 +73,6 @@ public class BrowseCharacter extends HttpServlet {
                         "GROUP BY m.id, m.title, m.year, m.director, r.rating, r.numVotes " +
                         "ORDER BY m.title ASC";
 
-        List<Map<String, Object>> movies = new ArrayList<>();
-
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
@@ -85,16 +80,17 @@ public class BrowseCharacter extends HttpServlet {
                 statement.setString(1, character);
             }
 
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                Map<String, Object> movie = new LinkedHashMap<>();
-                movie.put("title", rs.getString("Title"));
-                movie.put("year", rs.getInt("Year"));
-                movie.put("director", rs.getString("Director"));
-                movie.put("genres", rs.getString("Genres"));
-                movie.put("stars", rs.getString("Stars"));
-                movie.put("rating", rs.getDouble("Rating"));
-                movie.put("numVotes", rs.getInt("NumVotes"));
+            ResultSet resultSet = statement.executeQuery();
+            List<Movie> movies = new ArrayList<>();
+            while (resultSet.next()) {
+                Movie movie = new Movie();
+                movie.setTitle(resultSet.getString("title"));
+                movie.setYear(resultSet.getInt("year"));
+                movie.setDirector(resultSet.getString("director"));
+                movie.setGenres(Arrays.asList(resultSet.getString("genres").split(", ")));
+                movie.setStars(Arrays.asList(resultSet.getString("stars").split(", ")));
+                movie.setRating(resultSet.getDouble("rating"));
+                movie.setNumVotes(resultSet.getInt("numvotes"));
                 movies.add(movie);
             }
 

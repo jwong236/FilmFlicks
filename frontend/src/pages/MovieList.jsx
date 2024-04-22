@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {Box, Button, Chip, InputAdornment, TextField, Typography, useTheme} from "@mui/material";
+import {Box, Button, Chip, InputAdornment, TextField, useTheme} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Background from '../components/Background.jsx';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import SearchIcon from "@mui/icons-material/Search.js";
+import MovieListTable from "../components/MovieListTable.jsx";
 
 const HOST = import.meta.env.VITE_HOST;
 export default function MovieList() {
@@ -18,6 +19,10 @@ export default function MovieList() {
     const navigate = useNavigate();
 
     const handleSearch = () => {
+        if (!title && !year && !director && !star) {
+            console.log('All search fields are empty. No action taken.');
+            return;
+        }
         navigate('/movielist', { state: { title, year, director, star } });
     };
 
@@ -73,7 +78,8 @@ export default function MovieList() {
                     width: '95vw',
                     height: '85vh',
                     borderRadius: '20px',
-                    flexDirection: 'column'
+                    flexDirection: 'column',
+                    alignItems: 'center',
                 }}>
                     <Box sx={{
                         alignSelf: 'flex-start',
@@ -157,7 +163,7 @@ export default function MovieList() {
                         <Button
                             onClick={handleSearch}
                             sx={{
-                                backgroundColor: '#FF907E',
+                                backgroundColor: 'primary.main',
                                 color: 'secondary.light',
                                 fontWeight: 'bold',
                                 fontSize: '1rem',
@@ -170,6 +176,46 @@ export default function MovieList() {
                             Search
                         </Button>
                     </Box>
+                    <Box sx={{
+                        display: 'flex',
+                        flexGrow: 1,
+                        width: '95%',
+                        overflowY: 'auto',
+                        overflowX: 'auto',
+
+                    }}>
+                        <MovieListTable data = {movies} />
+                    </Box>
+                    <Box sx={{
+                        display: 'flex',
+                        paddingBottom: '.5rem',
+                        paddingTop: '.5rem',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: '2rem'
+                    }}>
+                        <Button sx={{
+                            backgroundColor: 'primary.main',
+                            color: 'secondary.light',
+                            height: '4vh',
+                            '&:hover': {
+                                backgroundColor: 'primary.dark'
+                            }
+                        }}>
+                            Previous
+                        </Button>
+                        <Button sx={{
+                            backgroundColor: 'primary.main',
+                            color: 'secondary.light',
+                            height: '4vh',
+                            '&:hover': {
+                                backgroundColor: 'primary.dark'
+                            }
+                        }}>
+                            Next
+                        </Button>
+                    </Box>
+
                 </Box>
             </Background>
         </Box>

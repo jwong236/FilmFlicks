@@ -15,6 +15,10 @@ export default function Homepage() {
     const navigate = useNavigate();
     const theme = useTheme();
     const handleSearch = () => {
+        if (!title && !year && !director && !star) {
+            console.log('All search fields are empty. No action taken.');
+            return;
+        }
         navigate('/movielist', { state: { title, year, director, star } });
     };
 
