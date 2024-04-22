@@ -28,6 +28,8 @@ import javax.xml.transform.Result;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 // This annotation maps this Java Servlet Class to a URL
@@ -127,7 +129,7 @@ public class Payment extends HttpServlet {
                     System.out.println("email: " + email + " customer id : " + customerId);
 
                     //add the items into the sales table
-                    //customerId -> email.java
+                    //customerId -> email.java, but it will stay the same because one customer per shopping cart
                     //movieId, SaleDate -> movieSession.java
                     String insertQuery = "INSERT INTO sales (customerId, movieId, saleDate) VALUES (?,?,?)";
 
@@ -138,7 +140,30 @@ public class Payment extends HttpServlet {
                     //map has to exist for the shopping cart to be added into the sales table
                     if (movieMap != null){
                         //System.out.println("map already exists");
-                        for()
+                        for (String title : movieMap.keySet()) {
+                            MovieSession movieObj = movieMap.get(title);
+                            String movieId = movieObj.getId();
+                            LocalDate saleDate = movieObj.getSaleDate();
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+                            String formattedSaleDate = saleDate.format(formatter);
+
+
+                            PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+                            insertStatement.setString(1, customerId);
+                            insertStatement.setString(2, movieId);
+                            insertStatement.setString(3, formattedSaleDate);
+
+                            int rowsInserted = insertStatement.executeUpdate();
+
+                            if (rowsInserted > 0) {
+                                System.out.println("INSERT SUCCESS: " + movieId);
+                            } else {
+                                System.out.println("INSERT FAIL: " + movieId);
+                            }
+                        }
+                    }else{
+                        System.out.println("no movie map exists : no inserting into the sales table");
                     }
 
                 }
@@ -146,7 +171,7 @@ public class Payment extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_OK);
             }else{
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
+                out.print("credit card info is invalid");
             }
 
 
