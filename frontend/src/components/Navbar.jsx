@@ -22,7 +22,7 @@ function Navbar() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        marginRight: '10px',
+        marginRight: '1rem',
     };
 
     return (
@@ -30,7 +30,7 @@ function Navbar() {
             <Box
                 sx={{
                     width: 40,
-                    height: 40,
+                    height: 60,
                     backgroundImage: `url(${singlepopcorntransparent})`,
                     backgroundSize: 'contain',
                     backgroundRepeat: 'no-repeat',
@@ -44,8 +44,8 @@ function Navbar() {
             <Link to="/topmovies" style={navIconsStyle}>
                 <StarIcon /> Popular
             </Link>
-            <Link to="/" style={navIconsStyle}>
-                <ListIcon /> Browse
+            <Link to="/movielist" style={navIconsStyle}>
+                <ListIcon /> List
             </Link>
             <Link to="/checkout" style={navIconsStyle}>
                 <ShoppingCartIcon /> Checkout

@@ -1,58 +1,58 @@
-import {useEffect, useState} from 'react'
-
-import MovieCard from '../components/MovieCard';
+import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import popcorn from '../assets/popcorn.png'
-
-// async function fetchEnv(){
-//     return await import.meta.env.VITE_HOST;
-// }
+import NavBar from '../components/Navbar.jsx';
+import Background from '../components/Background.jsx';
+import MovieCard from '../components/MovieCard';
 
 const HOST = import.meta.env.VITE_HOST;
 
 function TopMovies() {
     const [movieData, setMovieData] = useState([]);
-    //host = await fetchEnv()
 
     useEffect(() => {
         let mounted = true;
-        async function fetchMovieData(){
-            try{
-                console.log(HOST);
+        async function fetchMovieData() {
+            try {
                 const response = await fetch(`http://${HOST}:8080/fabFlix/topmovies`);
                 if (!response.ok) {
-                    console.error('response is not status 200');
+                    console.error('Response is not status 200');
+                    return;
                 }
                 const data = await response.json();
-                if (mounted){
+                if (mounted) {
                     setMovieData(data);
                 }
-            }catch(error){
+            } catch (error) {
                 console.error('Error fetching data: ', error);
             }
         }
 
         fetchMovieData();
-        return ()=>{
+        return () => {
             mounted = false;
         }
     }, []);
 
     return (
         <Box sx={{
-            padding: 3,
-            backgroundImage: `url(${popcorn})`,
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
-            backgroundAttachment: 'fixed',
-            minHeight: '100vh',
-            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100vh',
+            width: '100vw',
         }}>
-            <Grid container spacing={3}>
-                {movieData.length > 0 ? (
-                    movieData.map((movie, index) => (
-                        <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={index}>
+            <NavBar />
+            <Background sx={{
+                flexGrow: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundSize: 'cover',
+                backgroundAttachment: 'fixed',
+                padding: '3rem'
+            }}>
+                <Grid container spacing={3}>
+                    {movieData.length > 0 ? movieData.map((movie, index) => (
+                        <Grid item xs={4} sm={4} md={4} lg={4} xl={3} key={index}>
                             <MovieCard
                                 title={movie.title}
                                 year={movie.year}
@@ -63,15 +63,15 @@ function TopMovies() {
                                 link={true}
                             />
                         </Grid>
-                    ))
-                ) : (
-                    <Box sx={{ width: '100%', textAlign: 'center' }}>
-                        Loading movies...
-                    </Box>
-                )}
-            </Grid>
+                    )) : (
+                        <Box sx={{ width: '100%', textAlign: 'center' }}>
+                            Loading movies...
+                        </Box>
+                    )}
+                </Grid>
+            </Background>
         </Box>
     );
 }
 
-export default TopMovies
+export default TopMovies;

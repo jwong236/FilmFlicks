@@ -73,7 +73,7 @@ export default function Homepage() {
                     width: '95vw',
                     height: '85vh',
                     borderRadius: '20px',
-                    flexDirection: 'column'
+                    flexDirection: 'column',
                 }}>
                     <Box sx={{
                         alignSelf: 'flex-start',
