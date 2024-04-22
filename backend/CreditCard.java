@@ -1,34 +1,38 @@
 import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+
 public class CreditCard {
-    private final String firstName;
-    private final String lastName;
-    private final String creditCardNumber;
-    private final Date expirationDate;
+    private String firstName;
+    private String lastName;
+    private String creditCardNumber;
+    private String expirationDate;
 
-    public CreditCard(String firstName, String lastName, String creditCardNumber, Date expirationDate) {
+    public CreditCard() {
+        // Default constructor
+    }
 
+    public CreditCard(String firstName, String lastName, String creditCardNumber, String expirationDate)  {
         this.firstName = firstName;
         this.lastName = lastName;
         this.creditCardNumber = creditCardNumber;
         this.expirationDate = expirationDate;
     }
 
-    public String getFirstName(){
+    public String getFirstName() {
         return this.firstName;
     }
 
-    public String getLastName(){
+    public String getLastName() {
         return this.lastName;
     }
 
-    public String getCreditCardNumber(){
+    public String getCreditCardNumber() {
         return this.creditCardNumber;
     }
 
-    public Date getExpirationDate(){
+    public String getExpirationDate() {
         return this.expirationDate;
     }
-
-
 
 }

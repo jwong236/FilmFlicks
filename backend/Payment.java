@@ -56,7 +56,7 @@ public class Payment extends HttpServlet {
         String firstName = "";
         String lastName = "";
         String creditCardNumber = "";
-        Date expiration = null;
+        String expirationDate = "";
 
 
         try(BufferedReader reader = request.getReader()){
@@ -75,19 +75,29 @@ public class Payment extends HttpServlet {
         String requestString = requestBody.toString();
         System.out.println("request string " + requestString);
         ObjectMapper objectMapper = new ObjectMapper();
-        CreditCard creditCard = objectMapper.readValue(requestString, CreditCard.class);
+
+        CreditCard creditCard = null;
+
+        try{
+            creditCard = objectMapper.readValue(requestString, CreditCard.class);
+            System.out.println("succesfully converted credit card");
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+        }
 
         firstName = creditCard.getFirstName();
         lastName = creditCard.getLastName();
         creditCardNumber = creditCard.getCreditCardNumber();
-        expiration = creditCard.getExpirationDate();
 
+        expirationDate = creditCard.getExpirationDate();
+
+
+        System.out.println("firstName: " + firstName + " lastName: " + lastName + " creditCard: " + creditCardNumber + " exp: " + expirationDate);
 
         PrintWriter out = response.getWriter();
         // Set response mime type
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
         try {
 
@@ -101,11 +111,8 @@ public class Payment extends HttpServlet {
             preparedStatement.setString(1, firstName);
             preparedStatement.setString(2, lastName);
             preparedStatement.setString(3, creditCardNumber);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String expirationString = dateFormat.format(expiration);
 
-
-            preparedStatement.setString(4, expirationString);
+            preparedStatement.setString(4, expirationDate);
 
 
             // execute query
@@ -151,7 +158,7 @@ public class Payment extends HttpServlet {
 
                             //quantity of item will be distinguished by same customerId and movieId but diff sale id
 
-                            if(quantity > 1){
+                            if(quantity >= 1){
                                 for (int i = 0; i < quantity; i++){
                                     PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
                                     insertStatement.setString(1, customerId);

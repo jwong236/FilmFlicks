@@ -7,7 +7,7 @@ export default function PaymentInfo() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [creditCardNumber, setCreditCardNumber] = useState('');
-    const [expiration, setExpiration] = useState('');
+    const [expirationDate, setExpirationDate] = useState('');
     const [total, setTotal] = useState(0);
 
     const handleSubmit = async (event) => {
@@ -25,8 +25,7 @@ export default function PaymentInfo() {
                     firstName,
                     lastName,
                     creditCardNumber,
-                    expiration,
-                    total
+                    expirationDate,
                 }),
                 credentials: 'include'
             });
@@ -71,8 +70,8 @@ export default function PaymentInfo() {
                     <TextField
                         label="Expiration Date"
                         type="date"
-                        value={expiration}
-                        onChange={(e) => setExpiration(e.target.value)}
+                        value={expirationDate}
+                        onChange={(e) => setExpirationDate(e.target.value)}
                         required
                         InputLabelProps={{ shrink: true }}
                     />
