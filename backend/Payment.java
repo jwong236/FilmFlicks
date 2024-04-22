@@ -1,6 +1,7 @@
 //import com.google.gson.JsonArray;
 //import com.google.gson.JsonObject;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,27 +10,29 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.PreparedStatement;
+import java.sql.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 
 import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 import javax.sql.DataSource;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.xml.transform.Result;
+
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.http.HttpSession;
 
 
 // This annotation maps this Java Servlet Class to a URL
-@WebServlet("/login")
-public class Login extends HttpServlet {
+@WebServlet("/payment")
+public class Payment extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // Create a dataSource which registered in web.
@@ -48,8 +51,11 @@ public class Login extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         StringBuilder requestBody = new StringBuilder();
 
-        String email = "";
-        String password = "";
+        String firstName = "";
+        String lastName = "";
+        String creditCardNumber = "";
+        Date expiration = null;
+
 
         try(BufferedReader reader = request.getReader()){
             String line ;
@@ -67,7 +73,13 @@ public class Login extends HttpServlet {
         String requestString = requestBody.toString();
         System.out.println("request string " + requestString);
         ObjectMapper objectMapper = new ObjectMapper();
-        User user = objectMapper.readValue(requestString, User.class);
+        CreditCard creditCard = objectMapper.readValue(requestString, CreditCard.class);
+
+        firstName = creditCard.getFirstName();
+        lastName = creditCard.getLastName();
+        creditCardNumber = creditCard.getCreditCardNumber();
+        expiration = creditCard.getExpirationDate();
+
 
         PrintWriter out = response.getWriter();
         // Set response mime type
@@ -79,65 +91,62 @@ public class Login extends HttpServlet {
 
             Connection connection = dataSource.getConnection();
             // prepare query
-            String query = "SELECT c.id FROM customers c WHERE c.email = ? AND c.password = ?";
+            String query = "SELECT * FROM creditcards c WHERE c.firstName = ? AND c.lastName = ? AND c.id = ? AND c.expiration = ?";
             // declare statement
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
 
-            preparedStatement.setString(1,user.getEmail());
-            preparedStatement.setString(2,user.getPassword());
+            preparedStatement.setString(1, firstName);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setString(3, creditCardNumber);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String expirationString = dateFormat.format(expiration);
+
+
+            preparedStatement.setString(4, expirationString);
 
 
             // execute query
             ResultSet resultSet = preparedStatement.executeQuery();
 
-//            System.out.println("result set " + resultSet);
-            //null means failure
+
+            //if result set is not null that means the credit card info is valid
             if (resultSet.next()){
                 HttpSession session = request.getSession(false);
                 System.out.println("http session: " + session);
 
-                //System.out.println(sessionEmail);
-                String customerId = resultSet.getString("id");
-
-
-
-                if (session == null){
-                    System.out.println("SESSION IS NULL IN LOGIN JAVA");
-//                    request.getSession().setAttribute("email", new Email(user.getEmail()));
-//                    response.setHeader("Set-Cookie", "JSESSIONID=" + request.getSession().getId() + "; Path=/fabFlix");
-                    session = request.getSession();
-//                    response.setHeader("Set-Cookie", "JSESSIONID=" + session.getId() + "; Path=/fabFlix");
-                    session.setAttribute("email", new Email(customerId, user.getEmail()));
+                //if null, then you cant add into the cart bc no shopping cart
+                if (session != null){
 
                     Email emailObj = (Email)session.getAttribute("email");
 
-                    System.out.println("new email is used for login: " + emailObj.emailGetter());
-                }else{
-                    System.out.println("SESSION IS NOT NULL IN LOGIN JAVA");
-                    Email emailObj = (Email)session.getAttribute("email");
-                    System.out.println("recurring email is used : " + emailObj.emailGetter());
+                    String email = emailObj.emailGetter();
+
+                    String customerId = emailObj.customerIdGetter();
+
+                    System.out.println("email: " + email + " customer id : " + customerId);
+
+                    //add the items into the sales table
+                    //customerId -> email.java
+                    //movieId, SaleDate -> movieSession.java
+                    String insertQuery = "INSERT INTO sales (customerId, movieId, saleDate) VALUES (?,?,?)";
+
+                    //iterate throughout the session and get the items in the shopping cart
+                    // and add them individually into the sales table
+                    HashMap<String, MovieSession> movieMap = (HashMap<String, MovieSession>) session.getAttribute("movieMap");
+
+                    //map has to exist for the shopping cart to be added into the sales table
+                    if (movieMap != null){
+                        //System.out.println("map already exists");
+                        for()
+                    }
+
                 }
 
                 response.setStatus(HttpServletResponse.SC_OK);
             }else{
-                System.out.println("CHECKING IF EMAIL/PW WRONG");
-                String emailQuery = "SELECT * FROM customers c WHERE c.email = ?";
-                PreparedStatement emailPrepStatement = connection.prepareStatement(emailQuery);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-                emailPrepStatement.setString(1, user.getEmail());
-
-                ResultSet emailResult = emailPrepStatement.executeQuery();
-
-                System.out.println("EMAIL RESULT: " + emailResult);
-                //wrong pw
-                if(emailResult.next()){
-                    System.out.println("WRONG PASSWORD");
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                }else{
-                    System.out.println("WRONG EMAIL");
-                    response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-                }
             }
 
 

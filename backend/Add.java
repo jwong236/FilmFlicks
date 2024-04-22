@@ -25,6 +25,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
 
 
 // This annotation maps this Java Servlet Class to a URL
@@ -48,6 +49,7 @@ public class Add extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         StringBuilder requestBody = new StringBuilder();
         PrintWriter out = response.getWriter();
+        Connection connection = dataSource.getConnection();
 
 
         String movieTitle = "";
@@ -85,6 +87,23 @@ public class Add extends HttpServlet {
             //System.out.println("session exists");
             HashMap<String, MovieSession> movieMap = (HashMap<String, MovieSession>) session.getAttribute("movieMap");
 
+
+
+            //sql query to get the movieid based on the title
+            String movieIdQuery = "SELECT id FROM movies WHERE title = ?";
+
+            PreparedStatement movieIdStatement = connection.prepareStatement(movieIdQuery);
+
+            movieIdStatement.setString(1, title);
+
+            ResultSet idResult = movieIdStatement.executeQuery();
+
+            String movieId = idResult.getString("id");
+
+            System.out.println("movie title " + title + " movie id : " + movieId);
+
+            LocalDate currentDate = LocalDate.now();
+
             //if a map exists already increase the quantity
             if (movieMap != null){
                 //System.out.println("map already exists");
@@ -95,7 +114,7 @@ public class Add extends HttpServlet {
                 }else{
                     //not in then create new key value pair and make a price
                     //System.out.println("new movie added into cart");
-                    movieMap.put(title, new MovieSession(title, 1));
+                    movieMap.put(title, new MovieSession(movieId, title, 1, currentDate));
 
                     //add price into db
                     price = movieMap.get(title).getPrice();
@@ -107,7 +126,7 @@ public class Add extends HttpServlet {
                 //System.out.println("empty cart now has 1 item ");
                 movieMap = new HashMap<>();
 
-                movieMap.put(title, new MovieSession(title, 1));
+                movieMap.put(title, new MovieSession(movieId, title, 1, currentDate));
 
                 session.setAttribute("movieMap", movieMap);
 
@@ -135,7 +154,6 @@ public class Add extends HttpServlet {
             try {
                 String query = "SELECT id FROM movies WHERE title = ?";
 
-                Connection connection = dataSource.getConnection();
 
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
 

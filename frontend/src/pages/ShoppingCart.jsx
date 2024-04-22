@@ -103,7 +103,7 @@ export default function MovieList() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ "movieTitle": "Bigfoot"}),
+                body: JSON.stringify({ "movieTitle": "Impotent"}),
                 credentials: 'include'
             }); // Replace shoppingcart with confirmation when ready
             if (!response.ok) {

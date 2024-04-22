@@ -1,10 +1,14 @@
 import java.util.Random;
+import java.time.LocalDate;
+
 
 public class MovieSession {
+    private final String id;
+
     private final String movieTitle;
     private int quantity;
     private final double price;
-
+    private final LocalDate saleDate;
     private double price() {
         Random rand = new Random();
         // Generating a random double between 5 and 20
@@ -13,11 +17,13 @@ public class MovieSession {
         return Math.round(price * 100.0) / 100.0;
     }
 
-    public MovieSession(String movieTitle, int quantity) {
-
+    public MovieSession(String id, String movieTitle, int quantity, LocalDate saleDate) {
+        this.id = id;
         this.movieTitle = movieTitle;
         this.quantity = quantity;
         this.price = price();
+        this.saleDate = saleDate;
+
     }
 
     public void increase(){
@@ -27,6 +33,10 @@ public class MovieSession {
         this.quantity -= 1;
     }
 
+
+    public String getId(){
+        return this.id;
+    }
     public double getPrice(){
         return this.price;
     }
@@ -37,6 +47,10 @@ public class MovieSession {
 
     public double getTotal(){
         return (this.quantity * this.price);
+    }
+
+    public LocalDate getSaleDate(){
+        return this.saleDate;
     }
 
 }
