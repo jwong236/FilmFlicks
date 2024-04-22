@@ -17,8 +17,9 @@ export default function MovieList() {
     const [director, setDirector] = useState("");
     const [star, setStar] = useState("");
     const [movies, setMovies] = useState([]);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [sortRule, setSortRule] = useState(10);
+    const [pageSize, setPageSize] = useState(10);
+    const [page, setPage] = useState(1);
+    const [sortRule, setSortRule] = useState("title");
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -31,39 +32,41 @@ export default function MovieList() {
     };
 
     const handlePageDropDown = (event) => {
-        setItemsPerPage(event.target.value);
+        setPageSize(event.target.value);
+        console.log(pageSize);
     };
 
     const handleSortDropDown = (event) => {
         setSortRule(event.target.value);
+        console.log(sortRule);
     };
 
     useEffect(() => {
         const fetchData = async () => {
             let endpoint = `http://${HOST}:8080/fabFlix/`;
-            let params = {};
+            let params = { page, pageSize };
 
             if (location.state.title || location.state.year || location.state.director || location.state.star) {
                 endpoint += 'search';
-                params = { ...location.state };
+                params = { ...params, ...location.state };
             } else if (location.state.genre) {
                 endpoint += 'browse/genre';
-                params = { genre: location.state.genre };
+                params = { ...params, genre: location.state.genre };
             } else if (location.state.character) {
                 endpoint += 'browse/character';
-                params = { character: location.state.character };
+                params = { ...params, character: location.state.character };
             }
 
             try {
                 const response = await axios.get(endpoint, { params });
                 console.log("Received:", response.data);
-                setMovies(response.data.slice(0, 20)); // Temporarily only accept 20
+                setMovies(response.data);
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             }
         };
         fetchData();
-    }, [location.state]);
+    }, [location.state, page, pageSize, setMovies]);
 
     const theme = useTheme();
     const textFieldStyle = {
@@ -210,7 +213,7 @@ export default function MovieList() {
                             </Typography>
                             <FormControl variant="outlined" size="small">
                                 <Select
-                                    value={itemsPerPage}
+                                    value={pageSize}
                                     onChange={handlePageDropDown}
                                     sx={{ minWidth: '5rem' }}
                                 >
@@ -229,15 +232,11 @@ export default function MovieList() {
                                     onChange={handleSortDropDown}
                                     sx={{ minWidth: '5rem' }}
                                 >
-                                    <MenuItem value={10}>10</MenuItem>
-                                    <MenuItem value={25}>25</MenuItem>
-                                    <MenuItem value={50}>50</MenuItem>
-                                    <MenuItem value={100}>100</MenuItem>
+                                    <MenuItem value={"title"}>Title</MenuItem>
+                                    <MenuItem value={"rating"}>Rating</MenuItem>
                                 </Select>
                             </FormControl>
-                            <Button variant="contained" sx={{color: 'secondary.light'}}>
-                                Update
-                            </Button>
+
                         </Box>
                     </Box>
                     <Box sx={{

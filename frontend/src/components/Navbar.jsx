@@ -30,7 +30,7 @@ function Navbar() {
             <Box
                 sx={{
                     width: 40,
-                    height: 60,
+                    height: 40,
                     backgroundImage: `url(${singlepopcorntransparent})`,
                     backgroundSize: 'contain',
                     backgroundRepeat: 'no-repeat',
