@@ -9,6 +9,9 @@ public class MovieSession {
     private int quantity;
     private final double price;
     private final LocalDate saleDate;
+
+
+
     private double price() {
         Random rand = new Random();
         // Generating a random double between 5 and 20
@@ -48,7 +51,9 @@ public class MovieSession {
     public double getTotal(){
         return (this.quantity * this.price);
     }
-
+    public String getTitle(){
+        return this.movieTitle;
+    }
     public LocalDate getSaleDate(){
         return this.saleDate;
     }

@@ -7,8 +7,7 @@ export default function MovieList() {
     const [total, setTotal] = useState(0);
 
     useEffect(() => {
-
-
+        shoppingCart();
         totalPrice();
     }, []);
 
@@ -30,6 +29,27 @@ export default function MovieList() {
         }
     }
 
+    async function shoppingCart() {
+        try {
+            console.log("getting the whole shopping cart ");
+            const response = await fetch(`http://${HOST}:8080/fabFlix/shoppingCart`,{
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                console.error('Response is not status 200');
+                return;
+            }
+            const data = await response.json();
+            //iterate through the data json array and put it on the screen
+            for (const title in data){
+                console.log(`movie title : ${title} ${JSON.stringify(data[title])}`);
+            }
+
+
+        } catch (error) {
+            console.error('Error Calculating Total Price: ', error);
+        }
+    }
     async function addToCart(){
         try {
             const response = await fetch(`http://${HOST}:8080/fabFlix/add`,{
@@ -39,7 +59,7 @@ export default function MovieList() {
                 },
                 body: JSON.stringify({ "movieTitle": "Bigfoot"}),
                 credentials: 'include'
-            }); // Replace shoppingcart with confirmation when ready
+            }); // Replace totalPrice with confirmation when ready
             if (!response.ok) {
                 console.error('response is not status 200');
             }
@@ -50,9 +70,10 @@ export default function MovieList() {
                 console.log("REDIRECTION FROM MOVIE LIST");
                 navigate('/login')
             }else{
-                const jsonData = await response.json();
-                console.log("no need to login");
-                console.log("response from add: ", jsonData);
+                // const jsonData = await response.json();
+                // console.log("no need to login");
+                // console.log("response from add: ", jsonData);
+                shoppingCart();
                 totalPrice();
 
             }
@@ -70,7 +91,7 @@ export default function MovieList() {
                 },
                 body: JSON.stringify({ "movieTitle": "Bigfoot"}),
                 credentials: 'include'
-            }); // Replace shoppingcart with confirmation when ready
+            }); // Replace totalPrice with confirmation when ready
             if (!response.ok) {
                 console.error('response is not status 200');
             }
@@ -85,8 +106,9 @@ export default function MovieList() {
                 if (response.status === 405){
                     console.log("cant decrement 1 or movie doesnt exist");
                 }else if (response.status === 200){
-                    const jsonData = await response.json();
-                    console.log("response from add: ", jsonData);
+                    // const jsonData = await response.json();
+                    // console.log("response from add: ", jsonData);
+                    shoppingCart();
                     totalPrice();
                 }
             }
@@ -103,9 +125,9 @@ export default function MovieList() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ "movieTitle": "Impotent"}),
+                body: JSON.stringify({ "movieTitle": "Bigfoot"}),
                 credentials: 'include'
-            }); // Replace shoppingcart with confirmation when ready
+            }); // Replace totalPrice with confirmation when ready
             if (!response.ok) {
                 console.error('response is not status 200');
             }
@@ -120,8 +142,9 @@ export default function MovieList() {
                 if (response.status === 405){
                     console.log("cant decrement 1 or movie doesnt exist");
                 }else if (response.status === 200){
-                    const jsonData = await response.json();
-                    console.log("response from add: ", jsonData);
+                    // const jsonData = await response.json();
+                    // console.log("response from add: ", jsonData);
+                    shoppingCart();
                     totalPrice();
                 }
             }

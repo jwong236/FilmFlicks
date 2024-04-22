@@ -118,8 +118,6 @@ public class Delete extends HttpServlet {
 
                             deleteStatement.setString(1, movieId);
 
-                            ResultSet deleteSet = preparedStatement.executeQuery();
-
                             int rowsAffected = deleteStatement.executeUpdate();
 
                             if (rowsAffected > 0) {
@@ -141,10 +139,14 @@ public class Delete extends HttpServlet {
                 }
             }
 
+            //this is how we know we are adding properly into the shopping cart
+//            System.out.println(movieMap.get(title).getQuantity());
+//            //return in the response the hashmap as json
+//            System.out.println(movieMap);
             //return in the response the hashmap as json
             //should be one less item
-            String jsonResponse = objectMapper.writeValueAsString(movieMap);
-            out.write(jsonResponse);
+//            String jsonResponse = objectMapper.writeValueAsString(movieMap);
+//            out.write(jsonResponse);
         }else{
 
             //should not happen

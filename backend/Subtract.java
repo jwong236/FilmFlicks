@@ -110,9 +110,16 @@ public class Subtract extends HttpServlet {
             }else{
                 response.setStatus(HttpServletResponse.SC_OK);
             }
+
+            //this is how we know we are adding properly into the shopping cart
+            System.out.println("quantity after decreasing: " + movieMap.get(title).getQuantity());
             //return in the response the hashmap as json
-            String jsonResponse = objectMapper.writeValueAsString(movieMap);
-            out.write(jsonResponse);
+            System.out.println(movieMap);
+
+
+            //return in the response the hashmap as json
+//            String jsonResponse = objectMapper.writeValueAsString(movieMap);
+//            out.write(jsonResponse);
         }else{
 
             //should not happen
