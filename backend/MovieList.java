@@ -31,7 +31,7 @@ public class MovieList extends HttpServlet {
     // Create a dataSource which registered in web.
     private DataSource dataSource;
 
-    public void init(ServletConfig config) {
+    public void init(ServletConfimg config) {
         try {
             dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
             System.out.println("movie list");

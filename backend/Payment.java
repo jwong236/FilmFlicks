@@ -176,6 +176,15 @@ public class Payment extends HttpServlet {
                             }
 
                         }
+
+
+
+                        System.out.println("before remove " + session.getAttribute("movieMap"));
+                        //clear the shopping cart session
+                        session.removeAttribute("movieMap");
+                        System.out.println("after remove " + session.getAttribute("movieMap"));
+
+
                     }else{
                         System.out.println("no movie map exists : no inserting into the sales table");
                     }

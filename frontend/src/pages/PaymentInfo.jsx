@@ -30,7 +30,7 @@ export default function PaymentInfo() {
                 credentials: 'include'
             });
             if (!response.ok) {
-                console.error('Payment failed');
+                console.error('Wrong payment information');
                 return;
             }
 
