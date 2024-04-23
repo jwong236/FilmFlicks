@@ -38,9 +38,43 @@ public class BrowseGenre extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         String genre = request.getParameter("genre");
+        String userPage = request.getParameter("page");
+        String userPageSize = request.getParameter("pageSize");
+        String sortRule = request.getParameter("sortRule");
+
         if (genre == null || genre.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.println("{\"error\": \"Genre parameter is required.\"}");
+            out.flush();
+            return;
+        }
+
+        int page = 1;
+        int pageSize = 10;
+
+        try {
+            if (userPage != null) {
+                page = Integer.parseInt(userPage);
+            }
+            if (userPageSize != null) {
+                pageSize = Integer.parseInt(userPageSize);
+            }
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.println("{\"error\": \"Invalid pagination parameters.\"}");
+            out.flush();
+            return;
+        }
+        int offset = (page - 1) * pageSize;
+        String orderByClause;
+        try {
+            if (sortRule == null || sortRule.trim().isEmpty()) {
+                throw new IllegalArgumentException("Sort rule is required.");
+            }
+            orderByClause = parseSortRule(sortRule);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.println("{\"error\": \"" + e.getMessage() + "\"}");
             out.flush();
             return;
         }
@@ -57,11 +91,15 @@ public class BrowseGenre extends HttpServlet {
                 "LEFT JOIN ratings r ON m.id = r.movieId " +
                 "WHERE g.name = ? " +
                 "GROUP BY m.id, m.title, m.year, m.director, r.rating, r.numVotes " +
-                "ORDER BY m.title ASC";
+                orderByClause +
+                " LIMIT ? OFFSET ?";
+
 
         try (Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query)) {
+             PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, genre);
+            statement.setInt(2, pageSize);
+            statement.setInt(3, offset);
 
             ResultSet resultSet = statement.executeQuery();
             List<Movie> movies = new ArrayList<>();
@@ -91,4 +129,37 @@ public class BrowseGenre extends HttpServlet {
             out.flush();
         }
     }
+    private String parseSortRule(String sortRule) {
+        String[] parts = sortRule.split("_");
+        String field1 = mapField(parts[0]);
+        String direction1 = mapDirection(parts[1]);
+        String field2 = mapField(parts[2]);
+        String direction2 = mapDirection(parts[3]);
+
+        return String.format("ORDER BY %s %s, %s %s", field1, direction1, field2, direction2);
+    }
+
+    private String mapField(String field) {
+        switch (field) {
+            case "title":
+                return "m.title";
+            case "rating":
+                return "r.rating";
+            default:
+                throw new IllegalArgumentException("Invalid sorting field: " + field);
+        }
+    }
+
+    private String mapDirection(String direction) {
+        switch (direction) {
+            case "asc":
+                return "ASC";
+            case "desc":
+                return "DESC";
+            default:
+                throw new IllegalArgumentException("Invalid sorting direction: " + direction);
+        }
+    }
+
+
 }

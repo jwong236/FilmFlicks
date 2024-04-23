@@ -19,7 +19,7 @@ export default function MovieList() {
     const [movies, setMovies] = useState([]);
     const [pageSize, setPageSize] = useState(10);
     const [page, setPage] = useState(1);
-    const [sortRule, setSortRule] = useState("title");
+    const [sortRule, setSortRule] = useState("title_asc_rating_asc");
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -44,7 +44,7 @@ export default function MovieList() {
     useEffect(() => {
         const fetchData = async () => {
             let endpoint = `http://${HOST}:8080/fabFlix/`;
-            let params = { page, pageSize };
+            let params = { page, pageSize, sortRule };
 
             if (location.state.title || location.state.year || location.state.director || location.state.star) {
                 endpoint += 'search';
@@ -66,7 +66,7 @@ export default function MovieList() {
             }
         };
         fetchData();
-    }, [location.state, page, pageSize, setMovies]);
+    }, [location.state, page, pageSize, sortRule]);
 
     const theme = useTheme();
     const textFieldStyle = {
@@ -232,8 +232,14 @@ export default function MovieList() {
                                     onChange={handleSortDropDown}
                                     sx={{ minWidth: '5rem' }}
                                 >
-                                    <MenuItem value={"title"}>Title</MenuItem>
-                                    <MenuItem value={"rating"}>Rating</MenuItem>
+                                    <MenuItem value={"title_asc_rating_asc"}>Title ↑ / Rating ↑</MenuItem>
+                                    <MenuItem value={"title_asc_rating_desc"}>Title ↑ / Rating ↓</MenuItem>
+                                    <MenuItem value={"title_desc_rating_asc"}>Title ↓ / Rating ↑</MenuItem>
+                                    <MenuItem value={"title_desc_rating_desc"}>Title ↓ / Rating ↓</MenuItem>
+                                    <MenuItem value={"rating_asc_title_asc"}>Rating ↑ / Title ↑</MenuItem>
+                                    <MenuItem value={"rating_asc_title_desc"}>Rating ↑ / Title ↓</MenuItem>
+                                    <MenuItem value={"rating_desc_title_asc"}>Rating ↓ / Title ↑</MenuItem>
+                                    <MenuItem value={"rating_desc_title_desc"}>Rating ↓ / Title ↓</MenuItem>
                                 </Select>
                             </FormControl>
 

@@ -43,9 +43,29 @@ public class Search extends HttpServlet {
         String director = request.getParameter("director");
         String star = request.getParameter("star");
         String year = request.getParameter("year");
+        String userPage = request.getParameter("page");
+        String userPageSize = request.getParameter("pageSize");
+        String sortRule = request.getParameter("sortRule");
+
+
+        int page = 1;
+        int pageSize = 10;
+        try {
+            if (userPage != null) {
+                page = Integer.parseInt(userPage);
+            }
+            if (userPageSize != null) {
+                pageSize = Integer.parseInt(userPageSize);
+            }
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.println("{\"error\": \"Invalid pagination parameters.\"}");
+            out.flush();
+            return;
+        }
 
         try (Connection connection = dataSource.getConnection()) {
-            List<Movie> movies = searchMovies(connection, title, director, star, year);
+            List<Movie> movies = searchMovies(connection, title, director, star, year, page, pageSize, sortRule);
 
             response.setStatus(HttpServletResponse.SC_OK);
             out.println(new ObjectMapper().writeValueAsString(movies));
@@ -60,12 +80,10 @@ public class Search extends HttpServlet {
         }
     }
 
-    private List<Movie> searchMovies(Connection connection, String title, String director, String star, String year) throws SQLException {
-        // Main GET logic
+    private List<Movie> searchMovies(Connection connection, String title, String director, String star, String year, int page, int pageSize, String sortRule) throws SQLException {
         List<String> queryParts = new ArrayList<>();
         List<Object> parameters = new ArrayList<>();
 
-        // Used LIKE predicate here to enable substring search for titles directors and stars
         if (title != null && !title.isEmpty()) {
             queryParts.add("LOWER(m.title) LIKE ?");
             parameters.add("%" + title.toLowerCase() + "%");
@@ -88,13 +106,17 @@ public class Search extends HttpServlet {
         }
 
         String whereClause = String.join(" AND ", queryParts);
+        int offset = (page - 1) * pageSize;
 
-        String fullQuery = buildFullQuery(whereClause);
+        String fullQuery = buildFullQuery(whereClause, pageSize, offset, sortRule);
+
 
         return executeSearchQuery(connection, fullQuery, parameters);
     }
 
-    private String buildFullQuery(String whereClause) {
+
+    private String buildFullQuery(String whereClause, int pageSize, int offset, String sortRule) {
+        String orderByClause = parseSortRule(sortRule); // This will generate the ORDER BY clause based on sortRule
         return "SELECT " +
                 "    m.title AS title, " +
                 "    m.year AS year, " +
@@ -118,9 +140,44 @@ public class Search extends HttpServlet {
                 "WHERE " + whereClause +
                 " GROUP BY " +
                 "    m.id, m.title, m.year, m.director, r.rating, r.numVotes " +
-                "ORDER BY " +
-                "    m.title ASC;";
+                orderByClause +
+                " LIMIT " + pageSize + " OFFSET " + offset + ";";
     }
+    private String parseSortRule(String sortRule) {
+        if (sortRule == null || sortRule.isEmpty()) return ""; // Default sort if none provided
+        String[] parts = sortRule.split("_");
+        if (parts.length != 4) return ""; // Ensure sortRule is in the expected format
+        String field1 = mapField(parts[0]);
+        String direction1 = mapDirection(parts[1]);
+        String field2 = mapField(parts[2]);
+        String direction2 = mapDirection(parts[3]);
+
+        return String.format("ORDER BY %s %s, %s %s", field1, direction1, field2, direction2);
+    }
+
+    private String mapField(String field) {
+        switch (field) {
+            case "title":
+                return "m.title";
+            case "rating":
+                return "r.rating";
+            default:
+                throw new IllegalArgumentException("Invalid sorting field: " + field);
+        }
+    }
+
+    private String mapDirection(String direction) {
+        switch (direction) {
+            case "asc":
+                return "ASC";
+            case "desc":
+                return "DESC";
+            default:
+                throw new IllegalArgumentException("Invalid sorting direction: " + direction);
+        }
+    }
+
+
 
 
     private List<Movie> executeSearchQuery(Connection connection, String query, List<Object> parameters) throws SQLException {
