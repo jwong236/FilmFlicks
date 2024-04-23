@@ -109,6 +109,7 @@ public class LoginFilter implements Filter {
         allowedURIs.add("/search");
         allowedURIs.add("/browse/character");
         allowedURIs.add("/browse/genre");
+        allowedURIs.add("/previousGetter");
 
 
     }

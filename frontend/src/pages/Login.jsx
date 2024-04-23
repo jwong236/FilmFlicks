@@ -27,7 +27,7 @@ export default function MovieList() {
             console.log(data.status);
             if (data.status === 200){
                 setResult('Login Successful!');
-                navigate('/movielist');
+                navigate('/homepage');
             }else{
                 if(data.status === 401){
                     setResult('Incorrect Password!');
