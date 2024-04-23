@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from 'tailwindcss'
 
-
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
@@ -13,5 +12,12 @@ export default defineConfig({
     postcss: {
       plugins: [tailwindcss()],
     },
+  },
+  optimizeDeps: {
+    include: [
+      '@mui/material',
+      '@emotion/react',
+      '@emotion/styled'
+    ]
   }
 })

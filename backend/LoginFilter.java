@@ -86,14 +86,29 @@ public class LoginFilter implements Filter {
     //these should not need authentication each time these are requested indirectly
     //essential without auth, login should not need to login to login
     public void init(FilterConfig fConfig) {
-        allowedURIs.add("login.jsx");
         allowedURIs.add("app.jsx");
         allowedURIs.add("main.jsx");
+
+        allowedURIs.add("/fabFlix/");
         allowedURIs.add("index.html");
         allowedURIs.add("index.js");
+
+        allowedURIs.add("/");
+        allowedURIs.add("login.jsx");
+        allowedURIs.add("/topmovies.jsx");
+        allowedURIs.add("/singlemovie.jsx");
+        allowedURIs.add("/singlestar.jsx");
+        allowedURIs.add("/homepage.jsx");
+
         allowedURIs.add("/login");
-        allowedURIs.add("/fabFlix/");
-        //allowedURIs.add("movielist");
+        allowedURIs.add("/topmovies");
+        allowedURIs.add("/singlemovie");
+        allowedURIs.add("/singlestar");
+
+
+        allowedURIs.add("/search");
+        allowedURIs.add("/browse/character");
+        allowedURIs.add("/browse/genre");
 
 
     }

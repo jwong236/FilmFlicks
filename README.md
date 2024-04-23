@@ -19,3 +19,6 @@ This web application provides detailed movie information to users. It includes f
 - **Single Movie Feature:** Developed `SingleMovie.java` and the corresponding React component `SingleMovie`, which handles displaying detailed information about individual movies.
 - **Styling:** Took charge of the overall styling for the webpages, ensuring a cohesive visual experience.
 - **Database Design:** Created the SQL database schema which structures the entire database used for storing movie data.
+
+### LIKE Predicate
+- **Usage:** In the servlet, the LIKE keyword is used with SQL queries to enable partial and case-insensitive searches for movie titles, directors, and stars. It allows users to find movies based on substrings, making the search feature flexible and user-friendly. Wildcards (%) are used with LIKE to match any sequence of characters before and after the search terms.
