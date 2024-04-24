@@ -91,7 +91,6 @@ public class Login extends HttpServlet {
             // execute query
             ResultSet resultSet = preparedStatement.executeQuery();
 
-
 //            System.out.println("result set " + resultSet);
             //null means failure
             if (resultSet.next()){
@@ -99,6 +98,7 @@ public class Login extends HttpServlet {
                 System.out.println("http session: " + session);
 
                 //System.out.println(sessionEmail);
+                String customerId = resultSet.getString("id");
 
 
 
@@ -108,7 +108,7 @@ public class Login extends HttpServlet {
 //                    response.setHeader("Set-Cookie", "JSESSIONID=" + request.getSession().getId() + "; Path=/fabFlix");
                     session = request.getSession();
 //                    response.setHeader("Set-Cookie", "JSESSIONID=" + session.getId() + "; Path=/fabFlix");
-                    session.setAttribute("email", new Email(user.getEmail()));
+                    session.setAttribute("email", new Email(customerId, user.getEmail()));
 
                     Email emailObj = (Email)session.getAttribute("email");
 

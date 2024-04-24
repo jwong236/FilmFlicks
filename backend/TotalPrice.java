@@ -1,7 +1,6 @@
 //import com.google.gson.JsonArray;
 //import com.google.gson.JsonObject;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.mysql.cj.xdevapi.JsonArray;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import javax.sql.DataSource;
@@ -30,57 +27,67 @@ import jakarta.servlet.ServletConfig;
 import jakarta.servlet.http.HttpSession;
 
 
-//whole purpose of this is to return the session's hashmap in valid json format
-@WebServlet("/shoppingCart")
-public class ShoppingCart extends HttpServlet {
+// This annotation maps this Java Servlet Class to a URL
+@WebServlet("/totalPrice")
+public class TotalPrice extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    // Create a dataSource which registered in web.
+    private DataSource dataSource;
+
+    public void init(ServletConfig config) {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+            System.out.println("TOTAL PRICE");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
 
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
         //get the session, check if it exists, if it is on this section it exists
         HttpSession session = request.getSession(false);
-        ObjectMapper objectMapper = new ObjectMapper();
 
         //if the session exists, get the movieMap
         if (session != null){
-            //System.out.println("session exists");
+            System.out.println("session exists");
             HashMap<String, MovieSession> movieMap = (HashMap<String, MovieSession>) session.getAttribute("movieMap");
-            HashMap<String, Object> movieMapJson = new HashMap<>();
 
-            //if a map exists already increase the quantity
+            //if a map exists already decrease the quantity
             if (movieMap != null){
                 System.out.println("map already exists");
 
+                double total = 0;
+
+                System.out.println( "MOVIE MAP ENTRY SET " + movieMap);
+                //iterate through the movieMap calculating the total price from getPrice, getQuantity
                 for (String title : movieMap.keySet()) {
-                    //gets all the info for a movie
                     MovieSession movieObj = movieMap.get(title);
-                    int quantity = movieObj.getQuantity();
-                    String movieId = movieObj.getId();
-                    double price = movieObj.getPrice();
-                    double totalPrice = price * quantity;
 
-                    //creates a new object containing the totalPrice
-                    HashMap<String, Object> movieSessionJson = new HashMap<>();
-                    movieSessionJson.put("id", movieId);
-                    movieSessionJson.put("quantity", quantity);
-                    movieSessionJson.put("price", price);
-                    movieSessionJson.put("totalPrice", totalPrice);
-
-
-                    movieMapJson.put(title, movieSessionJson);
+                    System.out.println("movie object "  + movieObj);
+                    double temp = movieObj.getTotal();
+                    total+=temp;
                 }
-                System.out.println("new movie map " + movieMapJson);
-                String jsonResponse = objectMapper.writeValueAsString(movieMapJson);
-                out.write(jsonResponse);
-                response.setStatus(HttpServletResponse.SC_OK);
 
+                System.out.println("total for movie " + total);
+                HashMap<String, Double> responseMap = new HashMap<>();
+                responseMap.put("total", total);
+
+                // Convert the responseMap to JSON
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonResponse = objectMapper.writeValueAsString(responseMap);
+
+                out.print(jsonResponse);
 
             }else{
-                System.out.println("session doesnt have anything in the shopping cart");
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                System.out.println("movie map doesnt exist");
             }
+
 
         }else{
 
@@ -90,8 +97,7 @@ public class ShoppingCart extends HttpServlet {
         }
 
 
-
-
+        out.flush();
 
 
 
