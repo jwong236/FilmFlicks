@@ -41,6 +41,14 @@ export default function MovieList() {
         console.log(sortRule);
     };
 
+    const handleNextClick = () => {
+        setPage(prevPage => prevPage + 1);
+    }
+    const handlePrevClick = () => {
+        setPage(prevPage => prevPage > 1 ? prevPage - 1 : 1);
+    };
+
+
     useEffect(() => {
 
         const fetchData = async () => {
@@ -374,7 +382,9 @@ export default function MovieList() {
                             '&:hover': {
                                 backgroundColor: 'primary.dark'
                             }
-                        }}>
+                        }}
+                        onClick={handlePrevClick}
+                        >
                             Previous
                         </Button>
                         <Button sx={{
@@ -384,7 +394,9 @@ export default function MovieList() {
                             '&:hover': {
                                 backgroundColor: 'primary.dark'
                             }
-                        }}>
+                        }}
+                        onClick={handleNextClick}
+                        >
                             Next
                         </Button>
                     </Box>
