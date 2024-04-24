@@ -62,7 +62,7 @@ public class PreviousGetter extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         boolean prevSessionFlag = false;
-        System.out.println("inside of the previous getter");
+        //System.out.println("inside of the previous getter");
 
         BufferedReader reader = request.getReader();
 
@@ -71,19 +71,19 @@ public class PreviousGetter extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession(false);
-        System.out.println("http session: " + session);
+        //System.out.println("http session: " + session);
 
         HashMap<String, HashMap<String, String>> prev = (HashMap<String, HashMap<String, String>>) session.getAttribute("prev");
 
 
         if (request.getParameter("endpoint").isEmpty()){
-            System.out.println("endpoint is empty");
+            //System.out.println("endpoint is empty");
             prevSessionFlag = true;
         }
 
         //checks what's inside of the request body
         if (!prevSessionFlag || reader != null) {
-            System.out.println("Request Body:");
+            //System.out.println("Request Body:");
             String line;
             while ((line = reader.readLine()) != null) {
                 System.out.print(line);
@@ -91,7 +91,7 @@ public class PreviousGetter extends HttpServlet {
         } else {
             //if the body is empty than send the prev session as a response for the frontend to use
             prevSessionFlag = true;
-            System.out.println("Request body is null");
+            //System.out.println("Request body is null");
         }
 
 
@@ -102,12 +102,12 @@ public class PreviousGetter extends HttpServlet {
             String userPageSize = request.getParameter("pageSize");
             String sortRule = request.getParameter("sortRule");
             System.out.println("userPage " + userPage + " userPageSize " + userPageSize + " sort rule " + sortRule);
-            String title = "";
-            String director = "";
-            String star = "";
-            String year = "";
-            String genre = "";
-            String character = "";
+//            String title = "";
+//            String director = "";
+//            String star = "";
+//            String year = "";
+//            String genre = "";
+//            String character = "";
 
             ArrayList<String> searchArr = new ArrayList<>();
             searchArr.add("title");
@@ -124,6 +124,7 @@ public class PreviousGetter extends HttpServlet {
 
 
             if (endpoint.equals("search")) {
+                System.out.println("SEARCH");
                 //holds title director star and year not all of them will be included though
                 HashMap<String, String> searchParams = new HashMap<>();
                 for (String searchElem : searchArr){
@@ -141,9 +142,38 @@ public class PreviousGetter extends HttpServlet {
 
                 searchMap.put(endpoint, searchParams);
             }
-//            else if( endpoint.equals("brose/genre")){
-//
-//            }
+            else if( endpoint.equals("browse/genre")){
+                System.out.println("BROWSE/GENRE");
+                HashMap<String, String> browseParams = new HashMap<>();
+                browseParams.put("userPage", userPage);
+                browseParams.put("userPageSize", userPageSize);
+                browseParams.put("sortRule", sortRule);
+
+                String temp = request.getParameter("genre");
+
+                //if it is a valid param, put it in the hashmap
+                if (temp != null && !temp.isEmpty()){
+                    browseParams.put("genre", temp);
+                }
+
+                searchMap.put("browsegenre", browseParams);
+            }
+            else if( endpoint.equals("browse/character")){
+                System.out.println("BROWSE/CHARACTER");
+                HashMap<String, String> browseParams = new HashMap<>();
+                browseParams.put("userPage", userPage);
+                browseParams.put("userPageSize", userPageSize);
+                browseParams.put("sortRule", sortRule);
+
+                String temp = request.getParameter("character");
+
+                //if it is a valid param, put it in the hashmap
+                if (temp != null && !temp.isEmpty()){
+                    browseParams.put("character", temp);
+                }
+
+                searchMap.put("browsecharacter", browseParams);
+            }
 
 
             try {
@@ -170,7 +200,12 @@ public class PreviousGetter extends HttpServlet {
                         //compare the search map to prev to see if we should upate the session params
                         if (!hashMapComparison(prev, searchMap)) {
                             System.out.println("search params updated, using the current");
-                            response.setStatus(HttpServletResponse.SC_CONTINUE);
+                            ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+                            String currJson = mapper.writeValueAsString(searchMap);
+                            System.out.println("using the previous params" + searchMap);
+                            session.setAttribute("prev", searchMap);
+                            out.print(currJson);
+                            response.setStatus(HttpServletResponse.SC_CREATED);
                         }
                     } else {
                         //session exists but there is no prev from searching just return as if session == null w/o creating new sesh

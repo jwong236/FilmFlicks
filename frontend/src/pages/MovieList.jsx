@@ -82,9 +82,9 @@ export default function MovieList() {
                 //     credentials: 'include',
                 //     params: tempParams
                 // });
-
+                console.log("status of response: " + prevResponse.status);
                 //if it is 201 or 100 then use the newly updated params
-                if ((prevResponse.status === 201 )|| (prevResponse.status === 100)){
+                if (prevResponse.status === 201 ){
                     console.log("using the current params");
                     console.log("endpoint " + endpoint);
                     console.log("params ", params);
@@ -102,25 +102,47 @@ export default function MovieList() {
                     console.log("prev data endpoint " + prevEndpoint[0]);
 
                     const prevParams = {};
+                    let browseEndpoint = "";
+
+                    if (prevEndpoint[0].length > 8){
+                        console.log("ignoring the browse: " + prevEndpoint[0].slice(6, prevEndpoint[0].length));
+                    }
                     if (prevEndpoint[0] === "search"){
                         console.log("end point is search");
                         for (const key in prevData.search) {
                             prevParams[key] = prevData.search[key];
                         }
                     }
-                    // else if (prevEndpoint[0] === "genre"){
-                    //     console.log("end point is browse/genre");
-                    //     for (const key in prevData.genre) {
-                    //         prevParams[key] = prevData.search[key];
-                    //     }
-                    // }
+                    else if (prevEndpoint[0].slice(6, prevEndpoint[0].length) === "genre"){
+                        console.log("end point is browse/genre");
+                        for (const key in prevData.browsegenre) {
+                            prevParams[key] = prevData.browsegenre[key];
+                        }
+                        browseEndpoint = "genre"
+                    }else if (prevEndpoint[0].slice(6, prevEndpoint[0].length) === "character"){
+                        console.log("end point is browse/character ");
+                        for (const key in prevData.browsecharacter) {
+                            prevParams[key] = prevData.browsecharacter[key];
+                        }
+                        browseEndpoint = "character"
+                    }
 
 
                     console.log("prev params ", prevParams);
 
                     if (prevData && prevEndpoint && prevParams) {
                         //generating the old end point with the params to get prev data
-                        const endpointUrl = `http://${HOST}:8080/fabFlix/${prevEndpoint}`;
+                        let endpointUrl = "";
+
+                        //if the endpoint is browse, the end point would have been assigned based
+                        //on the get request to previousGetter
+                        if (browseEndpoint.length >0){
+                            //console.log("browse endpt: " + browseEndpoint);
+                            endpointUrl = `http://${HOST}:8080/fabFlix/browse/${browseEndpoint}`;
+                        }else{
+                            endpointUrl = `http://${HOST}:8080/fabFlix/${prevEndpoint}`;
+                        }
+
                         console.log("endpoint url " + endpointUrl);
 
 
