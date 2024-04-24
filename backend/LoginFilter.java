@@ -110,7 +110,7 @@ public class LoginFilter implements Filter {
         allowedURIs.add("/browse/character");
         allowedURIs.add("/browse/genre");
         allowedURIs.add("/previousGetter");
-
+        allowedURIs.add("/homepageGenres");
 
     }
 

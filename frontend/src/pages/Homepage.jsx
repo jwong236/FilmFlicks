@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, TextField, Button, useTheme, InputAdornment, Typography, Chip } from "@mui/material";
 import Navbar from '../components/Navbar';
 import Background from '../components/Background.jsx';
 import SearchIcon from '@mui/icons-material/Search';
+import axios from 'axios';
+
+
+const HOST = import.meta.env.VITE_HOST;
 
 export default function Homepage() {
     const [title, setTitle] = useState("");
@@ -14,6 +18,7 @@ export default function Homepage() {
     const [character, setCharacter] = useState("");
     const navigate = useNavigate();
     const theme = useTheme();
+    const [genres, setGenres] = useState([]);
     const handleSearch = () => {
         if (!title && !year && !director && !star) {
             console.log('All search fields are empty. No action taken.');
@@ -30,9 +35,27 @@ export default function Homepage() {
         navigate('/movielist', { state: { character } });
     };
 
-    const genres = ["Action", "Adult", "Adventure", "Animation", "Biography", "Comedy", "Crime", "Documentary",
-        "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Musical", "Mystery", "Reality-TV", "Romance",
-        "Sci-Fi", "Sport", "Thriller", "War", "Western"];
+
+    useEffect(() => {
+        const fetchGenres = async ()=>{
+            const gArray = await axios.get(`http://${HOST}:8080/fabFlix/homepageGenres`,{
+                withCredentials: true
+            });
+            const tempArray = [];
+
+            gArray.data.forEach(elem =>{
+               tempArray.push((elem.name));
+            });
+
+            console.log(tempArray);
+            setGenres(tempArray);
+        }
+
+        fetchGenres();
+    }, []);
+    // const genres = ["Action", "Adult", "Adventure", "Animation", "Biography", "Comedy", "Crime", "Documentary",
+    //     "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Musical", "Mystery", "Reality-TV", "Romance",
+    //     "Sci-Fi", "Sport", "Thriller", "War", "Western"];
     const characters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
         "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*"];
 
