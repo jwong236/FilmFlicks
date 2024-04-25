@@ -23,6 +23,10 @@ export default function MovieList() {
     const location = useLocation();
     const navigate = useNavigate();
 
+
+    const handleAdd = () => {
+        console.log("Add button pressed");
+    }
     const handleSearch = () => {
         if (!title && !year && !director && !star) {
             console.log('All search fields are empty. No action taken.');
@@ -365,7 +369,7 @@ export default function MovieList() {
                         overflowX: 'auto',
                         flexDirection: 'row'
                     }}>
-                        <MovieListTable data = {movies} />
+                        <MovieListTable data = {movies} handleAdd={handleAdd}/>
                     </Box>
                     <Box sx={{
                         display: 'flex',

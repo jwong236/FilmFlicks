@@ -1,7 +1,7 @@
 import React from 'react';
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, useTheme} from '@mui/material';
 
-function DataTable({ data }) {
+function DataTable({ data, handleAdd}) {
     const theme = useTheme();
 
     const headerStyle = {
@@ -40,7 +40,7 @@ function DataTable({ data }) {
                                             backgroundColor: theme.palette.primary.dark
                                         }
                                     }}
-                                    onClick={() => addToCart(movie)}>
+                                    onClick={() => handleAdd(movie)}>
                                     Add
                                 </Button>
                             </TableCell>
@@ -50,12 +50,6 @@ function DataTable({ data }) {
             </Table>
         </TableContainer>
     );
-}
-
-// Function to handle adding a movie to the cart
-function addToCart(movie) {
-    console.log('Add to Cart:', movie.title);
-    // Implementation for adding to cart can be added here
 }
 
 export default DataTable;
