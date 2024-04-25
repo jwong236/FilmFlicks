@@ -1,54 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Container } from "@mui/material";
+import React from 'react';
+import { Box, Typography, useTheme} from "@mui/material";
+import Navbar from "../components/Navbar.jsx";
+import Background from "../components/Background.jsx";
+import ConfirmationCard from "../components/ConfirmationCard.jsx";
 
-const HOST = import.meta.env.VITE_HOST;
-
-export default function MovieList() {
-    const [titles, setTitles] = useState([]);
-
-    useEffect(() => {
-        async function fetchMovieTitles() {
-            try {
-                const response = await fetch(`http://${HOST}:8080/fabFlix/templateendpoint`); // Replace templateendpoint with confirmation when ready
-                if (!response.ok) {
-                    console.error('Response is not status 200');
-                    return;
-                }
-                const data = await response.json();
-                setTitles(data.map(movie => movie.title));
-            } catch (error) {
-                console.error('Error fetching movie titles: ', error);
-            }
-        }
-
-        fetchMovieTitles();
-    }, []);
-
+export default function Confirmation({  }) { // Put orderDetails back between the {} later
+    const theme = useTheme();
+    const orderDetails = [
+        { saleId: 101, title: "Inception", quantity: 2, price: 10.00, total: 20.00 },
+        { saleId: 102, title: "The Matrix", quantity: 1, price: 15.00, total: 15.00 },
+        { saleId: 103, title: "Interstellar", quantity: 1, price: 12.50, total: 12.50 },
+        { saleId: 104, title: "Blade Runner 2049", quantity: 1, price: 9.99, total: 9.99 }
+    ];
     return (
-        <Container>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '100%',
-                minHeight: '100vh',
-                backgroundColor: '#f1f1f1',
-                padding: 3
-            }}>
-                {titles.length > 0 ? (
-                    <Box sx={{ width: '60%', backgroundColor: 'white', padding: 2, borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-                        <h2>Template Webpage</h2>
-                        <ul>
-                            {titles.map((title, index) => (
-                                <li key={index}>{title}</li>
-                            ))}
-                        </ul>
-                    </Box>
-                ) : (
-                    <p>No titles found</p>
-                )}
-            </Box>
-        </Container>
+        <Box sx={{
+            display: 'flex',
+            height: '100vh',
+            width: '100vw',
+            flexDirection: 'column'
+        }}>
+            <Navbar />
+            <Background sx={{ justifyContent: 'center', alignItems: 'center'}}>
+                <ConfirmationCard data={orderDetails} sx={{
+                    height: '80vh'
+                }}/>
+            </Background>
+        </Box>
     );
 }

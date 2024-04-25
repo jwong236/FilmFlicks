@@ -24,7 +24,6 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            {/*<Box sx={{ minHeight: '100vh', display: 'flex',  justifyContent: 'center', alignItems: 'center', }}>*/}
                 <Routes>
                     <Route path="/" element={<Homepage />} />
 
@@ -40,7 +39,6 @@ function App() {
                     <Route path="/paymentinfo" element={<PaymentInfo />} />
                     <Route path="/confirmation" element={<Confirmation />} />
                 </Routes>
-            {/*</Box>*/}
         </ThemeProvider>
     );
 }

@@ -1,83 +1,47 @@
 import React, { useState } from 'react';
-import {Box, Container, TextField, Button } from "@mui/material";
+import { Box } from "@mui/material";
+import Navbar from '../components/Navbar';
+import Background from '../components/Background.jsx';
+import PaymentInfoCard from '../components/PaymentInfoCard.jsx';
 
-const HOST = import.meta.env.VITE_HOST;
-
-export default function PaymentInfo() {
+export default function PaymentInfo({ total }) {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [creditCardNumber, setCreditCardNumber] = useState('');
     const [expirationDate, setExpirationDate] = useState('');
-    const [total, setTotal] = useState(0);
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            // Perform validation if needed
-
-            // Send payment data to server
-            const response = await fetch(`http://${HOST}:8080/fabFlix/payment`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    firstName,
-                    lastName,
-                    creditCardNumber,
-                    expirationDate,
-                }),
-                credentials: 'include'
-            });
-            if (!response.ok) {
-                console.error('Wrong payment information');
-                return;
-            }
-
-            if (response.status === 200){
-                console.log("PAYMENT SUCCESS!");
-            }else{
-                console.error('Payment failed from backend');
-            }
-        } catch (error) {
-            console.error('Error processing payment: ', error);
-        }
+    const handlePlaceOrder = async () => {
+        console.log("Order Details:");
+        console.log("First Name:", firstName);
+        console.log("Last Name:", lastName);
+        console.log("Credit Card Number:", creditCardNumber);
+        console.log("Expiration Date:", expirationDate);
+        console.log("Total:", total);
     };
 
     return (
-        <Container>
-            <Box mt={4}>
-                <form onSubmit={handleSubmit}>
-                    <TextField
-                        label="First Name"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        required
-
-                    />
-                    <TextField
-                        label="Last Name"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        required
-                    />
-                    <TextField
-                        label="Credit Card Number"
-                        value={creditCardNumber}
-                        onChange={(e) => setCreditCardNumber(e.target.value)}
-                        required
-                    />
-                    <TextField
-                        label="Expiration Date"
-                        type="date"
-                        value={expirationDate}
-                        onChange={(e) => setExpirationDate(e.target.value)}
-                        required
-                        InputLabelProps={{ shrink: true }}
-                    />
-                    <Button type="submit">Submit Payment</Button>
-                </form>
-            </Box>
-        </Container>
+        <Box sx={{
+            display: 'flex',
+            height: '100vh',
+            width: '100vw',
+            flexDirection: 'column'
+        }}>
+            <Navbar />
+            <Background sx={{ justifyContent: 'center', alignItems: 'center'}}>
+                <PaymentInfoCard
+                    firstName={firstName}
+                    lastName={lastName}
+                    creditCardNumber={creditCardNumber}
+                    expirationDate={expirationDate}
+                    setFirstName={setFirstName}
+                    setLastName={setLastName}
+                    setCreditCardNumber={setCreditCardNumber}
+                    setExpirationDate={setExpirationDate}
+                    total={total}
+                    handlePlaceOrder={handlePlaceOrder}
+                    sx={{ height: '80vh', width: '30vw' }}
+                />
+            </Background>
+        </Box>
     );
 }
