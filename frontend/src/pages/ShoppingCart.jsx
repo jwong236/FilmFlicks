@@ -1,12 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Container } from "@mui/material";
+import React, { useState } from 'react';
+import { Box } from "@mui/material";
 import Navbar from '../components/Navbar';
 import Background from '../components/Background.jsx';
 import ShoppingCartCard from '../components/ShoppingCartCard.jsx';
-
-const HOST = import.meta.env.VITE_HOST;
+import { useNavigate } from 'react-router-dom';
 
 export default function ShoppingCart() {
+    const [cartData, setCartData] = useState([
+        { title: "Inception", quantity: 1, price: 10.00, total: 10.00 },
+        { title: "The Matrix", quantity: 2, price: 15.00, total: 30.00 }
+    ]);
+    const navigate = useNavigate();
+
+    const handleDelete = (index) => {
+        const newCartData = cartData.filter((item, i) => i !== index);
+        setCartData(newCartData);
+        console.log('Item deleted at index:', index);
+    };
+
+    const handleProceedToPayment = () => {
+        console.log('Proceeding to payment with items:', cartData);
+        navigate('/paymentinfo');
+    };
 
     return (
         <Box sx={{
@@ -17,9 +32,12 @@ export default function ShoppingCart() {
         }}>
             <Navbar />
             <Background sx={{ justifyContent: 'center', alignItems: 'center'}}>
-                <ShoppingCartCard />
+                <ShoppingCartCard
+                    data={cartData}
+                    handleDelete={handleDelete}
+                    handleProceedToPayment={handleProceedToPayment}
+                />
             </Background>
         </Box>
-
     );
 }

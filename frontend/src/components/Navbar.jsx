@@ -47,7 +47,7 @@ function Navbar() {
             <Link to="/movielist" style={navIconsStyle}>
                 <ListIcon /> List
             </Link>
-            <Link to="/checkout" style={navIconsStyle}>
+            <Link to="/shoppingcart" style={navIconsStyle}>
                 <ShoppingCartIcon /> Checkout
             </Link>
             {}

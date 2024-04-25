@@ -2,12 +2,7 @@ import React from 'react';
 import {Box, Typography} from "@mui/material";
 import ShoppingCartList from "../components/ShoppingCartList";
 
-const defaultData = [
-    { title: "Inception", quantity: 1, price: 10.00, total: 10.00 },
-    { title: "The Matrix", quantity: 2, price: 15.00, total: 30.00 }
-];
-
-export default function ShoppingCartCard({ sx }) {
+export default function ShoppingCartCard({ sx, data, handleDelete, handleProceedToPayment}) {
     return (
         <Box sx={{
             display: 'flex',
@@ -25,7 +20,11 @@ export default function ShoppingCartCard({ sx }) {
             }}>
                 Shopping Cart
             </Typography>
-            <ShoppingCartList data={defaultData} />
+            <ShoppingCartList
+                data={data}
+                handleDelete={handleDelete}
+                handleProceedToPayment={handleProceedToPayment}
+            />
         </Box>
     );
 }

@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 
-export default function ShoppingCartList({ data, handleDelete }) {
+export default function ShoppingCartList({ data, handleDelete, handleProceedToPayment}) {
     const theme = useTheme();
 
     const headerStyle = {
@@ -72,7 +72,11 @@ export default function ShoppingCartList({ data, handleDelete }) {
             </TableContainer>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
                 <Typography variant="h6" sx={{ marginRight: 2, color: 'primary.main', textDecoration: 'underline'}}>Total: {formatCurrency(totalSum)}</Typography>
-                <Button variant="contained" sx={{ textTransform: 'none' }}>
+                <Button
+                    variant="contained"
+                    sx={{ textTransform: 'none' }}
+                    onClick={handleProceedToPayment}
+                >
                     Proceed to Payment
                 </Button>
             </Box>
