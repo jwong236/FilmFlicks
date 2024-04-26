@@ -16,6 +16,9 @@ import {
 
 export default function ShoppingCartList({ data, handleDelete, handleProceedToPayment}) {
     const theme = useTheme();
+    const [total, setTotal] = useState(0);
+
+
 
     const headerStyle = {
         color: 'white',
@@ -29,7 +32,7 @@ export default function ShoppingCartList({ data, handleDelete, handleProceedToPa
         }).format(amount);
     };
 
-    const totalSum = data.reduce((sum, item) => sum + item.total, 0);
+    // const totalSum = data.reduce((sum, item) => sum + item.total, 0);
 
     return (
         <Box sx={{ width: '100%' }}>

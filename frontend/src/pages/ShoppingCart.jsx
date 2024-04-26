@@ -1,16 +1,44 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Box } from "@mui/material";
 import Navbar from '../components/Navbar';
 import Background from '../components/Background.jsx';
 import ShoppingCartCard from '../components/ShoppingCartCard.jsx';
 import { useNavigate } from 'react-router-dom';
 
+const HOST = import.meta.env.VITE_HOST;
+
+
 export default function ShoppingCart() {
-    const [cartData, setCartData] = useState([
-        { title: "Inception", quantity: 1, price: 10.00, total: 10.00 },
-        { title: "The Matrix", quantity: 2, price: 15.00, total: 30.00 }
-    ]);
+    const [cartData, setCartData] = useState([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        let mounted = true;
+        async function fetchShoppingCart() {
+            try {
+                const response = await fetch(`http://${HOST}:8080/fabFlix/shoppingCart`,{
+                    credentials: 'include'
+                });
+                if (response.status !== 200) {
+                    console.error('Response is not status 200');
+                    return;
+                }
+
+                const data = await response.json();
+                console.log(data);
+                if (mounted) {
+                    setCartData(data);
+                }
+            } catch (error) {
+                console.error('Error fetching data: ', error);
+            }
+        }
+
+        fetchShoppingCart();
+        return () => {
+            mounted = false;
+        }
+    }, []);
 
     const handleDelete = (index) => {
         const newCartData = cartData.filter((item, i) => i !== index);

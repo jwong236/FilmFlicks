@@ -23,10 +23,152 @@ export default function MovieList() {
     const location = useLocation();
     const navigate = useNavigate();
 
-
-    const handleAdd = () => {
-        console.log("Add button pressed");
+    async function totalPrice() {
+        try {
+            console.log("attempting to get total price");
+            const response = await fetch(`http://${HOST}:8080/fabFlix/totalPrice`,{
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                console.error('Response is not status 200');
+                return;
+            }
+            const data = await response.json();
+            console.log("TOTAL : " + data.total);
+            // setTotal(data.total);
+        } catch (error) {
+            console.error('Error Calculating Total Price: ', error);
+        }
     }
+
+    async function shoppingCart() {
+        try {
+            console.log("getting the whole shopping cart ");
+            const response = await fetch(`http://${HOST}:8080/fabFlix/shoppingCart`,{
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                console.error('Response is not status 200');
+                return;
+            }
+            const data = await response.json();
+            //iterate through the data json array and put it on the screen
+            for (const title in data){
+                console.log(`movie title : ${title} ${JSON.stringify(data[title])}`);
+            }
+
+
+        } catch (error) {
+            console.error('Error Calculating Total Price: ', error);
+        }
+    }
+    async function addToShoppingCart(movie){
+        try {
+            console.log("the movie that was added is : " + movie.title);
+            const response = await fetch(`http://${HOST}:8080/fabFlix/add`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ "movieTitle": "Bigfoot"}),
+                credentials: 'include'
+            }); // Replace totalPrice with confirmation when ready
+            if (!response.ok) {
+                console.error('response is not status 200');
+            }
+
+            console.log("DATA AS TEXT IN MOVIE LIST " + response.text);
+
+            if (response.status === 401){
+                console.log("REDIRECTION FROM MOVIE LIST");
+                navigate('/login')
+            }else{
+                // const jsonData = await response.json();
+                // console.log("no need to login");
+                // console.log("response from add: ", jsonData);
+                shoppingCart();
+                totalPrice();
+
+            }
+        } catch (error) {
+            console.error('Error adding into cart: ', error);
+        }
+    }
+
+    async function decrease(){
+        try {
+            const response = await fetch(`http://${HOST}:8080/fabFlix/subtract`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ "movieTitle": "Bigfoot"}),
+                credentials: 'include'
+            }); // Replace totalPrice with confirmation when ready
+            if (!response.ok) {
+                console.error('response is not status 200');
+            }
+
+            console.log("DATA AS TEXT IN MOVIE LIST " + response.text);
+
+            if (response.status === 401){
+                console.log("REDIRECTION FROM MOVIE LIST");
+                navigate('/login')
+            }else{
+                console.log("no need to login");
+                if (response.status === 405){
+                    console.log("cant decrement 1 or movie doesnt exist");
+                }else if (response.status === 200){
+                    // const jsonData = await response.json();
+                    // console.log("response from add: ", jsonData);
+                    shoppingCart();
+                    totalPrice();
+                }
+            }
+        } catch (error) {
+            console.error('Error decreasing from cart: ', error);
+        }
+    }
+
+
+    async function deleteFromCart(){
+        try {
+            const response = await fetch(`http://${HOST}:8080/fabFlix/delete`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ "movieTitle": "Bigfoot"}),
+                credentials: 'include'
+            }); // Replace totalPrice with confirmation when ready
+            if (!response.ok) {
+                console.error('response is not status 200');
+            }
+
+            console.log("DATA AS TEXT IN MOVIE LIST " + response.text);
+
+            if (response.status === 401){
+                console.log("REDIRECTION FROM MOVIE LIST");
+                navigate('/login')
+            }else{
+                console.log("no need to login");
+                if (response.status === 405){
+                    console.log("cant decrement 1 or movie doesnt exist");
+                }else if (response.status === 200){
+                    // const jsonData = await response.json();
+                    // console.log("response from add: ", jsonData);
+                    shoppingCart();
+                    totalPrice();
+                }
+            }
+        } catch (error) {
+            console.error('Error decreasing from cart: ', error);
+        }
+    }
+    // const handleAdd = () => {
+    //     addToCart();
+    //     console.log("Add button pressed");
+    // }
     const handleSearch = () => {
         if (!title && !year && !director && !star) {
             console.log('All search fields are empty. No action taken.');
@@ -40,7 +182,7 @@ export default function MovieList() {
         console.log(pageSize);
     };
 
-    const handleSortDropDown = (event) => {
+    const handleSortDropDown = (event) => {mvn 
         setSortRule(event.target.value);
         console.log(sortRule);
     };
@@ -369,7 +511,7 @@ export default function MovieList() {
                         overflowX: 'auto',
                         flexDirection: 'row'
                     }}>
-                        <MovieListTable data = {movies} handleAdd={handleAdd}/>
+                        <MovieListTable data = {movies} handleAdd={addToShoppingCart}/>
                     </Box>
                     <Box sx={{
                         display: 'flex',

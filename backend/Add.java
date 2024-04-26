@@ -65,7 +65,6 @@ public class Add extends HttpServlet {
         }
 
 
-
         try{
             Connection connection = dataSource.getConnection();
             //turn the parameters of the post request into a user class
