@@ -148,6 +148,8 @@ export default function ShoppingCart() {
         navigate('/paymentinfo');
     };
 
+    console.log("total " + total);
+
     return (
         <Box sx={{
             display: 'flex',
@@ -157,6 +159,7 @@ export default function ShoppingCart() {
         }}>
             <Navbar />
             <Background sx={{ justifyContent: 'center', alignItems: 'center'}}>
+
                 <ShoppingCartCard
                     data={cartData}
                     total={total}

@@ -36,16 +36,16 @@ export default function ShoppingCartList({ data, total, handleDelete, handleProc
     //     }
     // }
 
-    useEffect(() => {
-        let mounted = true;
-
-
-        // totalPrice();
-        console.log(`total : ${total}`);
-        return () => {
-            mounted = false;
-        }
-    }, []);
+    // useEffect(() => {
+    //     let mounted = true;
+    //
+    //
+    //     // totalPrice();
+    //     console.log(`total : ${total}`);
+    //     return () => {
+    //         mounted = false;
+    //     }
+    // }, []);
 
 
     const headerStyle = {
@@ -103,15 +103,18 @@ export default function ShoppingCartList({ data, total, handleDelete, handleProc
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
-                <Typography variant="h6" sx={{ marginRight: 2, color: 'primary.main', textDecoration: 'underline'}}>Total: {formatCurrency(total)}</Typography>
-                <Button
-                    variant="contained"
-                    sx={{ textTransform: 'none' }}
-                    onClick={handleProceedToPayment}
-                >
-                    Proceed to Payment
-                </Button>
+            <Box sx={{ width: '100%' }}>
+                {total !== undefined && (  // Check if total has a value
+                    <>
+                        <TableContainer component={Paper}>
+                            {/* ... rest of your code */}
+                        </TableContainer>
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
+                            <Typography variant="h6" sx={{ marginRight: 2, color: 'primary.main', textDecoration: 'underline' }}>Total: {formatCurrency(total)}</Typography>
+                            <Button variant="contained" sx={{ textTransform: 'none' }} onClick={handleProceedToPayment}>Proceed to Payment</Button>
+                        </Box>
+                    </>
+                )}
             </Box>
         </Box>
     );
