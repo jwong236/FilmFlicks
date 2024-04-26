@@ -131,40 +131,7 @@ export default function MovieList() {
     }
 
 
-    async function deleteFromCart(){
-        try {
-            const response = await fetch(`http://${HOST}:8080/fabFlix/delete`,{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ "movieTitle": "Bigfoot"}),
-                credentials: 'include'
-            }); // Replace totalPrice with confirmation when ready
-            if (!response.ok) {
-                console.error('response is not status 200');
-            }
 
-            console.log("DATA AS TEXT IN MOVIE LIST " + response.text);
-
-            if (response.status === 401){
-                console.log("REDIRECTION FROM MOVIE LIST");
-                navigate('/login')
-            }else{
-                console.log("no need to login");
-                if (response.status === 405){
-                    console.log("cant decrement 1 or movie doesnt exist");
-                }else if (response.status === 200){
-                    // const jsonData = await response.json();
-                    // console.log("response from add: ", jsonData);
-                    shoppingCart();
-                    totalPrice();
-                }
-            }
-        } catch (error) {
-            console.error('Error decreasing from cart: ', error);
-        }
-    }
     // const handleAdd = () => {
     //     addToCart();
     //     console.log("Add button pressed");

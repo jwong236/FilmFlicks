@@ -67,33 +67,39 @@ public class Delete extends HttpServlet {
         //containing email and password
         //set attribute movieMap : hashmap that contains movieTitle -> Movie Objects (price, quantity)
         String requestString = requestBody.toString();
-        System.out.println("request string " + requestString);
-        ObjectMapper objectMapper = new ObjectMapper();
-        MovieObject movieObject = objectMapper.readValue(requestString, MovieObject.class);
-
-        String title =  movieObject.getMovieTitle();
-        //get the movie title
-        //System.out.println("movieTitle " + title);
-
+        System.out.println(requestBody);
+        System.out.println("delete request string " + requestString);
+        String title = "";
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            DeleteObject deleteObject = objectMapper.readValue(requestString, DeleteObject.class);
+            title = deleteObject.getTitle();
+            // Other processing code
+        } catch (Exception e) {
+            // Handle any exceptions that occur during deserialization
+            e.printStackTrace();
+        }
 
         double price = 0.0;
         //get the session, check if it exists, if it is on this section it exists
         HttpSession session = request.getSession(false);
-
+        System.out.println("delete session check: " + session);
         //if the session exists, get the movieMap
         if (session != null){
             //System.out.println("session exists");
             HashMap<String, MovieSession> movieMap = (HashMap<String, MovieSession>) session.getAttribute("movieMap");
-
+            System.out.println("movie map in delete " + movieMap);
             //if a map exists already increase the quantity
             if (movieMap != null){
                 //System.out.println("map already exists");
                 //map exists but the title is in increase
+                System.out.println("does movie map contain this title : " + title + "result:  "  + movieMap.containsKey(title));
                 if (movieMap.containsKey(title)){
                     //System.out.println("quantity increase");
                     //deletes the key value pair associated with the movie title
+                    System.out.println("deleting this movie: " + title);
                     movieMap.remove(title);
-
+                    System.out.println("session check after deletion: " + request.getSession(false));
 
                     try{
                         //go into database and delete row with the movieId
@@ -114,7 +120,7 @@ public class Delete extends HttpServlet {
 
                             String deleteQuery = "DELETE FROM movie_prices WHERE movieId = ?";
 
-                            PreparedStatement deleteStatement = connection.prepareStatement(query);
+                            PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery);
 
                             deleteStatement.setString(1, movieId);
 

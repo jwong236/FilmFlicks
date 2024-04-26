@@ -16,35 +16,38 @@ import {
 
 const HOST = import.meta.env.VITE_HOST;
 
-export default function ShoppingCartList({ data, handleDelete, handleProceedToPayment}) {
+export default function ShoppingCartList({ data, total, handleDelete, handleProceedToPayment}) {
     const theme = useTheme();
-    const [total, setTotal] = useState(0);
+    // async function totalPrice() {
+    //     try {
+    //         console.log("attempting to get total price");
+    //         const response = await fetch(`http://${HOST}:8080/fabFlix/totalPrice`,{
+    //             credentials: 'include'
+    //         });
+    //         if (!response.ok) {
+    //             console.error('Response is not status 200');
+    //             return;
+    //         }
+    //         const data = await response.json();
+    //         console.log("TOTAL : " + data.total);
+    //         total = data.total;
+    //     } catch (error) {
+    //         console.error('Error Calculating Total Price: ', error);
+    //     }
+    // }
 
     useEffect(() => {
         let mounted = true;
-        async function totalPrice() {
-            try {
-                console.log("attempting to get total price");
-                const response = await fetch(`http://${HOST}:8080/fabFlix/totalPrice`,{
-                    credentials: 'include'
-                });
-                if (!response.ok) {
-                    console.error('Response is not status 200');
-                    return;
-                }
-                const data = await response.json();
-                console.log("TOTAL : " + data.total);
-                setTotal(data.total);
-            } catch (error) {
-                console.error('Error Calculating Total Price: ', error);
-            }
-        }
 
-        totalPrice();
+
+        // totalPrice();
+        console.log(`total : ${total}`);
         return () => {
             mounted = false;
         }
     }, []);
+
+
     const headerStyle = {
         color: 'white',
         backgroundColor: theme.palette.info.main
@@ -89,7 +92,9 @@ export default function ShoppingCartList({ data, handleDelete, handleProceedToPa
                                                 color: 'secondary.light'
                                             }
                                         }}
-                                        onClick={() => handleDelete(index)}>
+                                        onClick={() => {
+                                            handleDelete(movie, index);
+                                        }}>
                                         Delete
                                     </Button>
                                 </TableCell>
