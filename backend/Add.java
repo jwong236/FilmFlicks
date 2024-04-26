@@ -245,6 +245,12 @@ public class Add extends HttpServlet {
                 }
 
                 out.flush();
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Error closing connection!");
+                }
             }
         }catch (Exception e) {
 

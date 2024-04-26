@@ -104,7 +104,7 @@ public class HomepageGenres extends HttpServlet {
             System.out.println("genre list" + genreList);
             out.print(genreJson);
             response.setStatus(HttpServletResponse.SC_OK);
-
+            connection.close();
         } catch (Exception e) {
 
             request.getServletContext().log("Error: ", e);

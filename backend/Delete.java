@@ -133,7 +133,7 @@ public class Delete extends HttpServlet {
                             }
 
                         }
-
+                        connection.close();
                     }catch(Exception e){
                         e.printStackTrace();
                     }
@@ -159,7 +159,6 @@ public class Delete extends HttpServlet {
             System.out.println("NOT AUTHENTICATED : ADD.JAVA");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
-
 
 
 
