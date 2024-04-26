@@ -25,9 +25,32 @@ export default function ShoppingCart() {
                 }
 
                 const data = await response.json();
-                console.log(data);
+                let movieArr = [];
+
+                for (const movieTitle in data) {
+                    const movieInfo = data[movieTitle];
+
+                    const tempMovieObj = {
+                        title : movieTitle,
+                        quantity : movieInfo.quantity,
+                        price: movieInfo.price,
+                        totalPrice: movieInfo.totalPrice,
+                        id : movieInfo.id
+                    };
+
+                    console.log("Movie Title:", tempMovieObj.title);
+                    console.log("Quantity:", tempMovieObj.quantity);
+                    console.log("Total Price:", tempMovieObj.totalPrice);
+                    console.log("Price:", tempMovieObj.price);
+                    console.log("ID:", tempMovieObj.id);
+                    console.log("----------");
+                    movieArr.push(tempMovieObj)
+                }
+
+
                 if (mounted) {
-                    setCartData(data);
+                    console.log("movie arr: " + movieArr);
+                    setCartData(movieArr);
                 }
             } catch (error) {
                 console.error('Error fetching data: ', error);

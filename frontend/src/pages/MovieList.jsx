@@ -70,7 +70,7 @@ export default function MovieList() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ "movieTitle": "Bigfoot"}),
+                body: JSON.stringify({ "movieTitle": movie.title}),
                 credentials: 'include'
             }); // Replace totalPrice with confirmation when ready
             if (!response.ok) {
