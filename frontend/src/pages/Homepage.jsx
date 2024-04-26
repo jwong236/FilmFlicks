@@ -18,7 +18,7 @@ export default function Homepage() {
     const [character, setCharacter] = useState("");
     const navigate = useNavigate();
     const theme = useTheme();
-    const [genres, setGenres] = useState([]);
+    const [genres, setGenres] = useState(["loading..."]);
     const handleSearch = () => {
         if (!title && !year && !director && !star) {
             console.log('All search fields are empty. No action taken.');

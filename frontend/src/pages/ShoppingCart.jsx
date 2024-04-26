@@ -123,13 +123,6 @@ export default function ShoppingCart() {
     }
 
 
-    // const handleDelete = (movie,index) => {
-    //     const newCartData = cartData.filter((item, i) => i !== index);
-    //     deleteFromCart(movie);
-    //     totalPrice();
-    //     setCartData(newCartData);
-    //     console.log('Item deleted at index:', index);
-    // };
 
     const handleDelete = async (movie, index) => {
         try {
@@ -148,13 +141,117 @@ export default function ShoppingCart() {
         navigate('/paymentinfo');
     };
 
+    async function addToShoppingCart(movie){
+        try {
+            console.log("the movie that was added is : " + movie.title);
+            const response = await fetch(`http://${HOST}:8080/fabFlix/add`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ "movieTitle": movie.title}),
+                credentials: 'include'
+            }); // Replace totalPrice with confirmation when ready
+            if (!response.ok) {
+                console.error('response is not status 200');
+            }
 
-    const handleIncrementQuantity = () => {
+            console.log("DATA AS TEXT IN MOVIE LIST " + response.text);
+
+            if (response.status === 401){
+                console.log("REDIRECTION FROM MOVIE LIST");
+                navigate('/login')
+            }else{
+                // const jsonData = await response.json();
+                // console.log("no need to login");
+                // console.log("response from add: ", jsonData);
+                console.log("succesfully incremented movie");
+            }
+        } catch (error) {
+            console.error('Error adding into cart: ', error);
+        }
+    }
+
+
+    const handleIncrementQuantity = async (movie, index) => {
         console.log('Incremented button pressed:');
+        try {
+            // const newCartData = cartData.((item, i) => i !== index);
+            const newCartData = cartData.map((item, i) => {
+                if (i === index) {
+                    return { ...item, quantity: item.quantity + 1,  totalPrice: (item.totalPrice + item.price)}; // Create a new object with updated quantity
+                }
+                return item; // Keep other items unchanged
+            });
+
+            await addToShoppingCart(movie);
+            await totalPrice();
+            setCartData(newCartData);
+            console.log('Item added at index:', index);
+        } catch (error) {
+            console.error('Error handling incrementing: ', error);
+        }
     };
-    const handleDecrementQuantity = () => {
+    // const handleDecrementQuantity = () => {
+    //     console.log('Decrement button pressed:');
+    // };
+
+    async function subtractFromCart(movie){
+        try {
+            const response = await fetch(`http://${HOST}:8080/fabFlix/subtract`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(movie),
+                credentials: 'include'
+            }); // Replace totalPrice with confirmation when ready
+            if (!response.ok) {
+                console.error('response is not status 200');
+            }
+
+            console.log("DATA AS TEXT IN MOVIE LIST " + response.text);
+
+            if (response.status === 401){
+                console.log("REDIRECTION FROM MOVIE LIST");
+                navigate('/login')
+            }else{
+                console.log("no need to login");
+                if (response.status === 405){
+                    console.log("cant decrement 1 or movie doesnt exist");
+                }else if (response.status === 200){
+                    // const jsonData = await response.json();
+                    //console.log("response from add: ", jsonData);
+                    // shoppingCart();
+                    // totalPrice();
+                    console.log("successfully decremented movie from cart");
+                }
+            }
+        } catch (error) {
+            console.error('Error decreasing from cart: ', error);
+        }
+    }
+
+    const handleDecrementQuantity = async (movie, index) => {
         console.log('Decrement button pressed:');
+        try {
+            // const newCartData = cartData.filter((item, i) => i !== index);
+            const newCartData = cartData.map((item, i) => {
+                if (i === index) {
+                    return { ...item, quantity: item.quantity - 1, totalPrice: (item.totalPrice - item.price)};
+                }
+                return item;
+            });
+            await subtractFromCart(movie);
+            await totalPrice();
+            setCartData(newCartData);
+            console.log('Item added at index:', index);
+        } catch (error) {
+            console.error('Error handling decrementing: ', error);
+        }
     };
+
+
 
     return (
         <Box sx={{
