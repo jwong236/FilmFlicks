@@ -3,10 +3,14 @@ import { Link } from 'react-router-dom';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, useTheme
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function MovieListTable({ data, handleAdd }) {
     const theme = useTheme();
-
+    const navigate = useNavigate();
+    const handleGenreClick = (genre) => {
+        navigate('/movielist', { state: { genre } });
+    };
     const headerStyle = {
         color: 'white'
     };
@@ -35,7 +39,19 @@ export default function MovieListTable({ data, handleAdd }) {
                             </TableCell>
                             <TableCell align="right">{movie.year}</TableCell>
                             <TableCell align="right">{movie.director}</TableCell>
-                            <TableCell align="right">{movie.genres.join(', ')}</TableCell>
+                            <TableCell align="right">
+                                {movie.genres.map((genre, index) => (
+                                    <React.Fragment key={index}>
+                                        <span
+                                            onClick={() => handleGenreClick(genre)}
+                                            style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
+                                        >
+                                            {genre}
+                                        </span>
+                                        {index < movie.genres.length - 1 ? ', ' : ''}
+                                    </React.Fragment>
+                                ))}
+                            </TableCell>
                             <TableCell align="right">
                                 {movie.stars.map((star, idx) => (
                                     <React.Fragment key={idx}>
