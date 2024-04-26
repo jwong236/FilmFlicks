@@ -148,7 +148,16 @@ export default function ShoppingCart() {
         navigate('/paymentinfo');
     };
 
+<<<<<<< HEAD
     console.log("total " + total);
+=======
+    const handleIncrementQuantity = () => {
+        console.log('Incremented button pressed:');
+    };
+    const handleDecrementQuantity = () => {
+        console.log('Decrement button pressed:');
+    };
+>>>>>>> c424c04a0daf22ae05c0cf0464e9025d13b80ad7
 
     return (
         <Box sx={{
@@ -165,6 +174,8 @@ export default function ShoppingCart() {
                     total={total}
                     handleDelete={handleDelete}
                     handleProceedToPayment={handleProceedToPayment}
+                    handleIncrementQuantity={handleIncrementQuantity}
+                    handleDecrementQuantity={handleDecrementQuantity}
                 />
             </Background>
         </Box>

@@ -16,7 +16,8 @@ import {
 
 const HOST = import.meta.env.VITE_HOST;
 
-export default function ShoppingCartList({ data, total, handleDelete, handleProceedToPayment}) {
+
+export default function ShoppingCartList({ data, total, handleDelete, handleProceedToPayment, handleIncrementQuantity, handleDecrementQuantity}) {
     const theme = useTheme();
     // async function totalPrice() {
     //     try {
@@ -79,7 +80,36 @@ export default function ShoppingCartList({ data, total, handleDelete, handleProc
                         {data.map((movie, index) => (
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row">{movie.title}</TableCell>
-                                <TableCell align="right">{movie.quantity}</TableCell>
+                                <TableCell align="right" sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                    <Button
+                                        sx={{
+                                            backgroundColor: 'primary.main',
+                                            color: 'secondary.light',
+                                            height: '1.5rem',
+                                            '&:hover': {
+                                                backgroundColor: 'primary.dark',
+                                                color: 'secondary.light'
+                                            }
+                                        }}
+                                        onClick={() => handleDecrementQuantity(index)}>
+                                        -
+                                    </Button>
+                                    {movie.quantity}
+                                    <Button
+                                        sx={{
+                                            backgroundColor: 'primary.main',
+                                            color: 'secondary.light',
+                                            height: '1.5rem',
+
+                                            '&:hover': {
+                                                backgroundColor: 'primary.dark',
+                                                color: 'secondary.light'
+                                            }
+                                        }}
+                                        onClick={() => handleIncrementQuantity(index)}>
+                                        +
+                                    </Button>
+                                </TableCell>
                                 <TableCell align="right">{formatCurrency(movie.price)}</TableCell>
                                 <TableCell align="right">{formatCurrency(movie.totalPrice)}</TableCell>
                                 <TableCell align="right">
