@@ -10,7 +10,7 @@ const HOST = import.meta.env.VITE_HOST;
 
 export default function ShoppingCart() {
     const [cartData, setCartData] = useState([]);
-    const [total, setTotal] = useState(1);
+    const [total, setTotal] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
