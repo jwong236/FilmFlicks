@@ -23,6 +23,13 @@ export default function ShoppingCart() {
         navigate('/paymentinfo');
     };
 
+    const handleIncrementQuantity = () => {
+        console.log('Incremented button pressed:');
+    };
+    const handleDecrementQuantity = () => {
+        console.log('Decrement button pressed:');
+    };
+
     return (
         <Box sx={{
             display: 'flex',
@@ -36,6 +43,8 @@ export default function ShoppingCart() {
                     data={cartData}
                     handleDelete={handleDelete}
                     handleProceedToPayment={handleProceedToPayment}
+                    handleIncrementQuantity={handleIncrementQuantity}
+                    handleDecrementQuantity={handleDecrementQuantity}
                 />
             </Background>
         </Box>

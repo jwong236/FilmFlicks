@@ -2,7 +2,7 @@ import React from 'react';
 import {Box, Typography} from "@mui/material";
 import ShoppingCartList from "../components/ShoppingCartList";
 
-export default function ShoppingCartCard({ sx, data, handleDelete, handleProceedToPayment}) {
+export default function ShoppingCartCard({ sx, data, handleDelete, handleProceedToPayment, handleIncrementQuantity, handleDecrementQuantity}) {
     return (
         <Box sx={{
             display: 'flex',
@@ -24,6 +24,8 @@ export default function ShoppingCartCard({ sx, data, handleDelete, handleProceed
                 data={data}
                 handleDelete={handleDelete}
                 handleProceedToPayment={handleProceedToPayment}
+                handleIncrementQuantity={handleIncrementQuantity}
+                handleDecrementQuantity={handleDecrementQuantity}
             />
         </Box>
     );
