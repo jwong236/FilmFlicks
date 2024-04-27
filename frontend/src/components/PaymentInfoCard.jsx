@@ -8,6 +8,14 @@ export default function PaymentInfoCard({ firstName, lastName, creditCardNumber,
         width: '100%',
     };
 
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(amount);
+    };
+
+
     return (
         <Box sx={{
             display: 'flex',
@@ -51,7 +59,7 @@ export default function PaymentInfoCard({ firstName, lastName, creditCardNumber,
                 InputLabelProps={{ shrink: true }}
             />
             <Typography sx={{ alignSelf: 'flex-end', marginTop: 'auto', marginBottom: 2 }}>
-                Total: ${total}
+                Total: {formatCurrency(total)}
             </Typography>
             <Button
                 onClick={handlePlaceOrder}

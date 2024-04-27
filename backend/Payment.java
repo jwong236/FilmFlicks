@@ -74,8 +74,8 @@ public class Payment extends HttpServlet {
         //containing email and password
         String requestString = requestBody.toString();
         System.out.println("request string " + requestString);
-        ObjectMapper objectMapper = new ObjectMapper();
-
+        ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+        objectMapper.findAndRegisterModules();
         CreditCard creditCard = null;
 
         try{
@@ -112,7 +112,11 @@ public class Payment extends HttpServlet {
             preparedStatement.setString(2, lastName);
             preparedStatement.setString(3, creditCardNumber);
 
-            preparedStatement.setString(4, expirationDate);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = dateFormat.parse(expirationDate);
+            preparedStatement.setDate(4, new java.sql.Date(parsedDate.getTime()));
+
+//            preparedStatement.setString(4, expirationDate);
 
 
             // execute query
@@ -143,7 +147,6 @@ public class Payment extends HttpServlet {
                     //iterate throughout the session and get the items in the shopping cart
                     // and add them individually into the sales table
                     HashMap<String, MovieSession> movieMap = (HashMap<String, MovieSession>) session.getAttribute("movieMap");
-
                     //map has to exist for the shopping cart to be added into the sales table
                     if (movieMap != null){
                         System.out.println("INSERTING ALL ITEMS IN SHOPPING CART INTO THE DB");
@@ -176,7 +179,11 @@ public class Payment extends HttpServlet {
                             }
 
                         }
-
+                        System.out.println("payment movie map : " + movieMap);
+                        String jsonResponse = objectMapper.writeValueAsString(movieMap);
+                        System.out.println("json response from payment : " + jsonResponse);
+                        out.write(jsonResponse);
+                        out.flush();
 
 
                         System.out.println("before remove " + session.getAttribute("movieMap"));
@@ -189,11 +196,14 @@ public class Payment extends HttpServlet {
                         System.out.println("no movie map exists : no inserting into the sales table");
                     }
 
+                }else{
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    System.out.println("user is not logged in for the payment");
                 }
 
                 response.setStatus(HttpServletResponse.SC_OK);
             }else{
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
                 out.print("credit card info is invalid");
             }
 
