@@ -122,7 +122,7 @@ public class Search extends HttpServlet {
                 "    m.year AS year, " +
                 "    m.director AS director, " +
                 "    GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS Genres, " +
-                "    GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS Stars, " +
+                "    GROUP_CONCAT(DISTINCT s.name ORDER BY movie_count DESC, s.name SEPARATOR ', ') AS Stars, " +
                 "    r.rating AS rating, " +
                 "    r.numVotes AS numvotes " +
                 "FROM " +
@@ -137,11 +137,17 @@ public class Search extends HttpServlet {
                 "    stars s ON s.id = sm.starId " +
                 "LEFT JOIN " +
                 "    ratings r ON m.id = r.movieId " +
-                "WHERE " + whereClause +
-                " GROUP BY " +
+                "LEFT JOIN ( " +
+                "    SELECT starId, COUNT(movieId) AS movie_count " +
+                "    FROM stars_in_movies " +
+                "    GROUP BY starId " +
+                ") AS movie_counts ON s.id = movie_counts.starId " +
+                "WHERE " + whereClause + " " +
+                "GROUP BY " +
                 "    m.id, m.title, m.year, m.director, r.rating, r.numVotes " +
-                orderByClause +
-                " LIMIT " + pageSize + " OFFSET " + offset + ";";
+                orderByClause + " " +
+                "LIMIT " + pageSize + " OFFSET " + offset + ";";
+
     }
     private String parseSortRule(String sortRule) {
         if (sortRule == null || sortRule.isEmpty()) return ""; // Default sort if none provided

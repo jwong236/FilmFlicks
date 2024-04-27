@@ -1,6 +1,8 @@
 import {Box, Card, CardHeader, CardContent, Chip, Typography, Link as MuiLink} from '@mui/material'
 import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 export default function MovieCard(props) { // title, year, director, genres, stars, rating
+    const navigate = useNavigate();
     const bull = (
         <Box
             component="span"
@@ -9,6 +11,9 @@ export default function MovieCard(props) { // title, year, director, genres, sta
             •
         </Box>
     );
+    const handleGenreClick = (genre) => {
+        navigate('/movielist', { state: { genre } });
+    };
 
     return (
         <Card sx={{ width: '100%', height: '80vh', backgroundColor: 'secondary.main', borderRadius: '1rem', display: 'flex', flexDirection: 'column',  justifyContent: 'flex-end'}}>
@@ -88,7 +93,14 @@ export default function MovieCard(props) { // title, year, director, genres, sta
                         <Chip
                             key={index}
                             label={`#${genre}`}
-                            sx={{ color: 'primary.main', backgroundColor: 'primary.light', marginRight: '8px', marginBottom: '8px' }}
+                            onClick={() => handleGenreClick(genre)}
+                            sx={{
+                                color: 'primary.main',
+                                backgroundColor: 'primary.light',
+                                marginRight: '8px',
+                                marginBottom: '8px',
+                                cursor: 'pointer'
+                            }}
                         />
                     ))}
                 </Box>
