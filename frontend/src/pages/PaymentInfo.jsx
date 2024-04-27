@@ -18,54 +18,40 @@ export default function PaymentInfo() {
     const [total, setTotal] = useState(0);
 
     const handlePlaceOrder = async () => {
-        console.log("Order Details:");
-        console.log("First Name:", firstName);
-        console.log("Last Name:", lastName);
-        console.log("Credit Card Number:", creditCardNumber);
-        console.log("Expiration Date:", expirationDate);
-        console.log("Total:", total);
         try {
-            const response = await fetch(`http://${HOST}:8080/fabFlix/payment`,{
+            const response = await fetch(`http://${HOST}:8080/fabFlix/payment`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     firstName: firstName,
-                    lastName : lastName,
+                    lastName: lastName,
                     creditCardNumber: creditCardNumber,
                     expirationDate: expirationDate
                 }),
                 credentials: 'include'
-            }); // Replace totalPrice with confirmation when ready
+            });
+
             if (!response.ok) {
-                console.error('response is not status 200');
-            }
-
-            console.log("DATA AS TEXT IN MOVIE LIST " + response.text);
-
-            if (response.status === 401){
-                console.log("REDIRECTION FROM MOVIE LIST");
-                navigate('/login')
-            }else{
-                console.log("no need to login");
-                if (response.status === 406){
-                    console.log("wrong credit card info");
-                }else if (response.status === 200){
-                    const jsonData = await response.json();
-                    console.log("response from paying: ", jsonData);
-
-                    // shoppingCart();
-                    // totalPrice();
-                    console.log("payment success");
-                    navigate('/confirmation', { state: { orderDetails: jsonData} });
+                const errorText = await response.text();
+                console.error('Error response status:', response.status, 'Error message:', errorText);
+                if (response.status === 401) {
+                    console.log("User not logged in, redirecting to login page.");
+                    navigate('/login');
+                } else if (response.status === 406) {
+                    console.error("Invalid credit card information.");
                 }
+                return;
             }
+            const jsonData = await response.json();
+            console.log("Payment successful, received response:", jsonData);
+            navigate('/confirmation', { state: { orderDetails: jsonData } });
         } catch (error) {
-            console.error('Error checking out cart: ', error);
+            console.error('Failed to process payment:', error);
         }
-
     };
+
 
     async function totalPrice() {
         try {

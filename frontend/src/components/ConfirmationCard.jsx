@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 export default function ConfirmationCard({ data, sx }) {
     const navigate = useNavigate();
 
+    const grandTotal = data.reduce((acc, item) => acc + item.total, 0);
+
     const handleBackClick = () => {
         navigate('/');
     };
@@ -15,7 +17,7 @@ export default function ConfirmationCard({ data, sx }) {
             display: 'flex',
             flexDirection: 'column',
             backgroundColor: 'secondary.light',
-            color: 'secondary.light',
+            color: 'secondary.contrastText',
             borderRadius: '15px',
             padding: '1rem 3rem 1rem 3rem',
             alignItems: 'center',
@@ -29,6 +31,9 @@ export default function ConfirmationCard({ data, sx }) {
                 Confirmation
             </Typography>
             <ConfirmationCardTable data={data} />
+            <Typography variant="h6" sx={{ marginY: '20px', fontWeight: 'bold', color: 'primary.main' }}>
+                Grand Total: ${grandTotal.toFixed(2)}
+            </Typography>
             <Button
                 onClick={handleBackClick}
                 sx={{

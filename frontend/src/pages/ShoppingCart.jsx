@@ -138,8 +138,9 @@ export default function ShoppingCart() {
 
     const handleProceedToPayment = () => {
         console.log('Proceeding to payment with items:', cartData);
-        navigate('/paymentinfo');
+        navigate('/paymentinfo', { state: { cartData } });
     };
+
 
     async function addToShoppingCart(movie){
         try {
