@@ -70,7 +70,7 @@ public class BrowseCharacter extends HttpServlet {
         String query = character.equals("*") ?
                 "SELECT m.title AS Title, m.year AS Year, m.director AS Director, " +
                         "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS Genres, " +
-                        "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS Stars, " +
+                        "GROUP_CONCAT(DISTINCT s.name ORDER BY movie_count DESC, s.name SEPARATOR ', ') AS Stars, " +
                         "r.rating AS Rating, r.numVotes AS NumVotes " +
                         "FROM movies m " +
                         "LEFT JOIN genres_in_movies gm ON m.id = gm.movieId " +
@@ -78,11 +78,16 @@ public class BrowseCharacter extends HttpServlet {
                         "LEFT JOIN stars_in_movies sm ON m.id = sm.movieId " +
                         "LEFT JOIN stars s ON sm.starId = s.id " +
                         "LEFT JOIN ratings r ON m.id = r.movieId " +
+                        "LEFT JOIN ( " +
+                        "    SELECT starId, COUNT(movieId) AS movie_count " +
+                        "    FROM stars_in_movies " +
+                        "    GROUP BY starId " +
+                        ") AS movie_counts ON s.id = movie_counts.starId " +
                         "WHERE m.title REGEXP '^[^a-zA-Z0-9]' " +
                         "GROUP BY m.id, m.title, m.year, m.director, r.rating, r.numVotes " + orderByClause + " LIMIT ? OFFSET ?" :
                 "SELECT m.title AS Title, m.year AS Year, m.director AS Director, " +
                         "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS Genres, " +
-                        "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS Stars, " +
+                        "GROUP_CONCAT(DISTINCT s.name ORDER BY movie_count DESC, s.name SEPARATOR ', ') AS Stars, " +
                         "r.rating AS Rating, r.numVotes AS NumVotes " +
                         "FROM movies m " +
                         "LEFT JOIN genres_in_movies gm ON m.id = gm.movieId " +
@@ -90,8 +95,14 @@ public class BrowseCharacter extends HttpServlet {
                         "LEFT JOIN stars_in_movies sm ON m.id = sm.movieId " +
                         "LEFT JOIN stars s ON sm.starId = s.id " +
                         "LEFT JOIN ratings r ON m.id = r.movieId " +
+                        "LEFT JOIN ( " +
+                        "    SELECT starId, COUNT(movieId) AS movie_count " +
+                        "    FROM stars_in_movies " +
+                        "    GROUP BY starId " +
+                        ") AS movie_counts ON s.id = movie_counts.starId " +
                         "WHERE m.title LIKE CONCAT(?, '%') " +
                         "GROUP BY m.id, m.title, m.year, m.director, r.rating, r.numVotes " + orderByClause + " LIMIT ? OFFSET ?";
+
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {

@@ -60,7 +60,13 @@ public class SingleStar extends HttpServlet {
 
             Connection connection = dataSource.getConnection();
             // prepare query
-            String query =  "SELECT s.name,  s.birthYear, GROUP_CONCAT(m.title SEPARATOR ', ') AS movieTitles FROM stars s JOIN stars_in_movies sm ON sm.starId = s.id JOIN movies m ON m.id = sm.movieId WHERE s.name= ? GROUP BY s.name, s.birthYear" ;
+            String query = "SELECT s.name, s.birthYear, " +
+                    "GROUP_CONCAT(m.title ORDER BY m.year DESC, m.title SEPARATOR ', ') AS movieTitles " +
+                    "FROM stars s " +
+                    "JOIN stars_in_movies sm ON sm.starId = s.id " +
+                    "JOIN movies m ON m.id = sm.movieId " +
+                    "WHERE s.name = ? " +
+                    "GROUP BY s.name, s.birthYear";
 
 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
