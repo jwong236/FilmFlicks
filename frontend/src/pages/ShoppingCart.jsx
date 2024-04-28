@@ -20,40 +20,46 @@ export default function ShoppingCart() {
                 const response = await fetch(`http://${HOST}:8080/fabFlix/shoppingCart`,{
                     credentials: 'include'
                 });
-                if (response.status !== 200) {
-                    console.error('Response is not status 200');
-                    return;
+
+                if (response.status === 401) {
+                    console.log("have to login to access shopping cart");
+                    navigate('/login');
+                }else{
+                    const data = await response.json();
+                    let movieArr = [];
+
+                    for (const movieTitle in data) {
+                        const movieInfo = data[movieTitle];
+
+                        const tempMovieObj = {
+                            title : movieTitle,
+                            quantity : movieInfo.quantity,
+                            price: movieInfo.price,
+                            totalPrice: movieInfo.totalPrice,
+                            id : movieInfo.id
+                        };
+
+                        console.log("Movie Title:", tempMovieObj.title);
+                        console.log("Quantity:", tempMovieObj.quantity);
+                        console.log("Total Price:", tempMovieObj.totalPrice);
+                        console.log("Price:", tempMovieObj.price);
+                        console.log("ID:", tempMovieObj.id);
+                        console.log("----------");
+                        movieArr.push(tempMovieObj)
+                    }
+
+
+                    if (mounted) {
+                        console.log("movie arr: " + movieArr);
+                        await totalPrice();
+                        setCartData(movieArr);
+                    }
                 }
 
-                const data = await response.json();
-                let movieArr = [];
-
-                for (const movieTitle in data) {
-                    const movieInfo = data[movieTitle];
-
-                    const tempMovieObj = {
-                        title : movieTitle,
-                        quantity : movieInfo.quantity,
-                        price: movieInfo.price,
-                        totalPrice: movieInfo.totalPrice,
-                        id : movieInfo.id
-                    };
-
-                    console.log("Movie Title:", tempMovieObj.title);
-                    console.log("Quantity:", tempMovieObj.quantity);
-                    console.log("Total Price:", tempMovieObj.totalPrice);
-                    console.log("Price:", tempMovieObj.price);
-                    console.log("ID:", tempMovieObj.id);
-                    console.log("----------");
-                    movieArr.push(tempMovieObj)
-                }
 
 
-                if (mounted) {
-                    console.log("movie arr: " + movieArr);
-                    await totalPrice();
-                    setCartData(movieArr);
-                }
+
+
             } catch (error) {
                 console.error('Error fetching data: ', error);
             }
@@ -204,7 +210,7 @@ export default function ShoppingCart() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(movie),
+                body: JSON.stringify({"movieTitle": movie.title}),
                 credentials: 'include'
             }); // Replace totalPrice with confirmation when ready
             if (!response.ok) {

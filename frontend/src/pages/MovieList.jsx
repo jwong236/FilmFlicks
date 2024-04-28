@@ -70,22 +70,14 @@ export default function MovieList() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ "movieTitle": movie.title}),
-                credentials: 'include'
+                credentials: 'include',
+                body: JSON.stringify({ "movieTitle": movie.title})
             }); // Replace totalPrice with confirmation when ready
-            if (!response.ok) {
-                console.error('response is not status 200');
-            }
-
-            console.log("DATA AS TEXT IN MOVIE LIST " + response.text);
 
             if (response.status === 401){
                 console.log("REDIRECTION FROM MOVIE LIST");
                 navigate('/login')
             }else{
-                // const jsonData = await response.json();
-                // console.log("no need to login");
-                // console.log("response from add: ", jsonData);
                 shoppingCart();
                 totalPrice();
 
@@ -119,8 +111,6 @@ export default function MovieList() {
                 if (response.status === 405){
                     console.log("cant decrement 1 or movie doesnt exist");
                 }else if (response.status === 200){
-                    // const jsonData = await response.json();
-                    // console.log("response from add: ", jsonData);
                     shoppingCart();
                     totalPrice();
                 }
@@ -131,11 +121,6 @@ export default function MovieList() {
     }
 
 
-
-    // const handleAdd = () => {
-    //     addToCart();
-    //     console.log("Add button pressed");
-    // }
     const handleSearch = () => {
         if (!title && !year && !director && !star) {
             console.log('All search fields are empty. No action taken.');
@@ -149,7 +134,7 @@ export default function MovieList() {
         console.log(pageSize);
     };
 
-    const handleSortDropDown = (event) => {mvn 
+    const handleSortDropDown = (event) => {
         setSortRule(event.target.value);
         console.log(sortRule);
     };
@@ -195,96 +180,133 @@ export default function MovieList() {
             try {
                 let tempParams = {...params, "endpoint" : endpointCategory};
                 console.log(tempParams);
-                const prevResponse = await axios.get(`http://${HOST}:8080/fabFlix/previousGetter`,{
-                    withCredentials: true,
-                    params: tempParams
-                });
-                // const prevResponse = await fetch(`http://${HOST}:8080/fabFlix/previousGetter`,{
-                //     credentials: 'include',
-                //     params: tempParams
-                // });
-                console.log("status of response: " + prevResponse.status);
-                //if it is 201 or 100 then use the newly updated params
-                if (prevResponse.status === 201 ){
-                    console.log("using the current params");
-                    console.log("endpoint " + endpoint);
-                    console.log("params ", params);
-                    const response = await axios.get(endpoint, { params });
-                    console.log("Received:", response.data);
-                    setMovies(response.data);
-                }else if (prevResponse.status === 200){
-                    console.log("going to use prev and checking for the prev data");
-                    //use the previous given to by prevResponse
-                    // const prevData = await prevResponse.text;
-                    const prevData = await prevResponse.data;
-                    console.log("prev data ", prevData);
 
-                    const prevEndpoint = Object.keys(prevData)
-                    console.log("prev data endpoint " + prevEndpoint[0]);
-
-                    const prevParams = {};
-                    let browseEndpoint = "";
-
-                    if (prevEndpoint[0].length > 8){
-                        console.log("ignoring the browse: " + prevEndpoint[0].slice(6, prevEndpoint[0].length));
-                    }
-                    if (prevEndpoint[0] === "search"){
-                        console.log("end point is search");
-                        for (const key in prevData.search) {
-                            prevParams[key] = prevData.search[key];
-                        }
-                    }
-                    else if (prevEndpoint[0].slice(6, prevEndpoint[0].length) === "genre"){
-                        console.log("end point is browse/genre");
-                        for (const key in prevData.browsegenre) {
-                            prevParams[key] = prevData.browsegenre[key];
-                        }
-                        browseEndpoint = "genre"
-                    }else if (prevEndpoint[0].slice(6, prevEndpoint[0].length) === "character"){
-                        console.log("end point is browse/character ");
-                        for (const key in prevData.browsecharacter) {
-                            prevParams[key] = prevData.browsecharacter[key];
-                        }
-                        browseEndpoint = "character"
-                    }
+                try{
+                    const prevResponse = await axios.get(`http://${HOST}:8080/fabFlix/previousGetter`,{
+                        withCredentials: true,
+                        params: tempParams
+                    });
 
 
-                    console.log("prev params ", prevParams);
-
-                    if (prevData && prevEndpoint && prevParams) {
-                        //generating the old end point with the params to get prev data
-                        let endpointUrl = "";
-
-                        //if the endpoint is browse, the end point would have been assigned based
-                        //on the get request to previousGetter
-                        if (browseEndpoint.length >0){
-                            //console.log("browse endpt: " + browseEndpoint);
-                            endpointUrl = `http://${HOST}:8080/fabFlix/browse/${browseEndpoint}`;
-                        }else{
-                            endpointUrl = `http://${HOST}:8080/fabFlix/${prevEndpoint}`;
-                        }
-
-                        console.log("endpoint url " + endpointUrl);
-
-
-                        try {
-                            const response = await axios.get(endpointUrl,{
-                                params: prevParams
+                    console.log("status of response: " + prevResponse.status);
+                    //if it is 201 or 100 then use the newly updated params
+                    if (prevResponse.status === 201 ){
+                        console.log("endpoint " + endpoint);
+                        console.log("params ", params);
+                        try{
+                            const response = await axios.get(endpoint, {
+                                params: params,
+                                withCredentials: true
                             });
                             console.log("Received:", response.data);
-
                             setMovies(response.data);
-                        } catch (error) {
-                            console.error("Failed to fetch movie data:", error);
+                        }catch(error){
+                            if (error.response.status === 401){
+                                console.log("Unauthorized access: Redirecting to login page");
+                                navigate('/login'); // Redirect on specific status code (401)
+                            } else {
+                                console.error("Error fetching movie list:", error); // Log other errors
+                            }
                         }
-                    } else {
-                        console.log("Previous data not available or invalid");
-                        const oldResponse = await axios.get(endpoint, { params });
-                        setMovies(oldResponse.data);
+                    }else if (prevResponse.status === 200){
+                        console.log("going to use prev and checking for the prev data");
+                        //use the previous given to by prevResponse
+                        const prevData = await prevResponse.data;
+                        console.log("prev data ", prevData);
+
+                        const prevEndpoint = Object.keys(prevData)
+                        console.log("prev data endpoint " + prevEndpoint[0]);
+
+                        const prevParams = {};
+                        let browseEndpoint = "";
+
+                        if (prevEndpoint[0].length > 8){
+                            console.log("ignoring the browse: " + prevEndpoint[0].slice(6, prevEndpoint[0].length));
+                        }
+                        if (prevEndpoint[0] === "search"){
+                            console.log("end point is search");
+                            for (const key in prevData.search) {
+                                prevParams[key] = prevData.search[key];
+                            }
+                        }
+                        else if (prevEndpoint[0].slice(6, prevEndpoint[0].length) === "genre"){
+                            console.log("end point is browse/genre");
+                            for (const key in prevData.browsegenre) {
+                                prevParams[key] = prevData.browsegenre[key];
+                            }
+                            browseEndpoint = "genre"
+                        }else if (prevEndpoint[0].slice(6, prevEndpoint[0].length) === "character"){
+                            console.log("end point is browse/character ");
+                            for (const key in prevData.browsecharacter) {
+                                prevParams[key] = prevData.browsecharacter[key];
+                            }
+                            browseEndpoint = "character"
+                        }
+
+
+                        console.log("prev params ", prevParams);
+
+                        if (prevData && prevEndpoint && prevParams) {
+                            //generating the old end point with the params to get prev data
+                            let endpointUrl = "";
+
+                            //if the endpoint is browse, the end point would have been assigned based
+                            //on the get request to previousGetter
+                            if (browseEndpoint.length >0){
+
+                                endpointUrl = `http://${HOST}:8080/fabFlix/browse/${browseEndpoint}`;
+                            }else{
+                                endpointUrl = `http://${HOST}:8080/fabFlix/${prevEndpoint}`;
+                            }
+
+                            console.log("endpoint url " + endpointUrl);
+
+
+                            try {
+                                const response = await axios.get(endpointUrl,{
+                                    params: prevParams,
+                                    withCredentials: true
+                                });
+                                console.log("Received:", response.data);
+
+                                setMovies(response.data);
+                            } catch (error) {
+                                if (error.response.status === 401){
+                                    console.log("Unauthorized access: Redirecting to login page");
+                                    navigate('/login'); // Redirect on specific status code (401)
+                                } else {
+                                    console.error("Error fetching movie list:", error); // Log other errors
+                                }                          }
+                        } else {
+                            console.log("Previous data not available or invalid");
+                            try{
+                                const oldResponse = await axios.get(endpoint, {
+                                    params: params,
+                                    withCredentials: true
+                                });
+                                setMovies(oldResponse.data);
+                            }catch(error){
+                                if (error.response.status === 401){
+                                    console.log("Unauthorized access: Redirecting to login page");
+                                    navigate('/login'); // Redirect on specific status code (401)
+                                } else {
+                                    console.error("Error fetching previous params:", error); // Log other errors
+                                }
+                            }
+                        }
+                    }else{
+                        console.error("error on server side : previousGetter");
                     }
-                }else{
-                    console.error("error on server side : previousGetter");
+                }catch(error){
+                    console.log("error repsonse " + error);
+                    if (error.response.status === 401){
+                        console.log("Unauthorized access: Redirecting to login page");
+                        navigate('/login'); // Redirect on specific status code (401)
+                    } else {
+                        console.error("Error fetching previous params:", error); // Log other errors
+                    }
                 }
+
             }
             catch (error) {
                 console.error("Failed to fetch data:", error);

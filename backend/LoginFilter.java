@@ -30,8 +30,19 @@ public class LoginFilter implements Filter {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        httpResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:8081"); // Replace with your frontend origin
+        httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Allowed HTTP methods
+        httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Allowed headers in request
+        httpResponse.setHeader("Access-Control-Allow-Credentials", "true"); // Allow sending cookies (if applicable)
 
+        String requestMethod = httpRequest.getMethod();
 
+        if (requestMethod.equals("OPTIONS")) {
+            // Handle preflight request (OPTIONS)'
+            System.out.println("HANDLING PREFLIGHT REQUEST IN LOGIN FILTER");
+            chain.doFilter(request, response);
+            return;
+        }
 
         // Check if this URL is allowed to access without logging in
         if (this.isUrlAllowedWithoutLogin(httpRequest.getRequestURI())) {
@@ -94,33 +105,33 @@ public class LoginFilter implements Filter {
         allowedURIs.add("index.js");
 
         allowedURIs.add("/login");
-        allowedURIs.add("/fabFlix/");
-        allowedURIs.add("/add");
+//        allowedURIs.add("/fabFlix/");
+        //allowedURIs.add("/add");
         allowedURIs.add("/subtract");
-        allowedURIs.add("/totalPrice");
-        allowedURIs.add("/delete");
-        allowedURIs.add("/payment");
-        allowedURIs.add("/shoppingcart");
-        //allowedURIs.add("movielist");
-
-        allowedURIs.add("/");
-        allowedURIs.add("login.jsx");
-        allowedURIs.add("/topmovies.jsx");
-        allowedURIs.add("/singlemovie.jsx");
-        allowedURIs.add("/singlestar.jsx");
-        allowedURIs.add("/homepage.jsx");
-
-        allowedURIs.add("/login");
-        allowedURIs.add("/topmovies");
-        allowedURIs.add("/singlemovie");
-        allowedURIs.add("/singlestar");
-
-
-        allowedURIs.add("/search");
-        allowedURIs.add("/browse/character");
-        allowedURIs.add("/browse/genre");
-        allowedURIs.add("/previousGetter");
-        allowedURIs.add("/homepageGenres");
+//        allowedURIs.add("/totalPrice");
+//        allowedURIs.add("/delete");
+//        allowedURIs.add("/payment");
+//        allowedURIs.add("/shoppingcart");
+//        //allowedURIs.add("movielist");
+//
+//        allowedURIs.add("/");
+//        allowedURIs.add("login.jsx");
+//        allowedURIs.add("/topmovies.jsx");
+//        allowedURIs.add("/singlemovie.jsx");
+//        allowedURIs.add("/singlestar.jsx");
+//        allowedURIs.add("/homepage.jsx");
+//
+//        allowedURIs.add("/login");
+//        allowedURIs.add("/topmovies");
+//        allowedURIs.add("/singlemovie");
+//        allowedURIs.add("/singlestar");
+//
+//
+//        allowedURIs.add("/search");
+//        allowedURIs.add("/browse/character");
+//        allowedURIs.add("/browse/genre");
+//        allowedURIs.add("/previousGetter");
+//        allowedURIs.add("/homepageGenres");
 
     }
 

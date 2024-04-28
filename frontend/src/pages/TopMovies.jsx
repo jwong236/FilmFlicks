@@ -4,25 +4,33 @@ import Box from '@mui/material/Box';
 import NavBar from '../components/Navbar.jsx';
 import Background from '../components/Background.jsx';
 import MovieCard from '../components/MovieCard';
+import {useNavigate} from 'react-router-dom';
 
 const HOST = import.meta.env.VITE_HOST;
 
 function TopMovies() {
     const [movieData, setMovieData] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         let mounted = true;
         async function fetchMovieData() {
             try {
-                const response = await fetch(`http://${HOST}:8080/fabFlix/topmovies`);
-                if (!response.ok) {
-                    console.error('Response is not status 200');
-                    return;
+
+                const response = await fetch(`http://${HOST}:8080/fabFlix/topmovies`,{
+                    credentials: 'include'
+                });
+                console.log("response status " + response.status);
+                if (response.status === 401) {
+                    console.log("have to login to access top movies");
+                    navigate('/login');
+                }else{
+                    const data = await response.json();
+                    if (mounted) {
+                        setMovieData(data);
+                    }
                 }
-                const data = await response.json();
-                if (mounted) {
-                    setMovieData(data);
-                }
+
             } catch (error) {
                 console.error('Error fetching data: ', error);
             }

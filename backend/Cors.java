@@ -27,8 +27,8 @@ public class Cors implements Filter {
         httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
 
-        //System.out.println("CORS FILTER INITIATED ");
-
+        System.out.println("CORS FILTER INITIATED ");
+        ((HttpServletResponse) response).setStatus(200);
         chain.doFilter(httpRequest, httpResponse);
 
     }

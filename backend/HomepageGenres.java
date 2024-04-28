@@ -1,6 +1,7 @@
 //import com.google.gson.JsonArray;
 //import com.google.gson.JsonObject;
 import com.fasterxml.jackson.core.type.TypeReference;
+import jakarta.servlet.SessionCookieConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,45 +67,39 @@ public class HomepageGenres extends HttpServlet {
         //response.addHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
         try {
-            HashMap<String, HashMap<Integer, String>> genreMap = new HashMap<String, HashMap<Integer, String>>();
 
-            Connection connection = dataSource.getConnection();
-            String query = "SELECT * FROM genres";
+            HttpSession session = request.getSession(false);
 
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-//            HashMap<Integer, String> g = new HashMap<Integer, String>();
-//
-//            while (resultSet.next()){
-//                int id = resultSet.getInt("id");
-//                String name = resultSet.getString("name");
-//                g.put(id, name);
-//            }
-//
-//            genreMap.put("genre" , g);
-//
-//            ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-//            String genreJson = mapper.writeValueAsString(genreMap);
-//            System.out.println("using the previous params" + genreMap);
-//            out.print(genreJson);
+            if (session == null){
+                out.print("{\"message\":\"Unauthorized access\"}");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }else{
+                HashMap<String, HashMap<Integer, String>> genreMap = new HashMap<String, HashMap<Integer, String>>();
 
-            ArrayList<GenreObjects> genreList = new ArrayList<GenreObjects>();
+                Connection connection = dataSource.getConnection();
+                String query = "SELECT * FROM genres";
 
-            while (resultSet.next()){
-                int id = resultSet.getInt("id");
-                String genreName = resultSet.getString("name");
-                GenreObjects genre = new GenreObjects(id, genreName);
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(query);
 
-                genreList.add(genre);
+
+                ArrayList<GenreObjects> genreList = new ArrayList<GenreObjects>();
+
+                while (resultSet.next()){
+                    int id = resultSet.getInt("id");
+                    String genreName = resultSet.getString("name");
+                    GenreObjects genre = new GenreObjects(id, genreName);
+
+                    genreList.add(genre);
+                }
+
+                ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+                String genreJson = mapper.writeValueAsString(genreList);
+                System.out.println("genre list" + genreList);
+                out.print(genreJson);
+                response.setStatus(HttpServletResponse.SC_OK);
+                connection.close();
             }
-
-
-            ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-            String genreJson = mapper.writeValueAsString(genreList);
-            System.out.println("genre list" + genreList);
-            out.print(genreJson);
-            response.setStatus(HttpServletResponse.SC_OK);
-            connection.close();
         } catch (Exception e) {
 
             request.getServletContext().log("Error: ", e);

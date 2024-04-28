@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/singlemovie")
 public class SingleMovie extends HttpServlet {
@@ -40,7 +41,15 @@ public class SingleMovie extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        // Get parameters
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            System.out.println("need to login before accessing top movies");
+            out.print("{\"message\":\"Unauthorized access\"}");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+            // Get parameters
         String title = request.getParameter("title");
 
         // Prepare the SQL query

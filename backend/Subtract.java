@@ -88,7 +88,7 @@ public class Subtract extends HttpServlet {
 
             //if a map exists already decrease the quantity
             if (movieMap != null){
-                System.out.println("map already exists");
+                System.out.println("map already exists subtract");
                 //map exists but the title is in increase
                 if (movieMap.containsKey(title)){
                     if (movieMap.get(title).getQuantity() > 1){

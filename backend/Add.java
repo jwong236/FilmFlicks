@@ -47,6 +47,7 @@ public class Add extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("into the add post request");
         StringBuilder requestBody = new StringBuilder();
         PrintWriter out = response.getWriter();
 
@@ -143,7 +144,7 @@ public class Add extends HttpServlet {
 
                 }
 
-
+                response.setStatus(HttpServletResponse.SC_OK);
                 //this is how we know we are adding properly into the shopping cart
                 System.out.println("quantity after adding : " +movieMap.get(title).getQuantity());
                 //return in the response the hashmap as json

@@ -102,12 +102,6 @@ public class PreviousGetter extends HttpServlet {
             String userPageSize = request.getParameter("pageSize");
             String sortRule = request.getParameter("sortRule");
             System.out.println("userPage " + userPage + " userPageSize " + userPageSize + " sort rule " + sortRule);
-//            String title = "";
-//            String director = "";
-//            String star = "";
-//            String year = "";
-//            String genre = "";
-//            String character = "";
 
             ArrayList<String> searchArr = new ArrayList<>();
             searchArr.add("title");
@@ -182,15 +176,9 @@ public class PreviousGetter extends HttpServlet {
                 //which means to store the current one as previous and return status picked up by the frontend
                 //which basically means to just continue with original get request
                 if (session == null) {
-                    //this shouldnt ever happen because a session is created when login
-                    //create session and store the current in the session
-                    session = request.getSession();
-                    System.out.println("search map: " + searchMap);
 
-                    session.setAttribute("prev", searchMap);
-
-                    System.out.println("no previous movie list, using current endpt and params");
-                    response.setStatus(HttpServletResponse.SC_CREATED);
+                    out.print("{\"message\":\"Unauthorized access\"}");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 } else {
                     //check if there is already an attribute for prev
                     System.out.println("checking if there is already an attribute for prev ");

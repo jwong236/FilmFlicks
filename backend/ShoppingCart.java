@@ -79,7 +79,8 @@ public class ShoppingCart extends HttpServlet {
 
             }else{
                 System.out.println("session doesnt have anything in the shopping cart");
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setStatus(HttpServletResponse.SC_OK);
+
             }
 
         }else{

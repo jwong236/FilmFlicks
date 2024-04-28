@@ -38,17 +38,29 @@ export default function Homepage() {
 
     useEffect(() => {
         const fetchGenres = async ()=>{
-            const gArray = await axios.get(`http://${HOST}:8080/fabFlix/homepageGenres`,{
-                withCredentials: true
-            });
-            const tempArray = [];
 
-            gArray.data.forEach(elem =>{
-               tempArray.push((elem.name));
-            });
+            try{
+                const gArray = await axios.get(`http://${HOST}:8080/fabFlix/homepageGenres`,{
+                    withCredentials: true
+                });
+                const tempArray = [];
 
-            console.log(tempArray);
-            setGenres(tempArray);
+                gArray.data.forEach(elem =>{
+                    tempArray.push((elem.name));
+                });
+
+                console.log(tempArray);
+                setGenres(tempArray);
+            }catch(error){
+                if (error.response.status === 401){
+                    console.log("Unauthorized access: Redirecting to login page");
+                    navigate('/login'); // Redirect on specific status code (401)
+                } else {
+                    console.error("Error fetching genres:", error); // Log other errors
+                }
+            }
+
+
         }
 
         fetchGenres();

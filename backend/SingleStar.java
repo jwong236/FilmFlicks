@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -57,6 +58,16 @@ public class SingleStar extends HttpServlet {
 //        System.out.println(name);
 
         try{
+
+
+            HttpSession session = request.getSession(false);
+            if (session == null) {
+                System.out.println("need to login before accessing top movies");
+                out.print("{\"message\":\"Unauthorized access\"}");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
 
             Connection connection = dataSource.getConnection();
             // prepare query

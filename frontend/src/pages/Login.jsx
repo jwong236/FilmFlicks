@@ -55,7 +55,9 @@ export default function MovieList() {
                 height: '100vh',
                 flex: '2',
                 backgroundImage: `url(${singlepopcorn})`,
-
+                '&:hover': {
+                    opacity: 0.95,
+                },
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center'
             }}>
@@ -81,8 +83,8 @@ export default function MovieList() {
                         paddingTop: '5%',
                         paddingBottom: '2%',
                     }}>
-                        <Typography variant = "h1" component = "h1" color = "secondary.light">
-                            MovieApp
+                        <Typography variant = "h1" component = "h1" color = "secondary.light" style={{ letterSpacing: 3}}>
+                            FabFlix
                         </Typography>
                         <Typography variant = "h3" component = "h3" color = "secondary.light">
                             Login
