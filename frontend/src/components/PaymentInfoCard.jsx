@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Button, TextField, Typography } from "@mui/material";
 
 export default function PaymentInfoCard({ firstName, lastName, creditCardNumber, expirationDate, setCreditCardNumber,
-                                            setFirstName, setLastName, setExpirationDate, total, handlePlaceOrder, sx }) {
+                                            setFirstName, setLastName, setExpirationDate, total, handlePlaceOrder, sx, results }) {
     const textFieldStyle = {
         paddingBottom: '2%',
         width: '100%',
@@ -26,7 +26,7 @@ export default function PaymentInfoCard({ firstName, lastName, creditCardNumber,
             padding: '1rem 3rem 1rem 3rem',
             ...sx
         }}>
-            <Typography variant='h4' sx={{ alignSelf: 'center' }}>
+            <Typography variant='h4' sx={{ alignSelf: 'center', marginBottom: '30px', marginTop: '30px'}}>
                 Payment Details
             </Typography>
             <Typography>Card Number</Typography>
@@ -58,7 +58,10 @@ export default function PaymentInfoCard({ firstName, lastName, creditCardNumber,
                 sx={textFieldStyle}
                 InputLabelProps={{ shrink: true }}
             />
-            <Typography sx={{ alignSelf: 'flex-end', marginTop: 'auto', marginBottom: 2 }}>
+            <Typography sx={{ alignSelf: 'flex-center', marginTop: 'auto', marginBottom: 2, fontSize: '20px'}}>
+                {results}
+            </Typography>
+            <Typography sx={{ alignSelf: 'flex-end', marginTop: 'auto', marginBottom: 2, fontSize: '25px'}}>
                 Total: {formatCurrency(total)}
             </Typography>
             <Button

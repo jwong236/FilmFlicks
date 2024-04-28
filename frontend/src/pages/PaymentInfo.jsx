@@ -16,7 +16,7 @@ export default function PaymentInfo() {
     const [expirationDate, setExpirationDate] = useState('');
     const navigate = useNavigate();
     const [total, setTotal] = useState(0);
-
+    const [results, setResults] = useState("");
     const handlePlaceOrder = async () => {
         try {
             const response = await fetch(`http://${HOST}:8080/fabFlix/payment`, {
@@ -41,6 +41,7 @@ export default function PaymentInfo() {
                     navigate('/login');
                 } else if (response.status === 406) {
                     console.error("Invalid credit card information.");
+                    setResults("Credit Card Information Not Found");
                 }
                 return;
             }
@@ -59,13 +60,15 @@ export default function PaymentInfo() {
             const response = await fetch(`http://${HOST}:8080/fabFlix/totalPrice`,{
                 credentials: 'include'
             });
-            if (!response.ok) {
-                console.error('Response is not status 200');
-                return;
+            if(response.status === 401){
+                console.log("cant access payment info before logging in");
+                navigate('/login');
+            }else{
+                const data = await response.json();
+                console.log("TOTAL : " + data.total);
+                setTotal(data.total);
             }
-            const data = await response.json();
-            console.log("TOTAL : " + data.total);
-            setTotal(data.total);
+
         } catch (error) {
             console.error('Error Calculating Total Price: ', error);
         }
@@ -101,6 +104,7 @@ export default function PaymentInfo() {
                     total={total}
                     handlePlaceOrder={handlePlaceOrder}
                     sx={{ height: '80vh', width: '30vw' }}
+                    results = {results}
                 />
             </Background>
         </Box>
