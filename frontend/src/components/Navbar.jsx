@@ -27,16 +27,21 @@ function Navbar() {
 
     return (
         <nav style={navbarStyle}>
-            <Box
-                sx={{
-                    width: 40,
-                    height: 40,
-                    backgroundImage: `url(${singlepopcorntransparent})`,
-                    backgroundSize: 'contain',
-                    backgroundRepeat: 'no-repeat',
-                    marginRight: '20px'
-                }}
-            />
+            <Link to="/" >
+                <Box
+                    sx={{
+                        width: 40,
+                        height: 40,
+                        backgroundImage: `url(${singlepopcorntransparent})`,
+                        '&:hover': {
+                            opacity: 0.5,
+                        },
+                        backgroundSize: 'contain',
+                        backgroundRepeat: 'no-repeat',
+                        marginRight: '20px'
+                    }}
+                />
+            </Link>
 
             <Link to="/" style={navIconsStyle}>
                 <HomeIcon /> Home
