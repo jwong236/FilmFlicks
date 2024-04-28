@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Box, Button, Chip, InputAdornment, TextField, Typography, useTheme, Select, MenuItem, FormControl, InputLabel
+    Box, Button, Chip, InputAdornment, TextField, Typography, useTheme, Select, MenuItem, FormControl, InputLabel, Snackbar
 } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -22,6 +22,8 @@ export default function MovieList() {
     const [sortRule, setSortRule] = useState("title_asc_rating_asc");
     const location = useLocation();
     const navigate = useNavigate();
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
 
     async function totalPrice() {
         try {
@@ -62,30 +64,38 @@ export default function MovieList() {
             console.error('Error Calculating Total Price: ', error);
         }
     }
-    async function addToShoppingCart(movie){
+    const addToShoppingCart = async (movie) => {
         try {
-            console.log("the movie that was added is : " + movie.title);
-            const response = await fetch(`http://${HOST}:8080/fabFlix/add`,{
+            console.log("The movie that was added is: " + movie.title);
+            const response = await fetch(`http://${HOST}:8080/fabFlix/add`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ "movieTitle": movie.title})
-            }); // Replace totalPrice with confirmation when ready
+                body: JSON.stringify({ "movieTitle": movie.title })
+            });
 
-            if (response.status === 401){
+            if (response.status === 401) {
                 console.log("REDIRECTION FROM MOVIE LIST");
-                navigate('/login')
-            }else{
+                navigate('/login');
+            } else {
                 shoppingCart();
                 totalPrice();
 
+                setSnackbarMessage("Movie added successfully!");
+                setOpenSnackbar(true);
+                var timer = setTimeout(() => {
+                    setOpenSnackbar(false);
+                }, 3000);
             }
         } catch (error) {
-            console.error('Error adding into cart: ', error);
+            console.error('Error adding to cart: ', error);
+            setSnackbarMessage("Failed to add movie to cart.");
+            setOpenSnackbar(true);
+            setTimeout(() => {
+                setOpenSnackbar(false);
+            }, 3000);
         }
-    }
+    };
 
     async function decrease(){
         try {
@@ -501,6 +511,12 @@ export default function MovieList() {
                         flexDirection: 'row'
                     }}>
                         <MovieListTable data = {movies} handleAdd={addToShoppingCart}/>
+                        <Snackbar
+                            open={openSnackbar}
+                            message={snackbarMessage}
+                            autoHideDuration={3000}
+                            onClose={() => setOpenSnackbar(false)}
+                        />
                     </Box>
                     <Box sx={{
                         display: 'flex',
