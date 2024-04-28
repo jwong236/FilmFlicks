@@ -62,6 +62,7 @@ public class PreviousGetter extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         boolean prevSessionFlag = false;
+        boolean emptyEndpoint = false;
         //System.out.println("inside of the previous getter");
 
         BufferedReader reader = request.getReader();
@@ -74,15 +75,16 @@ public class PreviousGetter extends HttpServlet {
         //System.out.println("http session: " + session);
 
         HashMap<String, HashMap<String, String>> prev = (HashMap<String, HashMap<String, String>>) session.getAttribute("prev");
+        System.out.println("prev map in the beginning: " + prev);
 
-
+        //empty endpoint means that we use the prev session's end point
         if (request.getParameter("endpoint").isEmpty()){
-            //System.out.println("endpoint is empty");
-            prevSessionFlag = true;
+            System.out.println("endpoint is empty");
+            emptyEndpoint = true;
         }
 
         //checks what's inside of the request body
-        if (!prevSessionFlag || reader != null) {
+        if (reader != null) {
             //System.out.println("Request Body:");
             String line;
             while ((line = reader.readLine()) != null) {
@@ -113,6 +115,19 @@ public class PreviousGetter extends HttpServlet {
 
             //if end point is search, browse/genre, or browse/character
             String endpoint = request.getParameter("endpoint");
+
+            if (emptyEndpoint){
+                HashMap.Entry<String,HashMap<String, String>> entry = prev.entrySet().iterator().next();
+                String key = endpoint = entry.getKey();
+                if (key.equals("browsegenre")){
+                    endpoint = "browse/genre";
+                }else if (key.equals("browsecharacter")){
+                    endpoint = "browse/character";
+                }else{
+                    endpoint = "search";
+                }
+                System.out.println("new endpoint retrieved from prev: " + endpoint);
+            }
             HashMap <String, HashMap<String, String>> searchMap = new HashMap<String, HashMap<String, String>>();
             System.out.println("endpoint " + endpoint);
 
@@ -123,10 +138,13 @@ public class PreviousGetter extends HttpServlet {
                 HashMap<String, String> searchParams = new HashMap<>();
                 for (String searchElem : searchArr){
                     String temp = request.getParameter(searchElem);
-
+                    System.out.println("temp: " + temp);
                     //if it is a valid param, put it in the hashmap
                     if (temp != null && !temp.isEmpty()){
                         searchParams.put(searchElem, temp);
+                    }else if (prev != null && !prev.isEmpty()){ //if temp is completely empty get the previous
+                        System.out.println("there is no search param: "+ prev.get("search").get(searchElem));
+                        searchParams.put(searchElem, prev.get("search").get(searchElem));
                     }
                 }
 
@@ -148,6 +166,9 @@ public class PreviousGetter extends HttpServlet {
                 //if it is a valid param, put it in the hashmap
                 if (temp != null && !temp.isEmpty()){
                     browseParams.put("genre", temp);
+                }else{
+                    System.out.println("there is no genre param: "+ prev.get("browsegenre").get("genre"));
+                    browseParams.put("genre", prev.get("browsegenre").get("genre"));
                 }
 
                 searchMap.put("browsegenre", browseParams);
@@ -164,6 +185,9 @@ public class PreviousGetter extends HttpServlet {
                 //if it is a valid param, put it in the hashmap
                 if (temp != null && !temp.isEmpty()){
                     browseParams.put("character", temp);
+                }else{
+                    System.out.println("there is no char param: "+ prev.get("browsecharacter").get("character"));
+                    browseParams.put("character", prev.get("browsecharacter").get("character"));
                 }
 
                 searchMap.put("browsecharacter", browseParams);
@@ -185,16 +209,15 @@ public class PreviousGetter extends HttpServlet {
 
                     //if there is a prev but the body is not null then that means a new search is activated and update the prev
                     if (prev != null && !prev.isEmpty()) {
-                        //compare the search map to prev to see if we should upate the session params
-                        if (!hashMapComparison(prev, searchMap)) {
-                            System.out.println("search params updated, using the current");
-                            ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-                            String currJson = mapper.writeValueAsString(searchMap);
-                            System.out.println("using the previous params" + searchMap);
-                            session.setAttribute("prev", searchMap);
-                            out.print(currJson);
-                            response.setStatus(HttpServletResponse.SC_CREATED);
-                        }
+
+                        //if there is always a prev one than just use the current one
+                        ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+                        String currJson = mapper.writeValueAsString(searchMap);
+                        System.out.println("using the current params" + searchMap);
+                        session.setAttribute("prev", searchMap);
+                        System.out.println("current json : " + currJson);
+                        out.print(currJson);
+                        response.setStatus(HttpServletResponse.SC_CREATED);
                     } else {
                         //session exists but there is no prev from searching just return as if session == null w/o creating new sesh
                         //THIS IS THE DEFAULT BEHAVIOR WHERE THIS IS THE FIRST SEARCH AND NO PREV EXISTS
@@ -217,6 +240,7 @@ public class PreviousGetter extends HttpServlet {
             }
         }else{
                 //use previous if when you click on list the body is null because nothing was searched before
+                //body is empty when you are adjusting the sorting and page number on the prev session
                 //THIS IS THE ONLY CASE WHERE YOU WOULD USE THE PREVIOUS
 
                 ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);

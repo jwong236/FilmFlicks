@@ -23,6 +23,7 @@ function Navbar() {
         flexDirection: 'column',
         alignItems: 'center',
         marginRight: '1rem',
+
     };
 
     return (

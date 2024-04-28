@@ -25,6 +25,16 @@ export default function MovieList() {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
 
+    function endpointShaper(endpoint){
+        console.log("endpoint shaper: " + endpoint);
+        if (endpoint === "browsegenre"){
+            return "browse/genre";
+        }else if (endpoint === "browsecharacter"){
+            return "browse/character";
+        }else{
+            return "search";
+        }
+    }
     async function totalPrice() {
         try {
             console.log("attempting to get total price");
@@ -165,6 +175,8 @@ export default function MovieList() {
             let params = { page, pageSize, sortRule };
             let prevSessionFlag = false;
 
+
+            //if this is null that means it's going to be using the prev session but the endpoint isn't passed
             if (location.state === null){
                 console.log("empty search -> use prev session");
                 prevSessionFlag = true;
@@ -202,13 +214,38 @@ export default function MovieList() {
                     //if it is 201 or 100 then use the newly updated params
                     if (prevResponse.status === 201 ){
                         console.log("endpoint " + endpoint);
+                        console.log("endpoint cat " + endpointCategory)
                         console.log("params ", params);
+
+                        //this is when previousGetter initally gets an empty param and then readjusts it server side with the prev session endpoint
+                        if (endpointCategory === ""){
+
+                            endpointCategory = Object.keys(prevResponse.data)[0];
+
+                            console.log("new endpoint cat: " + endpointCategory);
+                            endpointCategory = endpointShaper(endpointCategory);
+                            endpoint+= endpointCategory;
+                            console.log("new endpoint cat from prev session: ", endpoint);
+                            const prevMapData = Object.values(prevResponse.data)[0];
+                            if(endpointCategory === "search"){
+                                params = {...params, director : prevMapData.director, star: prevMapData.star, title: prevMapData.title, year: prevMapData.year};
+                            }
+                            if (prevMapData.hasOwnProperty("genre")){
+                                params = { ...params, genre: prevMapData.genre};
+                                console.log("adding genre to params");
+                            }else if (prevMapData.hasOwnProperty("character")){
+                                params = { ...params, character: prevMapData.character};
+                                console.log("adding character to params");
+                            }
+
+                            console.log("new params: " ,params);
+                        }
                         try{
                             const response = await axios.get(endpoint, {
                                 params: params,
                                 withCredentials: true
                             });
-                            console.log("Received:", response.data);
+                            console.log("Received for status 201:", response.data);
                             setMovies(response.data);
                         }catch(error){
                             if (error.response.status === 401){
