@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import {Box, Container} from "@mui/material";
+import {Box, Button, useTheme, Container, Snackbar} from "@mui/material";
 import MovieCard from "../components/MovieCard.jsx";
 import HomeButton from "../components/HomeButton.jsx";
 import popcorn from '../assets/popcorn.png'
@@ -21,6 +21,50 @@ export default function SingleMovie() {
     const search_params = new URLSearchParams(location.search);
     const title = search_params.get('title');
     const navigate = useNavigate();
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+
+    const theme = useTheme();
+    const textFieldStyle = {
+        "& .MuiInputBase-input": {
+            color: theme.palette.primary.dark,
+        },
+        "& .MuiInputBase-root": {
+            backgroundColor: theme.palette.secondary.light,
+        },
+    };
+
+
+
+    const addToShoppingCart = async (movie) => {
+        try {
+            console.log("The movie that was added is: " + movie.title);
+            const response = await fetch(`http://${HOST}:8080/fabFlix/add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ "movieTitle": movie.title })
+            });
+
+            if (response.status === 401) {
+                console.log("REDIRECTION FROM MOVIE LIST");
+                navigate('/login');
+            } else {
+                setSnackbarMessage("Movie added successfully!");
+                setOpenSnackbar(true);
+                var timer = setTimeout(() => {
+                    setOpenSnackbar(false);
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Error adding to cart: ', error);
+            setSnackbarMessage("Failed to add movie to cart.");
+            setOpenSnackbar(true);
+            setTimeout(() => {
+                setOpenSnackbar(false);
+            }, 3000);
+        }
+    };
 
     useEffect(() => {
         let mounted = true;
@@ -75,8 +119,27 @@ export default function SingleMovie() {
                 }}>
                 <HomeButton/>
                 <Box sx={{width: '30%'}}>
+                    <Button
+                        sx={{
+                            backgroundColor: theme.palette.primary.main,
+                            color: theme.palette.secondary.light,
+                            '&:hover': {
+                                backgroundColor: theme.palette.primary.dark
+                            }
+                        }}
+                        onClick={() => addToShoppingCart(movieData)}>
+                        Add
+                    </Button>
                     <MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genres={movieData.genres} link={false}/>
+
                 </Box>
+
+                <Snackbar
+                    open={openSnackbar}
+                    message={snackbarMessage}
+                    autoHideDuration={3000}
+                    onClose={() => setOpenSnackbar(false)}
+                />
             </Box>
     );
 

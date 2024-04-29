@@ -142,8 +142,8 @@ public class PreviousGetter extends HttpServlet {
                     //if it is a valid param, put it in the hashmap
                     if (temp != null && !temp.isEmpty()){
                         searchParams.put(searchElem, temp);
-                    }else if (prev != null && !prev.isEmpty()){ //if temp is completely empty get the previous
-                        System.out.println("there is no search param: "+ prev.get("search").get(searchElem));
+                    }else if (prev != null && !prev.isEmpty() && prev.get("search") != null){ //if temp is completely empty get the previous
+                        System.out.println("goes to check prev for temp: " + prev);
                         searchParams.put(searchElem, prev.get("search").get(searchElem));
                     }
                 }
