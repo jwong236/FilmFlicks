@@ -30,10 +30,10 @@ public class LoginFilter implements Filter {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        httpResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:8081"); // Replace with your frontend origin
-        httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Allowed HTTP methods
-        httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Allowed headers in request
-        httpResponse.setHeader("Access-Control-Allow-Credentials", "true"); // Allow sending cookies (if applicable)
+//        httpResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:8081"); // Replace with your frontend origin
+//        httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Allowed HTTP methods
+//        httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Allowed headers in request
+//        httpResponse.setHeader("Access-Control-Allow-Credentials", "true"); // Allow sending cookies (if applicable)
 
         String requestMethod = httpRequest.getMethod();
 
