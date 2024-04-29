@@ -3,8 +3,11 @@
 ## Description
 This web application provides detailed movie information to users. It includes features such as listing movies, viewing detailed pages for each movie, and user interactions. The webapp is designed to be responsive and user-friendly, utilizing a modern tech stack for both the frontend and backend.
 
-## Demo
+
+## Demo Project 1
 [Click here to view the demo](https://youtu.be/klhI5wOVID8)
+## Demo Project 2
+[Click here to view the demo](https://youtu.be/HGAe0ROsfOs)
 
 ## Contributions
 
