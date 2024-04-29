@@ -25,6 +25,7 @@ export default function MovieList() {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
 
+
     function endpointShaper(endpoint){
         console.log("endpoint shaper: " + endpoint);
         if (endpoint === "browsegenre"){
@@ -160,7 +161,9 @@ export default function MovieList() {
     };
 
     const handleNextClick = () => {
-        setPage(prevPage => prevPage + 1);
+        if (movies.length >= pageSize) {
+            setPage(prevPage => prevPage + 1);
+        }
     }
     const handlePrevClick = () => {
         setPage(prevPage => prevPage > 1 ? prevPage - 1 : 1);
