@@ -119,8 +119,12 @@ export default function SingleMovie() {
                 }}>
                 <HomeButton/>
                 <Box sx={{width: '30%'}}>
+
+                    <MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genres={movieData.genres} link={false}/>
                     <Button
                         sx={{
+                            marginTop: '2rem',
+                            width: '100%',
                             backgroundColor: theme.palette.primary.main,
                             color: theme.palette.secondary.light,
                             '&:hover': {
@@ -130,8 +134,6 @@ export default function SingleMovie() {
                         onClick={() => addToShoppingCart(movieData)}>
                         Add
                     </Button>
-                    <MovieCard title={movieData.title} year={movieData.year} director={movieData.director} rating={movieData.rating} stars={movieData.stars} genres={movieData.genres} link={false}/>
-
                 </Box>
 
                 <Snackbar
