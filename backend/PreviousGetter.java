@@ -100,10 +100,10 @@ public class PreviousGetter extends HttpServlet {
         //get the new updated current session if the request body contains content or there is no prev
         if(!prevSessionFlag){
             System.out.println("USE THE CURRENT PARAMS");
-            String userPage = request.getParameter("page");
-            String userPageSize = request.getParameter("pageSize");
+            String page = request.getParameter("page");
+            String pageSize = request.getParameter("pageSize");
             String sortRule = request.getParameter("sortRule");
-            System.out.println("userPage " + userPage + " userPageSize " + userPageSize + " sort rule " + sortRule);
+            System.out.println("page " + page + " pageSize " + pageSize + " sort rule " + sortRule);
 
             ArrayList<String> searchArr = new ArrayList<>();
             searchArr.add("title");
@@ -148,18 +148,24 @@ public class PreviousGetter extends HttpServlet {
                     }
                 }
 
-                searchParams.put("userPage", userPage);
-                searchParams.put("userPageSize", userPageSize);
-                searchParams.put("sortRule", sortRule);
-
+                if(!emptyEndpoint){
+                    searchParams.put("page", page);
+                    searchParams.put("pageSize", pageSize);
+                    searchParams.put("sortRule", sortRule);
+                }else{
+                    if (prev != null && !prev.isEmpty()){
+                        System.out.println("using the prev params for sorting rules");
+                        searchParams.put("page", prev.get("search").get("page"));
+                        searchParams.put("pageSize", prev.get("search").get("pageSize"));
+                        searchParams.put("sortRule", prev.get("search").get("sortRule"));
+                    }
+                }
                 searchMap.put(endpoint, searchParams);
             }
             else if( endpoint.equals("browse/genre")){
                 System.out.println("BROWSE/GENRE");
                 HashMap<String, String> browseParams = new HashMap<>();
-                browseParams.put("userPage", userPage);
-                browseParams.put("userPageSize", userPageSize);
-                browseParams.put("sortRule", sortRule);
+
 
                 String temp = request.getParameter("genre");
 
@@ -171,14 +177,25 @@ public class PreviousGetter extends HttpServlet {
                     browseParams.put("genre", prev.get("browsegenre").get("genre"));
                 }
 
+                if(!emptyEndpoint){
+                    browseParams.put("page", page);
+                    browseParams.put("pageSize", pageSize);
+                    browseParams.put("sortRule", sortRule);
+                }else{
+                    if (prev != null && !prev.isEmpty()){
+                        System.out.println("using the prev params for sorting rules");
+                        browseParams.put("page", prev.get("browsegenre").get("page"));
+                        browseParams.put("pageSize", prev.get("browsegenre").get("pageSize"));
+                        browseParams.put("sortRule", prev.get("browsegenre").get("sortRule"));
+                    }
+                }
+
                 searchMap.put("browsegenre", browseParams);
             }
             else if( endpoint.equals("browse/character")){
                 System.out.println("BROWSE/CHARACTER");
                 HashMap<String, String> browseParams = new HashMap<>();
-                browseParams.put("userPage", userPage);
-                browseParams.put("userPageSize", userPageSize);
-                browseParams.put("sortRule", sortRule);
+
 
                 String temp = request.getParameter("character");
 
@@ -188,6 +205,19 @@ public class PreviousGetter extends HttpServlet {
                 }else{
                     System.out.println("there is no char param: "+ prev.get("browsecharacter").get("character"));
                     browseParams.put("character", prev.get("browsecharacter").get("character"));
+                }
+
+                if(!emptyEndpoint){
+                    browseParams.put("page", page);
+                    browseParams.put("pageSize", pageSize);
+                    browseParams.put("sortRule", sortRule);
+                }else{
+                    if (prev != null && !prev.isEmpty()){
+                        System.out.println("using the prev params for sorting rules");
+                        browseParams.put("page", prev.get("browsecharacter").get("page"));
+                        browseParams.put("pageSize", prev.get("browsecharacter").get("pageSize"));
+                        browseParams.put("sortRule", prev.get("browsecharacter").get("sortRule"));
+                    }
                 }
 
                 searchMap.put("browsecharacter", browseParams);
