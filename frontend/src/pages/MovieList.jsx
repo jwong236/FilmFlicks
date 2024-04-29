@@ -230,16 +230,9 @@ export default function MovieList() {
                             endpoint+= endpointCategory;
                             console.log("new endpoint cat from prev session: ", endpoint);
                             const prevMapData = Object.values(prevResponse.data)[0];
-                            if(endpointCategory === "search"){
-                                params = {...params, director : prevMapData.director, star: prevMapData.star, title: prevMapData.title, year: prevMapData.year};
-                            }
-                            if (prevMapData.hasOwnProperty("genre")){
-                                params = { ...params, genre: prevMapData.genre};
-                                console.log("adding genre to params");
-                            }else if (prevMapData.hasOwnProperty("character")){
-                                params = { ...params, character: prevMapData.character};
-                                console.log("adding character to params");
-                            }
+                            params = prevMapData;
+                            setSortRule(prevMapData.sortRule);
+                            setPageSize(prevMapData.pageSize);
 
                             console.log("new params: " ,params);
                         }

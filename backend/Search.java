@@ -47,6 +47,8 @@ public class Search extends HttpServlet {
         String userPageSize = request.getParameter("pageSize");
         String sortRule = request.getParameter("sortRule");
 
+        System.out.println("SEARCH");
+        System.out.println(" title: " + title + " director: " + director + " star: " + star + " year: "+ year + " userPage :" + userPage + " userPageSize: " + userPageSize + " sort rule: " + sortRule);
 
         int page = 1;
         int pageSize = 10;
