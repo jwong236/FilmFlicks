@@ -1,19 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {useNavigate} from "react-router-dom";
 import { Box, Typography, Button, Checkbox, TextField } from "@mui/material";
 import singlepopcorn from '../assets/singlepopcorn.png'
+import ReCAPTCHA from 'react-google-recaptcha'
 
 const HOST = import.meta.env.VITE_HOST;
+const SITE_KEY = import.meta.env.VITE_SITE_KEY;
 
 export default function MovieList() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [result, setResult] = useState('');
+    const recaptcha = useRef(null);
 
     const navigate = new useNavigate();
 
     const handleLogin = async () => {
         try {
+            const recaptchaValue = recaptcha.current.getValue();
+            if (!recaptchaValue) {
+                setResult('NEED TO DO RECAPTCHA');
+                return;
+            }else{
+                console.log("recaptcha completed");
+            }
+
+            const loginData = {
+                email,
+                password,
+                recaptchaValue,
+            };
+
             console.log('Button clicked, received email: %s and password: %s', email, password);
             const response = await fetch(`http://${HOST}:8080/fabFlix/login`, {
                 method: 'POST',
@@ -21,7 +38,7 @@ export default function MovieList() {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({ email, password }) // Not sure if this is necessary
+                body: JSON.stringify(loginData) // Not sure if this is necessary
             });
             const data = await response;
             console.log(data.status);
@@ -31,9 +48,11 @@ export default function MovieList() {
             }else{
                 if(data.status === 401){
                     setResult('Incorrect Password!');
-                }else if (data.status === 406){
+                }else if (data.status === 406) {
                     setResult('Account Does Not Exist!');
-                }
+                }else if (data.status === 404){
+                setResult('Recaptcha Not Verified!');
+            }
             }
         } catch (error) {
             console.error('Login error:', error);
@@ -165,11 +184,23 @@ export default function MovieList() {
                             </Typography>
                         </Box>
                     </Box>
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        textAlign: 'center',
+                        paddingBottom: '10%',
+                        paddingLeft: '5%',
+                        fontWeight: '800'
+                    }}>
+                        <ReCAPTCHA ref={recaptcha} sitekey={SITE_KEY} />
+
+                    </Box>
+
                     <Button
                         onClick={handleLogin}
                         sx={{
-                        borderRadius: '20px',
-                        backgroundColor: '#FF907E',
+                            borderRadius: '20px',
+                            backgroundColor: '#FF907E',
                         color: 'secondary.light',
                         fontWeight: 'bold',
                         fontSize: '1.2rem',

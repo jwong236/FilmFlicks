@@ -50,6 +50,7 @@ public class Login extends HttpServlet {
 
         String email = "";
         String password = "";
+        String recaptcha = "";
 
         try(BufferedReader reader = request.getReader()){
             String line ;
@@ -74,6 +75,20 @@ public class Login extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         //response.addHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+
+//        System.out.println("recaptcha response=" + user.getRecaptchaValue());
+
+        // Verify reCAPTCHA
+        try {
+            System.out.println("verifying recaptcha");
+            RecaptchaVerifyUtils.verify(user.getRecaptchaValue());
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            System.out.println(e.getMessage());
+            out.close();
+            return;
+        }
+
 
         try {
 

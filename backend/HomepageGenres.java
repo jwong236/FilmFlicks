@@ -95,7 +95,7 @@ public class HomepageGenres extends HttpServlet {
 
                 ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
                 String genreJson = mapper.writeValueAsString(genreList);
-                System.out.println("genre list" + genreList);
+                //System.out.println("genre list" + genreList);
                 out.print(genreJson);
                 response.setStatus(HttpServletResponse.SC_OK);
                 connection.close();
