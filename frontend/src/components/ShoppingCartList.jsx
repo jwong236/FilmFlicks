@@ -14,7 +14,7 @@ import {
     useTheme
 } from '@mui/material';
 
-const HOST = import.meta.env.VITE_HOST;
+const URL = import.meta.env.VITE_URL;
 
 
 export default function ShoppingCartList({ data, total, handleDelete, handleProceedToPayment, handleIncrementQuantity, handleDecrementQuantity}) {

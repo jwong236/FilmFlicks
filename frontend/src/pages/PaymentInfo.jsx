@@ -6,7 +6,7 @@ import PaymentInfoCard from '../components/PaymentInfoCard.jsx';
 import {useNavigate} from "react-router-dom";
 
 
-const HOST = import.meta.env.VITE_HOST;
+const URL = import.meta.env.VITE_URL;
 
 
 export default function PaymentInfo() {
@@ -19,7 +19,7 @@ export default function PaymentInfo() {
     const [results, setResults] = useState("");
     const handlePlaceOrder = async () => {
         try {
-            const response = await fetch(`http://${HOST}:8080/fabFlix/payment`, {
+            const response = await fetch(`${URL}/payment`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ export default function PaymentInfo() {
     async function totalPrice() {
         try {
             console.log("attempting to get total price");
-            const response = await fetch(`http://${HOST}:8080/fabFlix/totalPrice`,{
+            const response = await fetch(`${URL}/totalPrice`,{
                 credentials: 'include'
             });
             if(response.status === 401){

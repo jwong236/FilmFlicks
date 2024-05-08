@@ -10,7 +10,7 @@ import axios from 'axios';
 import SearchIcon from "@mui/icons-material/Search.js";
 import MovieListTable from "../components/MovieListTable.jsx";
 
-const HOST = import.meta.env.VITE_HOST;
+const URL = import.meta.env.VITE_URL;
 export default function MovieList() {
     const [title, setTitle] = useState("");
     const [year, setYear] = useState("");
@@ -39,7 +39,7 @@ export default function MovieList() {
     async function totalPrice() {
         try {
             console.log("attempting to get total price");
-            const response = await fetch(`http://${HOST}:8080/fabFlix/totalPrice`,{
+            const response = await fetch(`${URL}/totalPrice`,{
                 credentials: 'include'
             });
             if (!response.ok) {
@@ -57,7 +57,7 @@ export default function MovieList() {
     async function shoppingCart() {
         try {
             console.log("getting the whole shopping cart ");
-            const response = await fetch(`http://${HOST}:8080/fabFlix/shoppingCart`,{
+            const response = await fetch(`${URL}/shoppingCart`,{
                 credentials: 'include'
             });
             if (!response.ok) {
@@ -78,7 +78,7 @@ export default function MovieList() {
     const addToShoppingCart = async (movie) => {
         try {
             console.log("The movie that was added is: " + movie.title);
-            const response = await fetch(`http://${HOST}:8080/fabFlix/add`, {
+            const response = await fetch(`${URL}/add`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -110,7 +110,7 @@ export default function MovieList() {
 
     async function decrease(){
         try {
-            const response = await fetch(`http://${HOST}:8080/fabFlix/subtract`,{
+            const response = await fetch(`${URL}/subtract`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ export default function MovieList() {
     useEffect(() => {
 
         const fetchData = async () => {
-            let endpoint = `http://${HOST}:8080/fabFlix/`;
+            let endpoint = `${URL}/`;
             let endpointCategory = "";
             let params = { page, pageSize, sortRule };
             let prevSessionFlag = false;
@@ -207,7 +207,7 @@ export default function MovieList() {
                 console.log(tempParams);
 
                 try{
-                    const prevResponse = await axios.get(`http://${HOST}:8080/fabFlix/previousGetter`,{
+                    const prevResponse = await axios.get(`${URL}/previousGetter`,{
                         withCredentials: true,
                         params: tempParams
                     });
@@ -297,9 +297,9 @@ export default function MovieList() {
                             //on the get request to previousGetter
                             if (browseEndpoint.length >0){
 
-                                endpointUrl = `http://${HOST}:8080/fabFlix/browse/${browseEndpoint}`;
+                                endpointUrl = `${URL}/browse/${browseEndpoint}`;
                             }else{
-                                endpointUrl = `http://${HOST}:8080/fabFlix/${prevEndpoint}`;
+                                endpointUrl = `${URL}/${prevEndpoint}`;
                             }
 
                             console.log("endpoint url " + endpointUrl);

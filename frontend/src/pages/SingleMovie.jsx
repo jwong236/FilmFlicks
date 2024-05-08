@@ -5,7 +5,7 @@ import MovieCard from "../components/MovieCard.jsx";
 import HomeButton from "../components/HomeButton.jsx";
 import popcorn from '../assets/popcorn.png'
 
-const HOST = import.meta.env.VITE_HOST;
+const URL = import.meta.env.VITE_URL;
 
 export default function SingleMovie() {
     const [movieData, setMovieData] = useState({
@@ -39,7 +39,7 @@ export default function SingleMovie() {
     const addToShoppingCart = async (movie) => {
         try {
             console.log("The movie that was added is: " + movie.title);
-            const response = await fetch(`http://${HOST}:8080/fabFlix/add`, {
+            const response = await fetch(`${URL}/add`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -70,7 +70,7 @@ export default function SingleMovie() {
         let mounted = true;
         async function fetchMovieData(){
             try{
-                const response = await fetch(`http://${HOST}:8080/fabFlix/singlemovie?title=${encodeURIComponent(title)}`,{
+                const response = await fetch(`${URL}/singlemovie?title=${encodeURIComponent(title)}`,{
                     credentials: 'include'
                 });
 

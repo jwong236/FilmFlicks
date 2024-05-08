@@ -4,7 +4,7 @@ import { Box, Typography, Button, Checkbox, TextField } from "@mui/material";
 import singlepopcorn from '../assets/singlepopcorn.png'
 import ReCAPTCHA from 'react-google-recaptcha'
 
-const HOST = import.meta.env.VITE_HOST;
+const URL = import.meta.env.VITE_URL;
 const SITE_KEY = import.meta.env.VITE_SITE_KEY;
 
 export default function MovieList() {
@@ -32,7 +32,7 @@ export default function MovieList() {
             };
 
             console.log('Button clicked, received email: %s and password: %s', email, password);
-            const response = await fetch(`http://${HOST}:8080/fabFlix/login`, {
+            const response = await fetch(`${URL}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

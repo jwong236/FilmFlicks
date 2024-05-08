@@ -5,7 +5,7 @@ import Background from '../components/Background.jsx';
 import ShoppingCartCard from '../components/ShoppingCartCard.jsx';
 import { useNavigate } from 'react-router-dom';
 
-const HOST = import.meta.env.VITE_HOST;
+const URL = import.meta.env.VITE_URL;
 
 
 export default function ShoppingCart() {
@@ -17,7 +17,7 @@ export default function ShoppingCart() {
         let mounted = true;
         async function fetchShoppingCart() {
             try {
-                const response = await fetch(`http://${HOST}:8080/fabFlix/shoppingCart`,{
+                const response = await fetch(`${URL}/shoppingCart`,{
                     credentials: 'include'
                 });
 
@@ -74,7 +74,7 @@ export default function ShoppingCart() {
     async function totalPrice() {
         try {
             console.log("attempting to get total price");
-            const response = await fetch(`http://${HOST}:8080/fabFlix/totalPrice`,{
+            const response = await fetch(`${URL}/totalPrice`,{
                 credentials: 'include'
             });
             if (!response.ok) {
@@ -91,7 +91,7 @@ export default function ShoppingCart() {
     async function deleteFromCart(movie){
         try {
             console.log("this movie is being deleted : " + movie);
-            const response = await fetch(`http://${HOST}:8080/fabFlix/delete`,{
+            const response = await fetch(`${URL}/delete`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -151,7 +151,7 @@ export default function ShoppingCart() {
     async function addToShoppingCart(movie){
         try {
             console.log("the movie that was added is : " + movie.title);
-            const response = await fetch(`http://${HOST}:8080/fabFlix/add`,{
+            const response = await fetch(`${URL}/add`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -205,7 +205,7 @@ export default function ShoppingCart() {
 
     async function subtractFromCart(movie){
         try {
-            const response = await fetch(`http://${HOST}:8080/fabFlix/subtract`,{
+            const response = await fetch(`${URL}/subtract`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

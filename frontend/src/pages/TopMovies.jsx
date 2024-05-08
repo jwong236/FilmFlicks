@@ -6,7 +6,7 @@ import Background from '../components/Background.jsx';
 import MovieCard from '../components/MovieCard';
 import {useNavigate} from 'react-router-dom';
 
-const HOST = import.meta.env.VITE_HOST;
+const URL = import.meta.env.VITE_URL;
 
 function TopMovies() {
     const [movieData, setMovieData] = useState([]);
@@ -17,7 +17,7 @@ function TopMovies() {
         async function fetchMovieData() {
             try {
 
-                const response = await fetch(`http://${HOST}:8080/fabFlix/topmovies`,{
+                const response = await fetch(`${URL}/topmovies`,{
                     credentials: 'include'
                 });
                 console.log("response status " + response.status);

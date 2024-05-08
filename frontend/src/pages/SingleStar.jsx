@@ -5,7 +5,7 @@ import StarCard from "../components/StarCard.jsx";
 import {Box}  from '@mui/material'
 import popcorn from "../assets/popcorn.png";
 
-const HOST = import.meta.env.VITE_HOST;
+const URL = import.meta.env.VITE_URL;
 
 function SingleStar() {
     const [starData, setStarData] = useState({
@@ -25,7 +25,7 @@ function SingleStar() {
         let mounted = true;
         async function fetchStarData(){
             try{
-                const response = await fetch(`http://${HOST}:8080/fabFlix/singlestar?name=${encodeURIComponent(name)}`,{
+                const response = await fetch(`${URL}/singlestar?name=${encodeURIComponent(name)}`,{
                     credentials: 'include'
                 });
                 if (!response.ok) {

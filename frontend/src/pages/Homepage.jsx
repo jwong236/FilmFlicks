@@ -7,7 +7,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 
 
-const HOST = import.meta.env.VITE_HOST;
+const URL = import.meta.env.VITE_URL;
 
 export default function Homepage() {
     const [title, setTitle] = useState("");
@@ -40,7 +40,7 @@ export default function Homepage() {
         const fetchGenres = async ()=>{
 
             try{
-                const gArray = await axios.get(`http://${HOST}:8080/fabFlix/homepageGenres`,{
+                const gArray = await axios.get(`${URL}/homepageGenres`,{
                     withCredentials: true
                 });
                 const tempArray = [];
