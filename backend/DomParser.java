@@ -21,8 +21,9 @@ import java.io.PrintWriter;
 public class DomParser {
     //genres: dram -> drama, myst -> mystery, susp -> thriller, comd -> comedy, romt->romantic, musc->musical
     HashMap<String, String> genreMap = new HashMap<>();
+    HashMap<String, Integer> movieMap = new HashMap<>();
 
-
+    HashMap<String, Integer> genreDupeMap = new HashMap<>();
 
 
     List<MovieXML> movieList = new ArrayList<>();
@@ -40,8 +41,6 @@ public class DomParser {
         genreMap.put("West", "Western");
         genreMap.put("Porn", "Adult");
         genreMap.put("Horr", "Horror");
-        genreMap.put("Tv", "Television"); //new add to database
-        genreMap.put("Noir", "Black"); //new add to database
         genreMap.put("Advt", "Adventure");
         genreMap.put("S.F.", "Sci-Fi");
         genreMap.put("Docu", "Documentary");
@@ -49,6 +48,9 @@ public class DomParser {
         genreMap.put("Actn", "Action");
         genreMap.put("Fant", "Fantasy");
 
+        MovieInsert movieInsert = new MovieInsert();
+        movieMap = movieInsert.hashmapBuilder();
+        genreDupeMap = movieInsert.genreMapBuilder();
 
 
         addNewGenres();
@@ -61,8 +63,11 @@ public class DomParser {
         parseDocument();
 
         // iterate through the list and print the data
-        printData();
+        //printData();
         inconMovieReport();
+
+        StarParser starParser = new StarParser();
+        starParser.runExample();
     }
 
     private void addNewGenres(){
@@ -79,16 +84,20 @@ public class DomParser {
             }
 
             String[] genres = {"Black", "Television"};
-
             PreparedStatement preparedStatement = null;
 
-            String genreQuery = "INSERT IGNORE INTO genres (name) VALUES (?)";
-            preparedStatement = conn.prepareStatement(genreQuery);
+            if (!genreDupeMap.containsKey("Black") && !genreDupeMap.containsKey("Television")){
+                String genreQuery = "INSERT IGNORE INTO genres (name) VALUES (?)";
+                preparedStatement = conn.prepareStatement(genreQuery);
+                genreMap.put("Tv", "Television"); //new add to database
+                genreMap.put("Noir", "Black"); //new add to database
 
-
-            for (String g: genres){
-                preparedStatement.setString(1, g);
-                preparedStatement.executeUpdate();
+                for (String g: genres){
+                    preparedStatement.setString(1, g);
+                    preparedStatement.executeUpdate();
+                }
+            }else{
+                System.out.println("Black and Television already in genres table");
             }
 
             if(conn!=null) conn.close();
@@ -150,8 +159,14 @@ public class DomParser {
 
 
             if (movie.getYear() != 0 && movie.getDirector() != null && movie.getTitle() != null && movie.getGenre() != null){
-                // add it to list
-                movieList.add(movie);
+                if (movieMap.containsKey(movie.getTitle())){
+                    System.out.println("duplicate movie: " + movie.getTitle());
+                    inconsistentMovieList.add(movie);
+                }else{
+                    // add it to list
+                    movieList.add(movie);
+                }
+
             }else{
                 inconsistentMovieList.add(movie);
             }
@@ -183,7 +198,7 @@ public class DomParser {
         String genre = uniformCapitalization(getTextValue(element, "cat"));
         if (genreMap.containsKey(genre)){
             genre = genreMap.get(genre);
-            System.out.println("GENRE: " + genre);
+            //System.out.println("GENRE: " + genre);
         }else{
             genre = null;
         }

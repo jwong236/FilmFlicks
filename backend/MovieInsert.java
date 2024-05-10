@@ -1,11 +1,7 @@
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,6 +26,19 @@ Note: Please change the username, password and the name of the datbase.
 
 public class MovieInsert {
 
+    private static Connection getConnection() throws SQLException {
+        try{
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            // Replace with your connection details
+            String jdbcURL = "jdbc:mysql://127.0.0.1:3307/moviedb";
+            return DriverManager.getConnection(jdbcURL, "admin", "andy");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
     public static void insertBatch (List<MovieXML> movieList) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         HashMap<String, Integer> genreIdMap = new HashMap<>();
         String[] genres = {
@@ -51,12 +60,13 @@ public class MovieInsert {
         String jdbcURL = "jdbc:mysql://127.0.0.1:3307/moviedb";
         Connection conn = null;
 
-        try {
-            conn = DriverManager.getConnection(jdbcURL, "admin", "andy");
-            System.out.println("INTO THE BATCH INSERT");
-        } catch (SQLException e) {
+        try{
+            conn = getConnection();
+
+        }catch(Exception e){
             e.printStackTrace();
         }
+
 
 
 
@@ -116,6 +126,106 @@ public class MovieInsert {
             e.printStackTrace();
         }
     }
+
+
+    public static HashMap<String, Integer> hashmapBuilder(){
+        //returns a hashmap that has the stars linked with the birthYear
+        HashMap<String, Integer> movieMap = new HashMap<>();
+        Statement statement = null;
+        Connection conn = null;
+
+        try{
+            conn = getConnection();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+
+        try{
+            String query = "Select title,year from movies";
+            statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while(resultSet.next()){
+                String name = resultSet.getString("title");
+                int year = resultSet.getInt("year");
+
+                movieMap.put(name, year);
+            }
+
+            if (!movieMap.isEmpty()){
+                return movieMap;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+
+        try {
+            if(statement!=null) statement.close();
+
+            if(conn!=null) conn.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return null;
+
+    }
+
+    public static HashMap<String, Integer> genreMapBuilder(){
+        //returns a hashmap that has the stars linked with the birthYear
+        HashMap<String, Integer> genreMap = new HashMap<>();
+        Statement statement = null;
+        Connection conn = null;
+
+        try{
+            conn = getConnection();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+
+        try{
+            String query = "Select name, id from genre";
+            statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while(resultSet.next()){
+                String genre = resultSet.getString("genre");
+                int id = resultSet.getInt("id");
+
+                genreMap.put(genre, id);
+            }
+
+            if (!genreMap.isEmpty()){
+                return genreMap;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+
+        try {
+            if(statement!=null) statement.close();
+
+            if(conn!=null) conn.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return null;
+
+    }
+
+
+
+
+
 
 }
 
