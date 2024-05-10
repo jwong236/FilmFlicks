@@ -7,15 +7,15 @@ public class MovieXML {
 
     private final String director;
 
-    private final String genres;
+    private final String genre;
 
     private String id;
 
-    public MovieXML(String title, int year, String director, String genres) {
+    public MovieXML(String title, int year, String director, String genre) {
         this.title = title;
         this.year = year;
         this.director = director;
-        this.genres = genres;
+        this.genre = genre;
 
         UUID uuid = UUID.randomUUID();
         this.id = uuid.toString();;
@@ -34,8 +34,8 @@ public class MovieXML {
         return this.director;
     }
 
-    public String getGenres(){
-        return this.genres;
+    public String getGenre(){
+        return this.genre;
     }
 
     public String getId(){
@@ -50,6 +50,6 @@ public class MovieXML {
                 "ID:" + getId() + ", " +
                 "Year:" + String.valueOf(getYear()) + ", " +
                 "Director:" + getDirector() + ", " +
-                "Genre:" + getGenres();
+                "Genre:" + getGenre();
     }
 }

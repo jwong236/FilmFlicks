@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.sql.PreparedStatement;
+import java.io.PrintWriter;
 
 public class DomParser {
     //genres: dram -> drama, myst -> mystery, susp -> thriller, comd -> comedy, romt->romantic, musc->musical
@@ -25,6 +26,8 @@ public class DomParser {
 
 
     List<MovieXML> movieList = new ArrayList<>();
+    List<MovieXML> inconsistentMovieList = new ArrayList<>();
+
     Document dom;
 
     public void runExample() {
@@ -43,6 +46,10 @@ public class DomParser {
         genreMap.put("S.F.", "Sci-Fi");
         genreMap.put("Docu", "Documentary");
         genreMap.put("BioP", "Biography");
+        genreMap.put("Actn", "Action");
+        genreMap.put("Fant", "Fantasy");
+
+
 
         addNewGenres();
 
@@ -55,7 +62,7 @@ public class DomParser {
 
         // iterate through the list and print the data
         printData();
-
+        inconMovieReport();
     }
 
     private void addNewGenres(){
@@ -141,29 +148,22 @@ public class DomParser {
             // get the Employee object
             MovieXML movie = parseMovie(element);
 
-            // add it to list
-            movieList.add(movie);
 
-            if (movieList.toArray().length == 100){
-                MovieInsert movieInsert = new MovieInsert();
-                try{
-                    movieInsert.insertBatch(movieList);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-                //reset it
-                movieList.clear();
+            if (movie.getYear() != 0 && movie.getDirector() != null && movie.getTitle() != null && movie.getGenre() != null){
+                // add it to list
+                movieList.add(movie);
+            }else{
+                inconsistentMovieList.add(movie);
             }
-        }
-        if (movieList.toArray().length > 0){
-            MovieInsert movieInsert = new MovieInsert();
-            try{
-                movieInsert.insertBatch(movieList);
-            }catch(Exception e){
-                e.printStackTrace();
-            }            //reset it
-            movieList.clear();
 
+
+        }
+        MovieInsert movieInsert = new MovieInsert();
+        try{
+            movieInsert.insertBatch(movieList);
+            System.out.println("inserting batch from dom parser");
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -183,6 +183,7 @@ public class DomParser {
         String genre = uniformCapitalization(getTextValue(element, "cat"));
         if (genreMap.containsKey(genre)){
             genre = genreMap.get(genre);
+            System.out.println("GENRE: " + genre);
         }else{
             genre = null;
         }
@@ -264,6 +265,24 @@ public class DomParser {
 
         for (MovieXML movie : movieList) {
             System.out.println("\t" + movie.toString());
+        }
+    }
+
+    private void inconMovieReport() {
+        PrintWriter writer = null;
+
+        try {
+            writer = new PrintWriter("inconsistentMovies.txt");
+            writer.println("Total inconsistent " + inconsistentMovieList.size() + " movies");
+
+            for (MovieXML movie : inconsistentMovieList) {
+                writer.println("\t" + movie.toString());
+            }
+        }catch(Exception e){
+            // Ensure the writer is closed even if an exception occurs
+            e.printStackTrace();
+        }finally {
+            writer.close();
         }
     }
 

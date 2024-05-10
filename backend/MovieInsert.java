@@ -53,6 +53,7 @@ public class MovieInsert {
 
         try {
             conn = DriverManager.getConnection(jdbcURL, "admin", "andy");
+            System.out.println("INTO THE BATCH INSERT");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -60,29 +61,46 @@ public class MovieInsert {
 
 
 
-        PreparedStatement psInsertRecord=null;
-        String sqlInsertRecord=null;
+        PreparedStatement psInsertMovie=null;
+        PreparedStatement psInsertGenre_Movies=null;
+
+        String movieSQL=null;
+        String genre_movieSQL = null;
 
         int[] iNoRows=null;
 
 
-        sqlInsertRecord="insert into movies (id, title, year, director) values(?,?, ?, ?)";
+        movieSQL="insert ignore into movies (id, title, year, director) values(?,?, ?, ?)";
+        genre_movieSQL = "insert ignore into genres_in_movies (genreId, movieId) values(?,?)";
         try {
             conn.setAutoCommit(false);
 
-            psInsertRecord=conn.prepareStatement(sqlInsertRecord);
-
+            psInsertMovie=conn.prepareStatement(movieSQL);
+            psInsertGenre_Movies = conn.prepareStatement(genre_movieSQL);
 
             for(MovieXML movie: movieList)
             {
-                psInsertRecord.setString(1, movie.getId());
-                psInsertRecord.setString(2, movie.getTitle());
-                psInsertRecord.setInt(3, movie.getYear());
-                psInsertRecord.setString(4, movie.getDirector());
-                psInsertRecord.addBatch();
+                psInsertMovie.setString(1, movie.getId());
+                psInsertMovie.setString(2, movie.getTitle());
+                psInsertMovie.setInt(3, movie.getYear());
+                psInsertMovie.setString(4, movie.getDirector());
+
+                String genre = movie.getGenre();
+
+                //retrieve the right id based on genre
+                if (genre != null && genreIdMap.containsKey(genre)){
+                    psInsertGenre_Movies.setInt(1, genreIdMap.get(movie.getGenre()));
+                }
+                psInsertGenre_Movies.setString(2, movie.getId());
+
+
+                psInsertMovie.addBatch();
+                psInsertGenre_Movies.addBatch();
             }
 
-            iNoRows=psInsertRecord.executeBatch();
+            iNoRows=psInsertMovie.executeBatch();
+            iNoRows=psInsertGenre_Movies.executeBatch();
+
             conn.commit();
 
         } catch (SQLException e) {
@@ -90,7 +108,9 @@ public class MovieInsert {
         }
 
         try {
-            if(psInsertRecord!=null) psInsertRecord.close();
+            if(psInsertMovie!=null) psInsertMovie.close();
+            if(psInsertGenre_Movies!=null) psInsertGenre_Movies.close();
+
             if(conn!=null) conn.close();
         } catch(Exception e) {
             e.printStackTrace();
