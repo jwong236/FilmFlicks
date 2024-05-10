@@ -14,11 +14,11 @@ services:
     expose:
       - '3306'
     volumes:
-      - ./createtable.sql:/docker-entrypoint-initdb.d/createtable.sql
-      - ./movie-data.sql:/docker-entrypoint-initdb.d/movie-data.sql
+      - ./01-createtable.sql:/docker-entrypoint-initdb.d/01-createtable.sql
+      - ./02-movie-data.sql:/docker-entrypoint-initdb.d/02-movie-data.sql
+      - ./03-add-star.sql:/docker-entrypoint-initdb.d/03-add-star.sql
       - my-db:/var/lib/mysql
-    command: ["--general-log=ON"] #enable logging
+    command: ["--general-log=ON"]
+
 volumes:
   my-db:
-
-

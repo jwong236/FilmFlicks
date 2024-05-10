@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Typography, TextField } from '@mui/material';
 import DashboardMetadataTable from './DashboardMetadataTable.jsx'
-
+const URL = import.meta.env.VITE_URL;
 export default function DashboardAddMovieCard({ employeeName }) {
     const [starName, setStarName] = useState("");
     const [starBirthYear, setStarBirthYear] = useState("");
@@ -9,9 +9,38 @@ export default function DashboardAddMovieCard({ employeeName }) {
     const [movieYear, setMovieYear] = useState("");
     const [movieDirector, setMovieDirector] = useState("");
 
-    const handleAddStar = () => {
-        // Implement fetch to add a new star
+    const handleAddStar = async () => {
+        const starData = {
+            name: starName,
+            birthYear: starBirthYear || null
+        };
+
+        try {
+            const response = await fetch(`${URL}/insert/star`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(starData)
+            });
+
+            if (response.ok) {
+                const responseBody = await response.json();
+                console.log('Success:', responseBody);
+                setStarName('');
+                setStarBirthYear('');
+                alert('Star added successfully!');
+            } else {
+                console.error('Failed to add star. Status:', response.status);
+                alert('Failed to add star. Please try again.');
+            }
+        } catch (error) {
+            console.error('Failed to send request:', error);
+            alert('Error sending request. Please check your network connection.');
+        }
     };
+
 
     const handleAddMovie = () => {
         // Implement fetch to add a new movie

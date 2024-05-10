@@ -60,5 +60,7 @@ public class LoginFilter implements Filter {
         allowedURIs.add("/subtract");
         allowedURIs.add("/employeeLogin");
         allowedURIs.add("/metadata");
+        allowedURIs.add("/insert/star");
+        allowedURIs.add("/insert/movie");
     }
 }
