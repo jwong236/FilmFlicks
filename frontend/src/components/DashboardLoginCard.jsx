@@ -1,12 +1,40 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from "@mui/material";
 
-export default function DashboardLoginCard({ handleLogin }) {
+const URL = import.meta.env.VITE_URL;
+
+export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = () => {
-        handleLogin(true);
+    const handleLogin = () => {
+        console.log("Sending login request with email:", email, "and password:", password);
+
+        fetch(`${URL}/employeeLogin`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    response.json().then(data => {
+                        setIsLoggedIn(true);
+                        setEmployeeName(data.fullname);
+                        console.log(data.fullname);
+                    });
+                } else {
+                    console.error('Login failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     };
 
     return (
@@ -37,7 +65,7 @@ export default function DashboardLoginCard({ handleLogin }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-            <Button onClick={handleSubmit} variant="contained" sx={{ marginTop: '1rem'}}>
+            <Button onClick={handleLogin} variant="contained" sx={{ marginTop: '1rem'}}>
                 Login
             </Button>
         </Box>

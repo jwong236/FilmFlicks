@@ -8,10 +8,8 @@ import DashboardAddMovieCard from "../components/DashboardAddMovieCard.jsx";
 export default function Dashboard(){
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [employeeName, setEmployeeName] = useState();
 
-    const handleLogin = () => {
-        setIsLoggedIn(true);
-    };
 
     return(
         <Box sx={{
@@ -23,8 +21,8 @@ export default function Dashboard(){
             <Navbar/>
             <Background sx={{alignItems: 'center', justifyContent: 'center'}}>
                 {isLoggedIn ? (
-                    <DashboardAddMovieCard />
-                ) : <DashboardLoginCard handleLogin={handleLogin} />
+                    <DashboardAddMovieCard employeeName={employeeName}/>
+                ) : <DashboardLoginCard setIsLoggedIn={setIsLoggedIn} setEmployeeName={setEmployeeName} />
                 }
             </Background>
         </Box>
