@@ -20,6 +20,8 @@ import ShoppingCart from './pages/ShoppingCart';
 import PaymentInfo from './pages/PaymentInfo';
 import Confirmation from './pages/Confirmation';
 
+import Dashboard from './pages/Dashboard.jsx';
+
 function App() {
     return (
         <ThemeProvider theme={theme}>
@@ -38,6 +40,8 @@ function App() {
                     <Route path="/shoppingcart" element={<ShoppingCart />} />
                     <Route path="/paymentinfo" element={<PaymentInfo />} />
                     <Route path="/confirmation" element={<Confirmation />} />
+
+                    <Route path="/_dashboard" element = {<Dashboard />} />
                 </Routes>
         </ThemeProvider>
     );
