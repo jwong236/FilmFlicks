@@ -128,9 +128,9 @@ public class MovieInsert {
     }
 
 
-    public static HashMap<String, Integer> hashmapBuilder(){
+    public static HashMap<String, String> hashmapBuilder(){
         //returns a hashmap that has the stars linked with the birthYear
-        HashMap<String, Integer> movieMap = new HashMap<>();
+        HashMap<String, String> movieMap = new HashMap<>();
         Statement statement = null;
         Connection conn = null;
 
@@ -143,15 +143,15 @@ public class MovieInsert {
 
 
         try{
-            String query = "Select title,year from movies";
+            String query = "Select title,id from movies";
             statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
 
             while(resultSet.next()){
                 String name = resultSet.getString("title");
-                int year = resultSet.getInt("year");
+                String id = resultSet.getString("id");
 
-                movieMap.put(name, year);
+                movieMap.put(name, id);
             }
 
             if (!movieMap.isEmpty()){
@@ -190,12 +190,12 @@ public class MovieInsert {
 
 
         try{
-            String query = "Select name, id from genre";
+            String query = "Select name, id from genres";
             statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
 
             while(resultSet.next()){
-                String genre = resultSet.getString("genre");
+                String genre = resultSet.getString("name");
                 int id = resultSet.getInt("id");
 
                 genreMap.put(genre, id);

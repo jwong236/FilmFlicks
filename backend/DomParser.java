@@ -21,13 +21,16 @@ import java.io.PrintWriter;
 public class DomParser {
     //genres: dram -> drama, myst -> mystery, susp -> thriller, comd -> comedy, romt->romantic, musc->musical
     HashMap<String, String> genreMap = new HashMap<>();
-    HashMap<String, Integer> movieMap = new HashMap<>();
+    HashMap<String, String> movieMap = new HashMap<>();
 
     HashMap<String, Integer> genreDupeMap = new HashMap<>();
 
 
     List<MovieXML> movieList = new ArrayList<>();
     List<MovieXML> inconsistentMovieList = new ArrayList<>();
+
+    HashMap<String, String> starMap = new HashMap<>();
+
 
     Document dom;
 
@@ -51,7 +54,7 @@ public class DomParser {
         MovieInsert movieInsert = new MovieInsert();
         movieMap = movieInsert.hashmapBuilder();
         genreDupeMap = movieInsert.genreMapBuilder();
-
+        System.out.println(genreDupeMap);
 
         addNewGenres();
 
@@ -63,11 +66,16 @@ public class DomParser {
         parseDocument();
 
         // iterate through the list and print the data
-        //printData();
+        printData();
         inconMovieReport();
 
         StarParser starParser = new StarParser();
-        starParser.runExample();
+        starMap = starParser.runExample();
+
+
+        CastParser castParser = new CastParser();
+        castParser.runExample();
+
     }
 
     private void addNewGenres(){
@@ -160,7 +168,7 @@ public class DomParser {
 
             if (movie.getYear() != 0 && movie.getDirector() != null && movie.getTitle() != null && movie.getGenre() != null){
                 if (movieMap.containsKey(movie.getTitle())){
-                    System.out.println("duplicate movie: " + movie.getTitle());
+                    //System.out.println("duplicate movie: " + movie.getTitle());
                     inconsistentMovieList.add(movie);
                 }else{
                     // add it to list
@@ -275,11 +283,20 @@ public class DomParser {
      * content to console
      */
     private void printData() {
+        PrintWriter writer = null;
 
-        System.out.println("Total parsed " + movieList.size() + " movies");
+        try {
+            writer = new PrintWriter("consistentMovies.txt");
+            writer.println("Total consistent " + movieList.size() + " movies");
 
-        for (MovieXML movie : movieList) {
-            System.out.println("\t" + movie.toString());
+            for (MovieXML movie : movieList) {
+                writer.println("\t" + movie.toString());
+            }
+        }catch(Exception e){
+            // Ensure the writer is closed even if an exception occurs
+            e.printStackTrace();
+        }finally {
+            writer.close();
         }
     }
 

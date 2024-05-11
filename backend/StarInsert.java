@@ -1,7 +1,3 @@
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
@@ -107,9 +103,9 @@ public class StarInsert {
         }
     }
 
-    public static HashMap<String, Integer> hashmapBuilder(){
+    public static HashMap<String, String> hashmapBuilder(){
         //returns a hashmap that has the stars linked with the birthYear
-        HashMap<String, Integer> starMap = new HashMap<>();
+        HashMap<String, String> starMap = new HashMap<>();
         Statement statement = null;
         Connection conn = null;
 
@@ -120,25 +116,18 @@ public class StarInsert {
             e.printStackTrace();
         }
 
-//        try {
-//            Class.forName("com.mysql.jdbc.Driver").newInstance();
-//            String jdbcURL = "jdbc:mysql://127.0.0.1:3307/moviedb";
-//            conn = DriverManager.getConnection(jdbcURL, "admin", "andy");
-//            System.out.println("Creating Hashmap for the stars");
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+
 
         try{
-            String query = "Select name, birthYear from stars";
+            String query = "Select name, id from stars";
             statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
 
             while(resultSet.next()){
                 String name = resultSet.getString("name");
-                int birthYear = resultSet.getInt("birthYear");
+                String id = resultSet.getString("id");
 
-                starMap.put(name, birthYear);
+                starMap.put(name, id);
             }
 
             if (!starMap.isEmpty()){

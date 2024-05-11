@@ -3,31 +3,24 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.sql.rowset.serial.SerialArray;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.security.spec.ECField;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
-import java.sql.PreparedStatement;
 import java.io.PrintWriter;
 
 public class StarParser {
 
     List<StarXML> starList = new ArrayList<>();
     List<StarXML> inconsistentStarList = new ArrayList<>();
-    HashMap<String, Integer> starMap = new HashMap<>();
+    HashMap<String, String> starMap = new HashMap<>();
 
     Document dom;
 
-    public void runExample() {
+    public HashMap<String, String> runExample() {
         StarInsert starInsert = new StarInsert();
         starMap = starInsert.hashmapBuilder();
 
@@ -42,6 +35,7 @@ public class StarParser {
         printData();
         inconStarReport();
 
+        return starMap;
 
     }
 
@@ -103,7 +97,7 @@ public class StarParser {
 
             if(star.getId() != null && star.getName() != null && star.getBirthYear() != 0){
                 if (starMap.containsKey(star.getName())){
-                    System.out.println("duplicate star: " + star.getName());
+                    //System.out.println("duplicate star: " + star.getName());
                     inconsistentStarList.add(star);
 
                 }else{
@@ -197,11 +191,20 @@ public class StarParser {
         return true;
     }
     private void printData() {
+        PrintWriter writer = null;
 
-        System.out.println("Total parsed " + starList.size() + " stars");
+        try {
+            writer = new PrintWriter("consistentStars.txt");
+            writer.println("Total consistent " + starList.size() + " stars");
 
-        for (StarXML star : starList) {
-            System.out.println("\t" + star.toString());
+            for (StarXML star : starList) {
+                writer.println("\t" + star.toString());
+            }
+        }catch(Exception e){
+            // Ensure the writer is closed even if an exception occurs
+            e.printStackTrace();
+        }finally {
+            writer.close();
         }
     }
 
