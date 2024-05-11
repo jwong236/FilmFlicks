@@ -15,8 +15,10 @@ services:
       - '3306'
     volumes:
       - ./01-createtable.sql:/docker-entrypoint-initdb.d/01-createtable.sql
-      - ./02-movie-data.sql:/docker-entrypoint-initdb.d/02-movie-data.sql
-      - ./03-add-star.sql:/docker-entrypoint-initdb.d/03-add-star.sql
+      - ./02-add-star.sql:/docker-entrypoint-initdb.d/02-add-star.sql
+      - ./03-add-movie.sql:/docker-entrypoint-initdb.d/03-add-movie.sql
+      - ./04-movie-data.sql:/docker-entrypoint-initdb.d/04-movie-data.sql
+
       - my-db:/var/lib/mysql
     command: ["--general-log=ON"]
 

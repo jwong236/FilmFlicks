@@ -2,18 +2,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Types;
-
 import javax.sql.DataSource;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
 import jakarta.servlet.ServletConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,42 +33,35 @@ public class InsertStar extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        StringBuilder requestBody = new StringBuilder();
-        try (BufferedReader reader = request.getReader()) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                requestBody.append(line);
-            }
-        } catch (IOException e) {
-            System.out.println("Reading error");
-            e.printStackTrace();
-        }
-
-        String requestString = requestBody.toString();
         ObjectMapper objectMapper = new ObjectMapper();
-        Star star = objectMapper.readValue(requestString, Star.class);
-        String starName = star.getName();
-        String starBirthYear = star.getBirthYear();
+        Star star = objectMapper.readValue(request.getReader(), Star.class);
 
         try (Connection connection = dataSource.getConnection();
              CallableStatement cstmt = connection.prepareCall("{CALL add_star(?, ?)}")) {
-            cstmt.setString(1, starName);
-            if (starBirthYear != null && !starBirthYear.isEmpty()) {
-                cstmt.setInt(2, Integer.parseInt(starBirthYear));
+            cstmt.setString(1, star.getName());
+            if (star.getBirthYear() != null && !star.getBirthYear().isEmpty()) {
+                cstmt.setInt(2, Integer.parseInt(star.getBirthYear()));
             } else {
                 cstmt.setNull(2, Types.INTEGER);
             }
-            cstmt.execute();
 
-            response.setStatus(HttpServletResponse.SC_OK);
-            System.out.println("Star inserted successfully.");
+            boolean hasResults = cstmt.execute();
+            if (hasResults) {
+                try (ResultSet rs = cstmt.getResultSet()) {
+                    if (rs.next()) {
+                        String message = rs.getString("message");
+                        String starId = rs.getString("starId");
+                        out.println("{\"status\": \"success\", \"message\": \"" + message + "\", \"starId\": \"" + starId + "\"}");
+                    }
+                }
+            } else {
+                out.println("{\"status\": \"success\", \"message\": \"Star added, but no ID returned.\"}");
+            }
 
-            out.println("{\"status\": \"success\", \"message\": \"Star added successfully.\"}");
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            System.out.println("Database error: " + e.getMessage());
-            out.println("{\"status\": \"error\", \"message\": \"" + e.getMessage() + "\"}");
+            out.println("{\"status\": \"error\", \"message\": \"Database error: " + e.getMessage() + "\"}");
         } finally {
             out.flush();
         }

@@ -8,7 +8,6 @@ export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
     const [password, setPassword] = useState("");
 
     const handleLogin = () => {
-        console.log("Sending login request with email:", email, "and password:", password);
 
         fetch(`${URL}/employeeLogin`, {
             method: 'POST',
@@ -26,7 +25,6 @@ export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
                     response.json().then(data => {
                         setIsLoggedIn(true);
                         setEmployeeName(data.fullname);
-                        console.log(data.fullname);
                     });
                 } else {
                     console.error('Login failed');
