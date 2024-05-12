@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Box, Button, TextField, Typography } from "@mui/material";
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const URL = import.meta.env.VITE_URL;
+const SITE_KEY = import.meta.env.VITE_SITE_KEY;  // Ensure you have this in your environment variables
 
 export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const recaptchaRef = useRef(null);
 
     const handleLogin = () => {
+        const recaptchaValue = recaptchaRef.current.getValue();
+        if (!recaptchaValue) {
+            console.error('Please complete the reCAPTCHA');
+            return;
+        }
 
         fetch(`${URL}/employeeLogin`, {
             method: 'POST',
@@ -17,7 +25,8 @@ export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
             credentials: 'include',
             body: JSON.stringify({
                 email: email,
-                password: password
+                password: password,
+                recaptchaValue: recaptchaValue
             })
         })
             .then(response => {
@@ -25,6 +34,7 @@ export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
                     response.json().then(data => {
                         setIsLoggedIn(true);
                         setEmployeeName(data.fullname);
+                        recaptchaRef.current.reset();
                     });
                 } else {
                     console.error('Login failed');
@@ -62,6 +72,11 @@ export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+            />
+            <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={SITE_KEY}
+                style={{ margin: '20px 0' }}
             />
             <Button onClick={handleLogin} variant="contained" sx={{ marginTop: '1rem'}}>
                 Login

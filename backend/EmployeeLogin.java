@@ -2,23 +2,21 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpSession;
+
+import javax.sql.DataSource;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.*;
-
-import javax.sql.DataSource;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.http.HttpSession;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
 @WebServlet("/employeeLogin")
@@ -42,52 +40,55 @@ public class EmployeeLogin extends HttpServlet {
             while ((line = reader.readLine()) != null) {
                 requestBody.append(line);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        System.out.println("Request Body: " + requestBody.toString());
+
         ObjectMapper objectMapper = new ObjectMapper();
         User user = objectMapper.readValue(requestBody.toString(), User.class);
-        String email = user.getEmail();
-        String password = user.getPassword();
-        StrongPasswordEncryptor passwordEncryptor = new StrongPasswordEncryptor();
 
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        // Verifying reCAPTCHA
         try {
-            Connection connection = dataSource.getConnection();
-            String query = "SELECT e.fullname, e.password FROM employees e WHERE e.email = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, email);
+            RecaptchaVerifyUtils.verify(user.getRecaptchaValue());
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            out.print("{\"error\":\"Invalid reCAPTCHA.\"}");
+            out.close();
+            return;
+        }
 
+        try (Connection connection = dataSource.getConnection()) {
+            String query = "SELECT password, fullname FROM employees WHERE email = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, user.getEmail());
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                String storedPassword = resultSet.getString("password");
-                String fullname = resultSet.getString("fullname");
-
-                if (passwordEncryptor.checkPassword(password, storedPassword)) {
+                String encryptedPassword = resultSet.getString("password");
+                StrongPasswordEncryptor passwordEncryptor = new StrongPasswordEncryptor();
+                if (passwordEncryptor.checkPassword(user.getPassword(), encryptedPassword)) {
                     HttpSession session = request.getSession();
-                    if (session != null) {
-                        session.invalidate();
-                    }
-                    session = request.getSession(true);
-                    session.setAttribute("fullname", fullname);
-
-                    response.setContentType("application/json");
-                    PrintWriter out = response.getWriter();
-                    out.println("{\"fullname\": \"" + fullname + "\"}");
-                    out.flush();
-
+                    session.setAttribute("fullname", resultSet.getString("fullname"));
                     response.setStatus(HttpServletResponse.SC_OK);
+                    out.print("{\"fullname\":\"" + resultSet.getString("fullname") + "\"}");
                 } else {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    out.print("{\"error\":\"Incorrect password.\"}");
                 }
             } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                out.print("{\"error\":\"Email not found.\"}");
             }
-            connection.close();
+            resultSet.close();
+            preparedStatement.close();
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.print("{\"error\":\"Server error.\"}");
         }
+        out.flush();
+        out.close();
     }
 }
