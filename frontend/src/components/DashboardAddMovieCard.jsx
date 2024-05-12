@@ -166,9 +166,9 @@ export default function DashboardAddMovieCard({ employeeName }) {
                     />
                     <Button variant='contained' onClick={handleAddMovie}>Add Movie</Button>
                 </Box>
-                <DashboardHistoryTable history={history} />
-            </Box>
 
+            </Box>
+            <DashboardHistoryTable history={history} />
             <DashboardMetadataTable />
         </Box>
     );
