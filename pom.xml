@@ -63,11 +63,30 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.6.0</version> <!-- Use the latest version available -->
-        <configuration>
-          <mainClass>DomParser</mainClass>
-        </configuration>
+        <version>1.6.0</version>
+        <executions>
+          <execution>
+            <id>domParser</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>DomParser</mainClass>
+            </configuration>
+          </execution>
+          <execution>
+            <id>encryptPasswords</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>EncryptPasswords</mainClass>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
+
+
     </plugins>
   </build>
 </project>
