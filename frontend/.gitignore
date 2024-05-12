@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+consistentStars.txt
+inconsistentStars.txt
+
+consistentCast.txt
+inconsistentCast.txt
+
+consistentMovies.txt
+inconsistentMovies.txt
