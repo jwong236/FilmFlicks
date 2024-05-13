@@ -9,7 +9,7 @@ This web application provides detailed movie information to users. It includes f
 ## Demo Project 2
 [Click here to view the demo](https://youtu.be/HGAe0ROsfOs)
 ## Demo Project 3
-[Click here to view the demo]([https://youtu.be/HGAe0ROsfOs](https://youtu.be/De-1VMAlrHc)
+[Click here to view the demo](https://youtu.be/De-1VMAlrHc?si=hZMTFuUaQ7Jm7qSE)
 ## Contributions
 
 ### Project 1
