@@ -198,7 +198,9 @@ public class Search extends HttpServlet {
                     preparedStatement.setInt(i + 1, (Integer) parameters.get(i));
                 }
             }
-            return getMoviesFromResultSet(preparedStatement.executeQuery());
+            List<Movie> results = getMoviesFromResultSet(preparedStatement.executeQuery());
+            System.out.println("RESULTS: " + results);
+            return results;
         }
     }
 
@@ -206,17 +208,38 @@ public class Search extends HttpServlet {
     private List<Movie> getMoviesFromResultSet(ResultSet resultSet) throws SQLException {
         // Extracts data from query results
         List<Movie> movies = new ArrayList<>();
+        List<String> genres = new ArrayList<>();
+        List<String> stars = new ArrayList<>();
         while (resultSet.next()) {
             Movie movie = new Movie();
             movie.setTitle(resultSet.getString("title"));
+            System.out.println("movie title " + movie.getTitle());
             movie.setYear(resultSet.getInt("year"));
             movie.setDirector(resultSet.getString("director"));
-            movie.setGenres(Arrays.asList(resultSet.getString("genres").split(", ")));
-            movie.setStars(Arrays.asList(resultSet.getString("stars").split(", ")));
+            String genresString = resultSet.getString("genres");
+            if (genresString != null) {
+                movie.setGenres(Arrays.asList(genresString.split(", ")));
+            } else {
+                System.out.println("EMPTY GENRES");
+                movie.setGenres(genres);
+            }
+
+            String starsString = resultSet.getString("stars");
+            if (starsString != null) {
+                movie.setStars(Arrays.asList(starsString.split(", ")));
+            } else {
+                System.out.println("EMPTY STARS");
+                movie.setStars(stars);
+            }
+
+
+//            movie.setGenres(Arrays.asList(resultSet.getString("genres").split(", ")));
+//            movie.setStars(Arrays.asList(resultSet.getString("stars").split(", ")));
             movie.setRating(resultSet.getDouble("rating"));
             movie.setNumVotes(resultSet.getInt("numvotes"));
             movies.add(movie);
         }
+        System.out.println("MOVIE RESULTS " + movies);
         return movies;
     }
 }
