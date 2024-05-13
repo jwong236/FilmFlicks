@@ -38,3 +38,19 @@ This web application provides detailed movie information to users. It includes f
 
 #### LIKE Predicate
 - **Usage:** In the servlet, the LIKE keyword is used with SQL queries to enable partial and case-insensitive searches for movie titles, directors, and stars. It allows users to find movies based on substrings, making the search feature flexible and user-friendly. Wildcards (%) are used with LIKE to match any sequence of characters before and after the search terms.
+
+### Project 3
+#### Andy Phu
+- **reCAPTCHA for Login:** Implemented reCAPTCHA to enhance the security during the user login
+- **HTTPS Configuration:** Configured HTTPS to ensure secure data transmission and improve the overall security of the web application.
+- **Prepared Statements:** Upgraded all SQL statements to prepared statements to prevent SQL injection and enhance database security.
+- **XML Parsing:** Implemented XML parsing to use new sources of data to increase the content size of the movie database.
+- **Domain Registration:** Registered a domain name for the project, establishing a professional web presence.
+
+#### Jacob Wong
+- **Password Encryption:** Added password encryption to the login process to enhance user data security.
+- **Employee Dashboard Implementation:** Developed an employee dashboard to insert movies and stars to the database
+- **Employee Login with reCAPTCHA:** Implemented an employee login feature integrated with reCAPTCHA
+
+#### All Prepared Statements files
+- Add.java, BrowseCharacter.java, BrowseGenre.java, CastInsert.java, Delete.java, DomParser.java, EmployeeLogin.java, EncryptPasswords.java, Login.java, Metadata.java, MovieInsert.java, Payment.java, PreviousGetter.java, Search.java, ShoppingCart.java, SingleMovie.java, SingleStar.java, StarInsert.java, Subtract.java, TopMovies.java, TotalPrice.java
