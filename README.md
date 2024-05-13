@@ -8,7 +8,8 @@ This web application provides detailed movie information to users. It includes f
 [Click here to view the demo](https://youtu.be/klhI5wOVID8)
 ## Demo Project 2
 [Click here to view the demo](https://youtu.be/HGAe0ROsfOs)
-
+## Demo Project 3
+[Click here to view the demo]([https://youtu.be/HGAe0ROsfOs](https://youtu.be/De-1VMAlrHc))
 ## Contributions
 
 ### Project 1
@@ -54,3 +55,13 @@ This web application provides detailed movie information to users. It includes f
 
 #### All Prepared Statements files
 - Add.java, BrowseCharacter.java, BrowseGenre.java, CastInsert.java, Delete.java, DomParser.java, EmployeeLogin.java, EncryptPasswords.java, Login.java, Metadata.java, MovieInsert.java, Payment.java, PreviousGetter.java, Search.java, ShoppingCart.java, SingleMovie.java, SingleStar.java, StarInsert.java, Subtract.java, TopMovies.java, TotalPrice.java
+
+#### XML Parser
+Cast: 25851
+Stars: 3029
+Movies: 4778
+Unoptimized Run Time: 40 seconds
+Optimized Run Time: 20 Seconds
+Things I did to optimize:
+1) Batch Insert
+2) Hash Map for genre translations and checking for duplicates
