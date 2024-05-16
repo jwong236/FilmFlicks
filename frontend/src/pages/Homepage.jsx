@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, TextField, Button, useTheme, InputAdornment, Typography, Chip } from "@mui/material";
+import { Box, useTheme, Typography } from "@mui/material";
 import Navbar from '../components/Navbar';
 import Background from '../components/Background.jsx';
-import SearchIcon from '@mui/icons-material/Search';
+import SplitSearchBar from '../components/SplitSearchBar.jsx';
+import BrowseGenres from '../components/BrowseGenres';
+import BrowseCharacters from '../components/BrowseCharacters';
+import AdvancedSearchBar from '../components/AdvancedSearchBar';
 import axios from 'axios';
-
 
 const URL = import.meta.env.VITE_URL;
 
@@ -16,15 +18,25 @@ export default function Homepage() {
     const [star, setStar] = useState("");
     const [genre, setGenre] = useState("");
     const [character, setCharacter] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
     const navigate = useNavigate();
     const theme = useTheme();
     const [genres, setGenres] = useState(["loading..."]);
-    const handleSearch = () => {
+
+    const handleSplitSearch = () => {
         if (!title && !year && !director && !star) {
             console.log('All search fields are empty. No action taken.');
             return;
         }
         navigate('/movielist', { state: { title, year, director, star } });
+    };
+
+    const handleAdvancedSearch = () => {
+        if (!searchQuery) {
+            console.log('Search field is empty. No action taken.');
+            return;
+        }
+        navigate('/movielist', { state: { title: searchQuery } });
     };
 
     const handleGenreClick = (genre) => {
@@ -35,63 +47,29 @@ export default function Homepage() {
         navigate('/movielist', { state: { character } });
     };
 
-
     useEffect(() => {
-        const fetchGenres = async ()=>{
-
-            try{
-                const gArray = await axios.get(`${URL}/homepageGenres`,{
+        const fetchGenres = async () => {
+            try {
+                const gArray = await axios.get(`${URL}/homepageGenres`, {
                     withCredentials: true
                 });
-                const tempArray = [];
-
-                gArray.data.forEach(elem =>{
-                    tempArray.push((elem.name));
-                });
-
+                const tempArray = gArray.data.map(elem => elem.name);
                 console.log(tempArray);
                 setGenres(tempArray);
-            }catch(error){
-                if (error.response.status === 401){
+            } catch (error) {
+                if (error.response && error.response.status === 401) {
                     console.log("Unauthorized access: Redirecting to login page");
                     navigate('/login'); // Redirect on specific status code (401)
                 } else {
                     console.error("Error fetching genres:", error); // Log other errors
                 }
             }
-
-
-        }
-
+        };
         fetchGenres();
-    }, []);
-    // const genres = ["Action", "Adult", "Adventure", "Animation", "Biography", "Comedy", "Crime", "Documentary",
-    //     "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Musical", "Mystery", "Reality-TV", "Romance",
-    //     "Sci-Fi", "Sport", "Thriller", "War", "Western"];
+    }, [navigate]);
+
     const characters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
         "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*"];
-
-    const textFieldStyle = {
-        "& .MuiInputBase-input": {
-            color: theme.palette.primary.dark,
-        },
-        "& .MuiInputBase-root": {
-            backgroundColor: theme.palette.secondary.light,
-        },
-
-    };
-
-    const chipStyle = {
-        cursor: 'pointer',
-        color: theme.palette.primary.dark,
-        paddingLeft: '1rem',
-        paddingRight: '1rem',
-        fontSize: '1.2rem',
-        backgroundColor: '#F8EFD3',
-        '&:hover': {
-            backgroundColor: 'secondary.dark' // Background color on hover
-        }
-    };
 
     return (
         <Box sx={{
@@ -101,7 +79,7 @@ export default function Homepage() {
             flexDirection: 'column'
         }}>
             <Navbar />
-            <Background sx={{ justifyContent: 'center', alignItems: 'center'}}>
+            <Background sx={{ justifyContent: 'center', alignItems: 'center' }}>
                 <Box sx={{
                     display: 'flex',
                     backgroundColor: 'info.light',
@@ -109,167 +87,44 @@ export default function Homepage() {
                     height: '85vh',
                     borderRadius: '20px',
                     flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                 }}>
-                    <Box sx={{
-                        alignSelf: 'flex-start',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        width: '100%',
-                        paddingTop: '1rem',
-                        paddingBottom: '1rem',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        gap: '1rem',
-                    }}>
-                        <TextField
-                            placeholder="Title"
-                            value={title}
-                            onChange={e => setTitle(e.target.value)}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                ),
-                            }}
-                            sx={{
-                                ...textFieldStyle,
-                                width: '30vw',
-                                minWidth: '8rem'
-                            }}
-                        />
-                        <TextField
-                            placeholder="Year"
-                            value={year}
-                            onChange={e => setYear(e.target.value)}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                ),
-                            }}
-                            sx={{
-                                ...textFieldStyle,
-                                width: '6vw',
-                                minWidth: '6rem'
-                            }}
-                        />
-                        <TextField
-                            placeholder="Director"
-                            value={director}
-                            onChange={e => setDirector(e.target.value)}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                ),
-                            }}
-                            sx={{
-                                ...textFieldStyle,
-                                width: '15vw',
-                                minWidth: '15rem'
-                            }}
-                        />
-                        <TextField
-                            placeholder="Star"
-                            value={star}
-                            onChange={e => setStar(e.target.value)}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                ),
-                            }}
-                            sx={{
-                                ...textFieldStyle,
-                                width: '15vw',
-                                minWidth: '15rem'
-                            }}
-                        />
-                        <Button
-                            onClick={handleSearch}
-                            sx={{
-                                backgroundColor: '#FF907E',
-                                color: 'secondary.light',
-                                fontWeight: 'bold',
-                                fontSize: '1rem',
-
-                                '&:hover': {
-                                    backgroundColor: 'primary.main',
-                                    transform: 'scale(1.05)'
-                                }
-                            }}>
-                            Search
-                        </Button>
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'column',
-                        paddingTop: '2rem',
-                        paddingBottom: '2rem'
-                    }}>
-                        <Typography variant = "h3" component = 'h3' color = "primary.dark">
-                            Browse by Movie Genre
-                        </Typography>
-
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        justifyContent: 'center',
-                        gap: '1rem',
-                        paddingTop: '1rem',
-                        paddingBottom: '1rem',
-                        paddingRight: '1rem',
-                        paddingLeft: '1rem'
-                    }}>
-                        {genres.map((genreName) => (
-                            <Chip
-                                key={genreName}
-                                label={genreName}
-                                onClick={() => handleGenreClick(genreName)}
-                                sx={chipStyle}
-                            />
-                        ))}
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'column',
-                        paddingTop: '2rem',
-                        paddingBottom: '2rem'
-                    }}>
-                        <Typography variant = "h3" component = 'h3' color = "primary.dark">
-                            Browse by Movie Title
-                        </Typography>
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        justifyContent: 'center',
-                        gap: '1rem',
-                        paddingTop: '1rem',
-                        paddingBottom: '1rem',
-                        paddingRight: '1rem',
-                        paddingLeft: '1rem'
-                    }}>
-                        {characters.map((character) => (
-                            <Chip
-                                key={character}
-                                label={character}
-                                onClick={() => handleCharacterClick(character)}
-                                sx={chipStyle}
-                            />
-                        ))}
-                    </Box>
+                    <Typography variant="h3" component='h3' color="primary.dark">
+                        Full Search
+                    </Typography>
+                    <AdvancedSearchBar
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        handleSearch={handleAdvancedSearch}
+                        theme={theme}
+                    />
+                    <Typography variant="h3" component='h3' color="primary.dark">
+                        Search by Movie Traits
+                    </Typography>
+                    <SplitSearchBar
+                        title={title}
+                        setTitle={setTitle}
+                        year={year}
+                        setYear={setYear}
+                        director={director}
+                        setDirector={setDirector}
+                        star={star}
+                        setStar={setStar}
+                        handleSearch={handleSplitSearch}
+                        theme={theme}
+                    />
+                    <BrowseGenres
+                        genres={genres}
+                        handleGenreClick={handleGenreClick}
+                        theme={theme}
+                    />
+                    <BrowseCharacters
+                        characters={characters}
+                        handleCharacterClick={handleCharacterClick}
+                        theme={theme}
+                    />
                 </Box>
-
             </Background>
         </Box>
     );

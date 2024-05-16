@@ -14,8 +14,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -80,43 +80,19 @@ public class FullTextSearch extends HttpServlet {
     }
 
     private List<Movie> searchMovies(Connection connection, String title, int page, int pageSize, String sortRule) throws SQLException {
-
-        String[] titleTokens = null;
-        List<Object> parameters = new ArrayList<>();
-        String fullQuery = null;
         String newTitle = "";
-
         if (title != null && !title.isEmpty()) {
-            titleTokens = title.split(" ");
-
-            for (int i = 0; i < titleTokens.length-1; i++){
-                titleTokens[i] = "+" +titleTokens[i] + "* ";
-                newTitle+= titleTokens[i];
+            String[] titleTokens = title.split(" ");
+            for (int i = 0; i < titleTokens.length - 1; i++) {
+                titleTokens[i] = "+" + titleTokens[i] + "* ";
+                newTitle += titleTokens[i];
             }
-
-            String temp = "+" + titleTokens[titleTokens.length-1] + "*";
-            newTitle+= temp;
-
-            int offset = (page - 1) * pageSize;
-
-            fullQuery = buildFullQuery(titleTokens.length);
+            newTitle += "+" + titleTokens[titleTokens.length - 1] + "*";
         }
 
-        if (fullQuery == null){
-            System.err.println("ERROR QUERY WAS NOT BUILT");
-        }
+        String sortClause = buildSortClause(sortRule);
+        int offset = (page - 1) * pageSize;
 
-
-        return executeSearchQuery(connection, fullQuery, newTitle, parseSortRule(sortRule), page, pageSize);
-    }
-
-
-    private String buildFullQuery(int titleTokenLength) {
-//        String orderByClause = parseSortRule(sortRule); // This will generate the ORDER BY clause based on sortRule
-        //make all the title tokens have + (front) and * (back)
-        String matchAgainstClause = "WHERE MATCH (title) AGAINST (? in BOOLEAN MODE)";
-
-        // Construct the rest of the query
         String query = "SELECT " +
                 "    m.title AS title, " +
                 "    m.year AS year, " +
@@ -142,58 +118,37 @@ public class FullTextSearch extends HttpServlet {
                 "    FROM stars_in_movies " +
                 "    GROUP BY starId " +
                 ") AS movie_counts ON s.id = movie_counts.starId " +
-                matchAgainstClause + // Append the MATCH ... AGAINST clause
-                " GROUP BY " +
+                "WHERE MATCH (title) AGAINST (? in BOOLEAN MODE) " +
+                "GROUP BY " +
                 "    m.id, m.title, m.year, m.director, r.rating, r.numVotes " +
-                "ORDER BY ? ? ? ? " +
-                "LIMIT ? OFFSET ?;";
+                sortClause +
+                " LIMIT ? OFFSET ?;";
 
         System.out.println("query: " + query);
-        return query;
 
-    }
-
-    private List<Movie> executeSearchQuery(Connection connection, String query,  String title, String[] sortRules, Integer page, Integer pageSize) throws SQLException {
-        // Executes the full query
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            System.out.println("title " + title);
-            preparedStatement.setString(1, title);
-
-            preparedStatement.setString(2, sortRules[0]);
-            preparedStatement.setString(3, sortRules[1]);
-            preparedStatement.setString(4, sortRules[2]);
-            preparedStatement.setString(5, sortRules[3]);
-
-            int offset = (page - 1) * pageSize;
-            System.out.println(offset);
-
-
-            preparedStatement.setInt(6, pageSize);
-            preparedStatement.setInt(7, offset);
-
+            preparedStatement.setString(1, newTitle);
+            preparedStatement.setInt(2, pageSize);
+            preparedStatement.setInt(3, offset);
 
             String preparedQuery = preparedStatement.toString();
             System.out.println("Prepared query: " + preparedQuery);
 
-            List<Movie> results = getMoviesFromResultSet(preparedStatement.executeQuery());
-            System.out.println("RESULTS: " + results);
-            return results;
+            return getMoviesFromResultSet(preparedStatement.executeQuery());
         }
     }
 
-
-    private String[] parseSortRule(String sortRule) {
-        if (sortRule == null || sortRule.isEmpty()) return null; // Default sort if none provided
+    private String buildSortClause(String sortRule) {
+        if (sortRule == null || sortRule.isEmpty()) return "";
         String[] parts = sortRule.split("_");
-        if (parts.length != 4) return null; // Ensure sortRule is in the expected format
+        if (parts.length != 4) return "";
+
         String field1 = mapField(parts[0]);
         String direction1 = mapDirection(parts[1]);
         String field2 = mapField(parts[2]);
         String direction2 = mapDirection(parts[3]);
 
-        String[] ruleArray = {field1, direction1, field2, direction2};
-        return ruleArray;
-
+        return "ORDER BY " + field1 + " " + direction1 + ", " + field2 + " " + direction2;
     }
 
     private String mapField(String field) {
@@ -202,6 +157,8 @@ public class FullTextSearch extends HttpServlet {
                 return "m.title";
             case "rating":
                 return "r.rating";
+            case "year":
+                return "m.year";
             default:
                 throw new IllegalArgumentException("Invalid sorting field: " + field);
         }
@@ -218,46 +175,25 @@ public class FullTextSearch extends HttpServlet {
         }
     }
 
-
-
-
-
-
     private List<Movie> getMoviesFromResultSet(ResultSet resultSet) throws SQLException {
-        // Extracts data from query results
         List<Movie> movies = new ArrayList<>();
-        List<String> genres = new ArrayList<>();
-        List<String> stars = new ArrayList<>();
         while (resultSet.next()) {
             Movie movie = new Movie();
             movie.setTitle(resultSet.getString("title"));
-            System.out.println("movie title " + movie.getTitle());
             movie.setYear(resultSet.getInt("year"));
             movie.setDirector(resultSet.getString("director"));
-            String genresString = resultSet.getString("genres");
+            String genresString = resultSet.getString("Genres");
             if (genresString != null) {
                 movie.setGenres(Arrays.asList(genresString.split(", ")));
-            } else {
-                System.out.println("EMPTY GENRES");
-                movie.setGenres(genres);
             }
-
-            String starsString = resultSet.getString("stars");
+            String starsString = resultSet.getString("Stars");
             if (starsString != null) {
                 movie.setStars(Arrays.asList(starsString.split(", ")));
-            } else {
-                System.out.println("EMPTY STARS");
-                movie.setStars(stars);
             }
-
-
-//            movie.setGenres(Arrays.asList(resultSet.getString("genres").split(", ")));
-//            movie.setStars(Arrays.asList(resultSet.getString("stars").split(", ")));
             movie.setRating(resultSet.getDouble("rating"));
             movie.setNumVotes(resultSet.getInt("numvotes"));
             movies.add(movie);
         }
-        System.out.println("MOVIE RESULTS " + movies);
         return movies;
     }
 }
