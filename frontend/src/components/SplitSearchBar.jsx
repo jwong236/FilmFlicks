@@ -1,8 +1,15 @@
-import React from 'react';
-import { Box, TextField, Button, InputAdornment } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, TextField, Button, InputAdornment, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { useNavigate } from 'react-router-dom';
+const SplitSearchBar = ({ sx }) => {
+    const [title, setTitle] = useState("");
+    const [year, setYear] = useState("");
+    const [director, setDirector] = useState("");
+    const [star, setStar] = useState("");
+    const theme = useTheme();
+    const navigate = useNavigate();
 
-const SplitSearchBar = ({ title, setTitle, year, setYear, director, setDirector, star, setStar, handleSearch, theme }) => {
     const textFieldStyle = {
         "& .MuiInputBase-input": {
             color: theme.palette.primary.dark,
@@ -12,17 +19,25 @@ const SplitSearchBar = ({ title, setTitle, year, setYear, director, setDirector,
         },
     };
 
+    const handleSearch = () => {
+        if (!title && !year && !director && !star) {
+            console.log('All search fields are empty. No action taken.');
+            return;
+        }
+        navigate('/movielist', { state: { title, year, director, star } });
+    };
+
     return (
         <Box sx={{
+            ...sx,
             alignSelf: 'flex-start',
             display: 'flex',
             flexDirection: 'row',
             width: '100%',
-            paddingTop: '1rem',
-            paddingBottom: '1rem',
             justifyContent: 'center',
             alignItems: 'center',
             gap: '1rem',
+
         }}>
             <TextField
                 placeholder="Title"

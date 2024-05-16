@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Typography, Snackbar, useTheme } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Background from '../components/Background.jsx';
-import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import MovieListTable from "../components/MovieListTable.jsx";
 import SplitSearchBar from "../components/SplitSearchBar.jsx";
 import MoviesPerPageDropdown from "../components/MoviesPerPageDropdown.jsx";
 import SortByDropdown from "../components/SortByDropdown.jsx";
-import AdvancedSearchBar from "../components/AdvancedSearchBar.jsx";
 
 const URL = import.meta.env.VITE_URL;
 
@@ -22,13 +20,12 @@ export default function MovieList() {
     const [pageSize, setPageSize] = useState(10);
     const [page, setPage] = useState(1);
     const [sortRule, setSortRule] = useState("title_asc_rating_asc");
-    const location = useLocation();
-    const navigate = useNavigate();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
-    const [searchQuery, setSearchQuery] = useState("");
-
+    const location = useLocation();
+    const navigate = useNavigate();
     const theme = useTheme();
+
     function endpointShaper(endpoint) {
         switch (endpoint) {
             case "browsegenre":
@@ -41,13 +38,7 @@ export default function MovieList() {
                 return "search";
         }
     }
-    const handleAdvancedSearch = () => {
-        if (!searchQuery) {
-            console.log('Search field is empty. No action taken.');
-            return;
-        }
-        navigate('/movielist', { state: { title: searchQuery } });
-    };
+
     const addToShoppingCart = async (movie) => {
         try {
             console.log("The movie that was added is: " + movie.title);
@@ -62,9 +53,6 @@ export default function MovieList() {
                 console.log("REDIRECTION FROM MOVIE LIST");
                 navigate('/login');
             } else {
-                shoppingCart();
-                totalPrice();
-
                 setSnackbarMessage("Movie added successfully!");
                 setOpenSnackbar(true);
                 setTimeout(() => {
@@ -79,14 +67,6 @@ export default function MovieList() {
                 setOpenSnackbar(false);
             }, 3000);
         }
-    };
-
-    const handleSplitSearch = () => {
-        if (!title && !year && !director && !star) {
-            console.log('All search fields are empty. No action taken.');
-            return;
-        }
-        navigate('/movielist', { state: { title, year, director, star } });
     };
 
     const handleNextClick = () => {
@@ -104,15 +84,14 @@ export default function MovieList() {
             let endpoint = `${URL}/`;
             let endpointCategory = "";
             let params = { page, pageSize, sortRule };
-            let prevSessionFlag = location.state === null;
-
+            const prevSessionFlag = location.state === null;
+            console.log("Current state", location.state)
             if (!prevSessionFlag) {
-                if (location.state.title && !location.state.year && !location.state.director && !location.state.star) {
+                if (title && year === null && director === null && star === null) {
                     endpoint += 'fullTextSearch';
                     endpointCategory = "fullTextSearch";
-                    params = {...params, title: location.state.title};
-                }
-                else if (location.state.title || location.state.year || location.state.director || location.state.star) {
+                    params = { ...params, title };
+                } else if (title !== null || year !== null || director !== null || star !== null) {
                     endpoint += 'search';
                     endpointCategory = "search";
                     params = { ...params, ...location.state };
@@ -126,9 +105,12 @@ export default function MovieList() {
                     params = { ...params, character: location.state.character };
                 }
             }
+            console.log("Initial endpoint:", endpoint);
+            console.log("Initial params:", params);
 
             try {
-                let tempParams = { ...params, "endpoint": endpointCategory };
+                const tempParams = { ...params, endpoint: endpointCategory };
+                console.log("tempParams before previousGetter:", tempParams);
 
                 const prevResponse = await axios.get(`${URL}/previousGetter`, {
                     withCredentials: true,
@@ -143,16 +125,18 @@ export default function MovieList() {
                     const prevEndpoint = Object.keys(prevData)[0];
                     newParams = prevData[prevEndpoint];
 
+                    console.log("Previous session newParams:", newParams);
+
                     setSortRule(newParams.sortRule);
                     setPageSize(newParams.pageSize);
-
+                    console.log(endpoint)
                     endpoint = `${URL}/${endpointShaper(prevEndpoint)}`;
                 } else {
                     throw new Error("Unexpected response status from previousGetter");
                 }
 
-                if ((endpointCategory === "browsegenre" && !newParams.genre) || (endpointCategory === "browsecharacter" && !newParams.character)) {
-                    throw new Error(`${endpointCategory === "browsegenre" ? "Genre" : "Character"} parameter is required.`);
+                if ((endpointCategory === "browse/genre" && !newParams.genre) || (endpointCategory === "browse/character" && !newParams.character)) {
+                    throw new Error(`${endpointCategory === "browse/genre" ? "Genre" : "Character"} parameter is required.`);
                 }
 
                 const response = await axios.get(endpoint, {
@@ -160,6 +144,7 @@ export default function MovieList() {
                     withCredentials: true
                 });
 
+                console.log("Final response data:", response.data);
                 setMovies(response.data);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
@@ -171,7 +156,9 @@ export default function MovieList() {
         };
 
         fetchData();
-    }, [location.state, page, pageSize, sortRule]);
+    }, [location.state, page, pageSize, sortRule, navigate]);
+
+
 
     return (
         <Box sx={{
@@ -191,30 +178,10 @@ export default function MovieList() {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}>
-                    <Typography variant="h4" component='h4' color="primary.dark">
-                        Full Search
+                    <Typography variant="h4" component='h4' color="primary.dark" sx={{ margin: '1rem' }}>
+                        Advanced Search
                     </Typography>
-                    <AdvancedSearchBar
-                        searchQuery={searchQuery}
-                        setSearchQuery={setSearchQuery}
-                        handleSearch={handleAdvancedSearch}
-                        theme={theme}
-                    />
-                    <Typography variant="h4" component='h4' color="primary.dark">
-                        Search by Movie Traits
-                    </Typography>
-                    <SplitSearchBar
-                        title={title}
-                        setTitle={setTitle}
-                        year={year}
-                        setYear={setYear}
-                        director={director}
-                        setDirector={setDirector}
-                        star={star}
-                        setStar={setStar}
-                        handleSearch={handleSplitSearch}
-                        theme={theme}
-                    />
+                    <SplitSearchBar sx={{marginBottom: '1rem'}}/>
                     <Box sx={{
                         display: 'flex',
                         width: '95%',
@@ -228,7 +195,7 @@ export default function MovieList() {
                         <Box sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: 1
+                            gap: '1rem'
                         }}>
                             <MoviesPerPageDropdown pageSize={pageSize} setPageSize={setPageSize} />
                             <SortByDropdown sortRule={sortRule} setSortRule={setSortRule} />

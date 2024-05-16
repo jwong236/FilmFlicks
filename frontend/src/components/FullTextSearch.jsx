@@ -1,8 +1,13 @@
-import React from 'react';
-import { Box, TextField, Button, InputAdornment } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, TextField, Button, InputAdornment, useTheme } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 
-const AdvancedSearchBar = ({ searchQuery, setSearchQuery, handleSearch, theme }) => {
+const FullTextSearch = ({ sx }) => {
+    const [searchQuery, setSearchQuery] = useState("");
+    const theme = useTheme();
+    const navigate = useNavigate();
+
     const textFieldStyle = {
         "& .MuiInputBase-input": {
             color: theme.palette.primary.dark,
@@ -12,15 +17,20 @@ const AdvancedSearchBar = ({ searchQuery, setSearchQuery, handleSearch, theme })
         },
     };
 
+    const handleFullSearch = () => {
+        if (!searchQuery) {
+            console.log('Search field is empty. No action taken.');
+            return;
+        }
+        navigate('/movielist', { state: { title: searchQuery, year: null, director: null, star: null } });
+    };
+
+
     return (
         <Box sx={{
-            alignSelf: 'flex-start',
+            ...sx,
             display: 'flex',
             flexDirection: 'row',
-            width: '100%',
-            paddingTop: '1rem',
-            paddingBottom: '1rem',
-            justifyContent: 'center',
             alignItems: 'center',
             gap: '1rem',
         }}>
@@ -42,15 +52,14 @@ const AdvancedSearchBar = ({ searchQuery, setSearchQuery, handleSearch, theme })
                 }}
             />
             <Button
-                onClick={handleSearch}
+                onClick={handleFullSearch}
                 sx={{
                     backgroundColor: '#FF907E',
-                    color: 'secondary.light',
+                    color: theme.palette.secondary.light,
                     fontWeight: 'bold',
                     fontSize: '1rem',
-
                     '&:hover': {
-                        backgroundColor: 'primary.main',
+                        backgroundColor: theme.palette.primary.main,
                         transform: 'scale(1.05)'
                     }
                 }}>
@@ -60,4 +69,4 @@ const AdvancedSearchBar = ({ searchQuery, setSearchQuery, handleSearch, theme })
     );
 };
 
-export default AdvancedSearchBar;
+export default FullTextSearch;
