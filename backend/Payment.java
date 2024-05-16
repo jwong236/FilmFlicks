@@ -131,11 +131,12 @@ public class Payment extends HttpServlet {
                 //if null, then you cant add into the cart bc no shopping cart
                 if (session != null){
 
-                    Email emailObj = (Email)session.getAttribute("email");
+                    User userObj = (User)session.getAttribute("user");
 
-                    String email = emailObj.emailGetter();
 
-                    String customerId = emailObj.customerIdGetter();
+                    String email = userObj.getEmail();
+
+                    String customerId =String.valueOf(userObj.getCustomerId());
 
                     System.out.println("email: " + email + " customer id : " + customerId);
 

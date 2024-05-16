@@ -4,6 +4,7 @@ public class User {
 
     private String recaptchaValue;
 
+    private Integer customerId;
 
     public User(){
     }
@@ -25,4 +26,14 @@ public class User {
     public String getRecaptchaValue(){
         return this.recaptchaValue;
     }
+
+    public Integer getCustomerId(){
+        return this.customerId;
+    }
+
+
+    public void setCustomerId(int customerId){
+        this.customerId = customerId;
+    }
+
 }
