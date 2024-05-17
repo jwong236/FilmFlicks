@@ -12,10 +12,10 @@ import SortByDropdown from "../components/SortByDropdown.jsx";
 const URL = import.meta.env.VITE_URL;
 
 export default function MovieList() {
-    const [title, setTitle] = useState("");
-    const [year, setYear] = useState("");
-    const [director, setDirector] = useState("");
-    const [star, setStar] = useState("");
+    const [title, setTitle] = useState(null);
+    const [year, setYear] = useState(null);
+    const [director, setDirector] = useState(null);
+    const [star, setStar] = useState(null);
     const [movies, setMovies] = useState([]);
     const [pageSize, setPageSize] = useState(10);
     const [page, setPage] = useState(1);
@@ -80,18 +80,27 @@ export default function MovieList() {
     };
 
     useEffect(() => {
+        if (location.state) {
+            setTitle(location.state.title || null);
+            setYear(location.state.year || null);
+            setDirector(location.state.director || null);
+            setStar(location.state.star || null);
+        }
+    }, [location.state]);
+
+    useEffect(() => {
         const fetchData = async () => {
             let endpoint = `${URL}/`;
             let endpointCategory = "";
             let params = { page, pageSize, sortRule };
             const prevSessionFlag = location.state === null;
-            console.log("Current state", location.state)
+
             if (!prevSessionFlag) {
-                if (title && year === null && director === null && star === null) {
+                if (location.state.title && location.state.year === null && location.state.director === null && location.state.star === null) {
                     endpoint += 'fullTextSearch';
                     endpointCategory = "fullTextSearch";
-                    params = { ...params, title };
-                } else if (title !== null || year !== null || director !== null || star !== null) {
+                    params = { ...params, title: location.state.title };
+                } else if (location.state.title !== null || location.state.year !== "" || location.state.director !== null || location.state.star !== null) {
                     endpoint += 'search';
                     endpointCategory = "search";
                     params = { ...params, ...location.state };
