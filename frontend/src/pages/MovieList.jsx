@@ -85,24 +85,27 @@ export default function MovieList() {
             let endpointCategory = "";
             let params = { page, pageSize, sortRule };
             const prevSessionFlag = location.state === null;
-
+            console.log(endpoint)
             if (!prevSessionFlag) {
                 if (location.state.title && location.state.year === null && location.state.director === null && location.state.star === null) {
                     endpoint += 'fullTextSearch';
                     endpointCategory = "fullTextSearch";
                     params = { ...params, title: location.state.title };
-                } else if (location.state.title !== null || location.state.year !== "" || location.state.director !== null || location.state.star !== null) {
-                    endpoint += 'search';
-                    endpointCategory = "search";
-                    params = { ...params, ...location.state };
-                } else if (location.state.genre) {
+                }
+                else if (location.state.genre) {
                     endpoint += 'browse/genre';
                     endpointCategory = "browse/genre";
                     params = { ...params, genre: location.state.genre };
-                } else if (location.state.character) {
+                }
+                else if (location.state.character) {
                     endpoint += 'browse/character';
                     endpointCategory = "browse/character";
                     params = { ...params, character: location.state.character };
+                }
+                else if (location.state.title !== null || location.state.year !== null || location.state.director !== null || location.state.star !== null) {
+                    endpoint += 'search';
+                    endpointCategory = "search";
+                    params = {...params, ...location.state};
                 }
             }
             console.log("Initial endpoint:", endpoint);
