@@ -80,15 +80,6 @@ export default function MovieList() {
     };
 
     useEffect(() => {
-        if (location.state) {
-            setTitle(location.state.title || null);
-            setYear(location.state.year || null);
-            setDirector(location.state.director || null);
-            setStar(location.state.star || null);
-        }
-    }, [location.state]);
-
-    useEffect(() => {
         const fetchData = async () => {
             let endpoint = `${URL}/`;
             let endpointCategory = "";
