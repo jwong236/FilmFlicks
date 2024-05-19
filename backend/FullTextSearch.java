@@ -79,6 +79,16 @@ public class FullTextSearch extends HttpServlet {
         }
     }
 
+    private int normalizeThreshold(String query) {
+        if (query.length() <= 4) {
+            return 1;
+        } else if (query.length() <= 8) {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
+
     private List<Movie> searchMovies(Connection connection, String title, int page, int pageSize, String sortRule) throws SQLException {
         String newTitle = "";
         if (title != null && !title.isEmpty()) {
@@ -92,6 +102,7 @@ public class FullTextSearch extends HttpServlet {
 
         String sortClause = buildSortClause(sortRule);
         int offset = (page - 1) * pageSize;
+        int threshold = normalizeThreshold(title);
 
         String query = "SELECT " +
                 "    m.title AS title, " +
@@ -118,7 +129,9 @@ public class FullTextSearch extends HttpServlet {
                 "    FROM stars_in_movies " +
                 "    GROUP BY starId " +
                 ") AS movie_counts ON s.id = movie_counts.starId " +
-                "WHERE MATCH (title) AGAINST (? in BOOLEAN MODE) " +
+                "WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) " +
+                "   OR title LIKE ? " +
+                "   OR edth(title, ?, ?) = 1 " +
                 "GROUP BY " +
                 "    m.id, m.title, m.year, m.director, r.rating, r.numVotes " +
                 sortClause +
@@ -128,8 +141,11 @@ public class FullTextSearch extends HttpServlet {
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, newTitle);
-            preparedStatement.setInt(2, pageSize);
-            preparedStatement.setInt(3, offset);
+            preparedStatement.setString(2, "%" + title + "%");
+            preparedStatement.setString(3, title);
+            preparedStatement.setInt(4, threshold);
+            preparedStatement.setInt(5, pageSize);
+            preparedStatement.setInt(6, offset);
 
             String preparedQuery = preparedStatement.toString();
             System.out.println("Prepared query: " + preparedQuery);
@@ -137,6 +153,7 @@ public class FullTextSearch extends HttpServlet {
             return getMoviesFromResultSet(preparedStatement.executeQuery());
         }
     }
+
 
     private String buildSortClause(String sortRule) {
         if (sortRule == null || sortRule.isEmpty()) return "";
