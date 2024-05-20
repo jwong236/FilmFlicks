@@ -12,13 +12,11 @@ const FullTextSearch = ({ sx }) => {
     const navigate = useNavigate();
 
     const fetchSuggestions = async (query) => {
-        console.log("Autocomplete search initiated");
         const cachedSuggestions = localStorage.getItem(query);
         if (cachedSuggestions) {
-            console.log("Using cached results");
+            console.log("Autocomplete using cached results: ", JSON.parse(cachedSuggestions));
             setSuggestions(JSON.parse(cachedSuggestions));
         } else {
-            console.log("Sending ajax request to the server");
             setLoading(true);
             try {
                 const response = await fetch(`${URL}/fullTextSearch?title=${encodeURIComponent(query)}&userPage=1&userPageSize=10&sortRule=title_asc_rating_asc`, {
@@ -27,9 +25,10 @@ const FullTextSearch = ({ sx }) => {
                     credentials: 'include'
                 });
                 const data = await response.json();
-                console.log("Received suggestions:", data);
-                localStorage.setItem(query, JSON.stringify(data));
-                setSuggestions(data);
+                const titles = data.map(item => item.title);
+                localStorage.setItem(query, JSON.stringify(titles));
+                console.log("Autocomplete using new results: ", JSON.stringify(titles));
+                setSuggestions(titles);
             } catch (error) {
                 console.error("Error fetching suggestions:", error);
             } finally {
@@ -39,13 +38,13 @@ const FullTextSearch = ({ sx }) => {
     };
 
     useEffect(() => {
-        const delayDebounceFn = setTimeout(() => {
-            if (searchQuery.length >= 3) {
+        if (searchQuery.length >= 3) {
+            const delayDebounceFn = setTimeout(() => {
                 fetchSuggestions(searchQuery);
-            }
-        }, 300);
+            }, 300);
 
-        return () => clearTimeout(delayDebounceFn);
+            return () => clearTimeout(delayDebounceFn);
+        }
     }, [searchQuery]);
 
     const handleFullSearch = () => {
@@ -72,11 +71,11 @@ const FullTextSearch = ({ sx }) => {
         }}>
             <Autocomplete
                 freeSolo
-                options={suggestions.map(suggestion => suggestion.title)}
+                options={suggestions}
                 onInputChange={(event, newInputValue) => setSearchQuery(newInputValue)}
                 onChange={handleSuggestionSelect}
                 loading={loading}
-
+                filterOptions={(x) => x}
                 renderInput={(params) => (
                     <TextField
                         {...params}
@@ -109,7 +108,6 @@ const FullTextSearch = ({ sx }) => {
                                 color: theme.palette.primary.dark,
                             },
                         }}
-
                     />
                 )}
             />
