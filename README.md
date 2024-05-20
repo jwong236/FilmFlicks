@@ -65,3 +65,73 @@ This web application provides detailed movie information to users. It includes f
 - **Things I did to optimize:**
 - **1)** Batch Insert
 - **2)** Hash Map for genre translations and checking for duplicates
+
+### Project 4
+
+#### Connection Pooling
+
+- **Include the filename/path of all code/configuration files in GitHub of using JDBC Connection Pooling:**
+    - `META-INF/context.xml`
+    - The following servlet files in `src/main/java/com/fabflix/servlets/`:
+        - `Add.java`
+        - `BrowseCharacter.java`
+        - `BrowseGenre.java`
+        - `CastInsert.java`
+        - `Delete.java`
+        - `DomParser.java`
+        - `EmployeeLogin.java`
+        - `EncryptPasswords.java`
+        - `Login.java`
+        - `Metadata.java`
+        - `MovieInsert.java`
+        - `Payment.java`
+        - `PreviousGetter.java`
+        - `Search.java`
+        - `ShoppingCart.java`
+        - `SingleMovie.java`
+        - `SingleStar.java`
+        - `StarInsert.java`
+        - `Subtract.java`
+        - `TopMovies.java`
+        - `TotalPrice.java`
+        - `FullTextSearch.java`
+
+- **Explain how Connection Pooling is utilized in the Fabflix code:**
+    - **Configuration in `context.xml`:**
+      JDBC Connection Pooling is configured in the `META-INF/context.xml` file. This file contains the connection pooling settings, including the maximum number of connections (`maxTotal`), the maximum number of idle connections (`maxIdle`), and the maximum wait time for a connection (`maxWaitMillis`). The database URL, username, and password are specified in this file along with the `factory` attribute to use the `org.apache.tomcat.jdbc.pool.DataSourceFactory`.
+    - **Usage in Servlets:**
+      Connection pooling is utilized across multiple servlets in the Fabflix application. Each servlet initializes the `DataSource` object in the `init` method by looking up the resource configured in `context.xml`. Here is an example from the `Search` servlet:
+      ```java
+      @WebServlet("/search")
+      public class Search extends HttpServlet {
+          private DataSource dataSource;
+  
+          @Override
+          public void init(ServletConfig config) {
+              try {
+                  dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+              } catch (NamingException e) {
+                  e.printStackTrace();
+              }
+          }
+  
+          @Override
+          protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+              try (Connection connection = dataSource.getConnection()) {
+                  List<Movie> movies = searchMovies(connection, title, director, star, year, page, pageSize, sortRule);
+                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.getWriter().println(new ObjectMapper().writeValueAsString(movies));
+              } catch (SQLException e) {
+                  response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                  response.getWriter().println("{\"error\": \"Database error: " + e.getMessage() + "\"}");
+              }
+          }
+      }
+      ```
+    - **Prepared Statements:**
+      Prepared Statements are used in all database interactions involving user input to prevent SQL injection and improve performance. These statements are also optimized using the `cachePrepStmts=true` flag in the JDBC URL, which caches the prepared statements for reuse.
+
+- **Explain how Connection Pooling works with two backend SQL:**
+    - **Single Database Instance (Current Setup):**
+      In the current Fabflix setup, JDBC Connection Pooling is configured to interact with a single MySQL database instance. All database interactions, including reads and writes, utilize the connection pool defined in the `META-INF/context.xml` file. This setup ensures efficient reuse of database connections and reduces the overhead associated with opening and closing connections.
+    - **Potential Master/Slave Configuration:**
