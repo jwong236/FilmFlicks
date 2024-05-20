@@ -80,14 +80,18 @@ public class FullTextSearch extends HttpServlet {
     }
 
     private int normalizeThreshold(String query) {
-        if (query.length() <= 4) {
+        int length = query.length();
+        if (length <= 4) {
             return 1;
-        } else if (query.length() <= 8) {
+        } else if (length <= 8) {
             return 2;
-        } else {
+        } else if (length <= 12) {
             return 3;
+        } else {
+            return length / 4;
         }
     }
+
 
     private List<Movie> searchMovies(Connection connection, String title, int page, int pageSize, String sortRule) throws SQLException {
         String newTitle = "";
