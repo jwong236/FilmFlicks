@@ -7,6 +7,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import singlepopcorntransparent from '../assets/singlepopcorntransparent.png';
 import {Box} from "@mui/material";
 import theme from "../theme/index.js";
+import FullTextSearch from "./FullTextSearch.jsx";
 
 function Navbar() {
     const navbarStyle = {
@@ -56,7 +57,7 @@ function Navbar() {
             <Link to="/shoppingcart" style={navIconsStyle}>
                 <ShoppingCartIcon /> Checkout
             </Link>
-            {}
+            <FullTextSearch sx={{ marginLeft: 'auto' }}/>
         </nav>
     );
 }

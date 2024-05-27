@@ -62,5 +62,7 @@ public class LoginFilter implements Filter {
         allowedURIs.add("/metadata");
         allowedURIs.add("/insert/star");
         allowedURIs.add("/insert/movie");
+        allowedURIs.add("/fullTextSearch");
+
     }
 }

@@ -67,13 +67,16 @@ public class Login extends HttpServlet {
 
         try {
             Connection connection = dataSource.getConnection();
-            String query = "SELECT password FROM customers WHERE email = ?";
+            String query = "SELECT id, password FROM customers WHERE email = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, user.getEmail());
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 String encryptedPassword = resultSet.getString("password");
+                int customerId = resultSet.getInt("id");
+                user.setCustomerId(customerId);
+
                 StrongPasswordEncryptor passwordEncryptor = new StrongPasswordEncryptor();
                 if (passwordEncryptor.checkPassword(user.getPassword(), encryptedPassword)) {
                     HttpSession session = request.getSession();
