@@ -27,6 +27,7 @@ public class Login extends HttpServlet {
     public void init(ServletConfig config) {
         try {
             dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+            System.out.println("this is the datasource" + dataSource);
             System.out.println("LOGIN");
         } catch (NamingException e) {
             e.printStackTrace();
