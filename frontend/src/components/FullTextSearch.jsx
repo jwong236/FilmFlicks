@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, InputAdornment, useTheme, Autocomplete, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
+
 const URL = import.meta.env.VITE_URL;
 
 const FullTextSearch = ({ sx }) => {
     const [searchQuery, setSearchQuery] = useState("");
+    const [inputValue, setInputValue] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const theme = useTheme();
     const navigate = useNavigate();
 
@@ -50,16 +53,34 @@ const FullTextSearch = ({ sx }) => {
     }, [searchQuery]);
 
     const handleFullSearch = () => {
-        if (!searchQuery) {
+        if (!inputValue) {
             console.log('Search field is empty. No action taken.');
             return;
         }
-        navigate('/movielist', { state: { title: searchQuery, year: null, director: null, star: null } });
+        navigate('/movielist', { state: { title: inputValue, year: null, director: null, star: null } });
     };
 
     const handleSuggestionSelect = (event, value) => {
         if (value) {
             navigate(`/singlemovie?title=${encodeURIComponent(value)}`);
+        }
+    };
+
+    const handleKeyDown = (event) => {
+        if (suggestions.length > 0) {
+            if (event.key === 'ArrowDown') {
+                setHighlightedIndex((prevIndex) => {
+                    const newIndex = prevIndex + 1 >= suggestions.length ? 0 : prevIndex + 1;
+                    setInputValue(suggestions[newIndex]);
+                    return newIndex;
+                });
+            } else if (event.key === 'ArrowUp') {
+                setHighlightedIndex((prevIndex) => {
+                    const newIndex = prevIndex - 1 < 0 ? suggestions.length - 1 : prevIndex - 1;
+                    setInputValue(suggestions[newIndex]);
+                    return newIndex;
+                });
+            }
         }
     };
 
@@ -74,7 +95,14 @@ const FullTextSearch = ({ sx }) => {
             <Autocomplete
                 freeSolo
                 options={suggestions}
-                onInputChange={(event, newInputValue) => setSearchQuery(newInputValue)}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                    setHighlightedIndex(-1);
+                    if (newInputValue.length >= 3) {
+                        setSearchQuery(newInputValue);
+                    }
+                }}
                 onChange={handleSuggestionSelect}
                 loading={loading}
                 filterOptions={(x) => x}
@@ -97,7 +125,8 @@ const FullTextSearch = ({ sx }) => {
                             ),
                             sx: {
                                 alignItems: 'center',
-                            }
+                            },
+                            onKeyDown: handleKeyDown
                         }}
                         sx={{
                             width: '40vw',
@@ -112,6 +141,19 @@ const FullTextSearch = ({ sx }) => {
                         }}
                     />
                 )}
+                renderOption={(props, option, { selected, index }) => (
+                    <li
+                        {...props}
+                        style={{
+                            backgroundColor: highlightedIndex === index ? theme.palette.action.hover : 'inherit'
+                        }}
+                    >
+                        {option}
+                    </li>
+                )}
+                ListboxProps={{
+                    onMouseDown: (event) => event.preventDefault(),
+                }}
             />
             <Button
                 onClick={handleFullSearch}
