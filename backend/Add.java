@@ -39,7 +39,7 @@ public class Add extends HttpServlet {
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/write");
             System.out.println("ADD");
         } catch (NamingException e) {
             e.printStackTrace();
