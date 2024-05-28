@@ -12,6 +12,7 @@ const FullTextSearch = ({ sx }) => {
     const navigate = useNavigate();
 
     const fetchSuggestions = async (query) => {
+        console.log("Autocomplete query initiated for: ", query);
         const cachedSuggestions = localStorage.getItem(query);
         if (cachedSuggestions) {
             console.log("Autocomplete using cached results: ", JSON.parse(cachedSuggestions));
@@ -35,6 +36,7 @@ const FullTextSearch = ({ sx }) => {
                 setLoading(false);
             }
         }
+        console.log("Used suggestion list: ", suggestions);
     };
 
     useEffect(() => {
