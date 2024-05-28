@@ -10,6 +10,8 @@ This web application provides detailed movie information to users. It includes f
 [Click here to view the demo](https://youtu.be/HGAe0ROsfOs)
 ## Demo Project 3
 [Click here to view the demo](https://youtu.be/De-1VMAlrHc?si=hZMTFuUaQ7Jm7qSE)
+## Demo Project 4
+[Click here to view the demo]()
 ## Contributions
 
 ### Project 1
@@ -67,6 +69,16 @@ This web application provides detailed movie information to users. It includes f
 - **2)** Hash Map for genre translations and checking for duplicates
 
 ### Project 4
+#### Andy Phu
+- **FullTextSearch:** Implemented FullTextSearch endpoint
+- **Connection Pooling:** Implemented JDBC Connection pooling and ensured Prepared Statement usage
+- **MySQL Master-Slave Replication:** Implemented master and slave instances
+- **Scaling and load balancer:** Scale Fabflix to handle massive traffic using a MySQL/Tomcat cluster and a load balancer, ensuring proper session handling and MySQL master/slave replication, while deploying instances on AWS"
+
+#### Jacob Wong
+- **Fuzzy Search:** Added fuzzy search in addition to FullTextSearch
+- **Full Text Search Bar:** Added full text search to the navbar
+- **Autocomplete:** Added autocomplete with logs to show the full text search. Also have arrow key compatibility and redirects
 
 #### Connection Pooling
 
@@ -134,4 +146,8 @@ This web application provides detailed movie information to users. It includes f
 - **Explain how Connection Pooling works with two backend SQL:**
     - **Single Database Instance (Current Setup):**
       In the current Fabflix setup, JDBC Connection Pooling is configured to interact with a single MySQL database instance. All database interactions, including reads and writes, utilize the connection pool defined in the `META-INF/context.xml` file. This setup ensures efficient reuse of database connections and reduces the overhead associated with opening and closing connections.
-    - **Potential Master/Slave Configuration:**
+
+#### Master/Slave
+- **Include the filename/path of all code/configuration files in GitHub of routing queries to Master/Slave SQL:**
+
+- **How read/write requests were routed to Master/Slave SQL?:**
