@@ -149,5 +149,8 @@ This web application provides detailed movie information to users. It includes f
 
 #### Master/Slave
 - **Include the filename/path of all code/configuration files in GitHub of routing queries to Master/Slave SQL:**
+-context.xml
+-web.xml
 
 - **How read/write requests were routed to Master/Slave SQL?:**
+- I made two different data sources in the context.xml and made sure for the servlets that wrote to use the writing resource.
