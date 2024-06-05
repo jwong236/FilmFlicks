@@ -4,7 +4,7 @@ import { Box, Typography, Button, Checkbox, TextField } from "@mui/material";
 import singlepopcorn from '../assets/singlepopcorn.png'
 import ReCAPTCHA from 'react-google-recaptcha'
 
-const URL = import.meta.env.VITE_URL;
+let URL = import.meta.env.VITE_URL;
 const SITE_KEY = import.meta.env.VITE_SITE_KEY;
 
 export default function MovieList() {
@@ -32,6 +32,21 @@ export default function MovieList() {
             };
 
             console.log('Button clicked, received email: %s and password: %s', email, password);
+            let href = window.location.href;
+            if (href.includes("http://54.215.130.204:8081/")){
+                console.log("master")
+                URL = "http://54.215.130.204:8080/fabFlix"
+            }else if (href.includes("http://54.153.15.47:8081/")) {
+                console.log("slave")
+                URL = "http://54.153.15.47:8080/fabFlix"
+            }else if (href.includes("localhost")) {
+                console.log("local")
+                URL = "http://localhost:8080/fabFlix"
+            }else if (href.includes("fabflixs")) {
+                console.log("fabflixs")
+                URL = "http://api.fabflixs.com/fabFlix"
+            }
+
             const response = await fetch(`${URL}/login`, {
                 method: 'POST',
                 headers: {
