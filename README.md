@@ -12,6 +12,10 @@ This web application provides detailed movie information to users. It includes f
 [Click here to view the demo](https://youtu.be/De-1VMAlrHc?si=hZMTFuUaQ7Jm7qSE)
 ## Demo Project 4
 [Click here to view the demo](https://youtu.be/HDZEMo-PV_U)
+## Demo Project 5
+[Click here to view the demo](https://youtu.be/ZDW8XxzH4dI)
+
+
 ## Contributions
 
 ### Project 1
@@ -154,3 +158,16 @@ This web application provides detailed movie information to users. It includes f
 
 - **How read/write requests were routed to Master/Slave SQL?:**
 - I made two different data sources in the context.xml and made sure for the servlets that wrote to use the writing resource.
+- 
+### Project 5
+#### Andy Phu
+- **Dockerization:** Dockerized Project
+- **Fabflix Kubernetes deployment:** Deployed Fabflix on Kubernetes
+
+#### Jacob Wong
+- **Kubernetes Setup:** Install Kubernetes on AWS instances
+- **JMeter:** Stress tested using JMeter
+
+#### Throughput Values
+- **3 nodes 2 pods:** 900.596/minute
+- **4 nodes 3 pods:** 610.129/minute
