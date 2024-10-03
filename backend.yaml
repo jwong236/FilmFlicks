@@ -1,3 +1,5 @@
+# this file is for kubernetes
+
 apiVersion: apps/v1
 kind: Deployment # Specifies that this resource is a Deployment, used for managing a set of replicas of a pod.
 metadata:
