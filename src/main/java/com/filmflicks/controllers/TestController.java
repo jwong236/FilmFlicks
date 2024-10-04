@@ -27,9 +27,7 @@ public class TestController {
              Statement statement = connection.createStatement()) {
 
             ResultSet resultSet = statement.executeQuery(
-                    "SELECT table_name" +
-                            "FROM information_schema.tables" +
-                            "WHERE table_schema = 'your_database_name'");
+                    "SELECT table_name FROM information_schema.tables WHERE table_schema = 'moviedb'");
 
             StringBuilder tables = new StringBuilder("Tables in the database: ");
             while (resultSet.next()) {
