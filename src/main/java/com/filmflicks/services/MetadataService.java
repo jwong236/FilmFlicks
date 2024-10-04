@@ -1,7 +1,6 @@
 package com.filmflicks.services;
 
 import com.filmflicks.models.TableMetadata;
-import com.filmflicks.models.ColumnMetadata;
 import com.filmflicks.models.Genre;
 import com.filmflicks.models.Movie;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,9 +102,17 @@ public class MetadataService {
         List<Movie> topMovies = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "SELECT m.title, m.year, m.director, r.rating FROM movies m " +
+            String query = "SELECT m.id, m.title, m.year, m.director, r.rating, " +
+                    "(SELECT GROUP_CONCAT(g.name SEPARATOR ', ') FROM genres g " +
+                    "JOIN genres_in_movies gm ON gm.genreId = g.id " +
+                    "WHERE gm.movieId = m.id) AS genres, " +
+                    "(SELECT GROUP_CONCAT(s.name SEPARATOR ', ') FROM stars s " +
+                    "JOIN stars_in_movies sm ON sm.starId = s.id " +
+                    "WHERE sm.movieId = m.id) AS stars " +
+                    "FROM movies m " +
                     "JOIN ratings r ON m.id = r.movieId " +
                     "ORDER BY r.rating DESC LIMIT 20";
+
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
 
@@ -115,16 +122,37 @@ public class MetadataService {
                 String director = resultSet.getString("director");
                 double rating = resultSet.getDouble("rating");
 
+                String genresString = resultSet.getString("genres");
+                String starsString = resultSet.getString("stars");
+
+                // Create movie object with title, year, and director
                 Movie movie = new Movie(title, year, director);
                 movie.setRating(rating);
+
+                // Add genres to the movie
+                if (genresString != null && !genresString.isEmpty()) {
+                    for (String genre : genresString.split(", ")) {
+                        movie.addGenre(genre);
+                    }
+                }
+
+                // Add stars to the movie
+                if (starsString != null && !starsString.isEmpty()) {
+                    for (String star : starsString.split(", ")) {
+                        movie.addStar(star);
+                    }
+                }
+
                 topMovies.add(movie);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return topMovies;
     }
+
 
     /**
      * Retrieves database metadata including table names and column details
