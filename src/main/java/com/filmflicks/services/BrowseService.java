@@ -1,6 +1,7 @@
 package com.filmflicks.services;
 
 import com.filmflicks.models.Movie;
+import com.filmflicks.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -167,45 +168,12 @@ public class BrowseService {
      */
     private String getOrderByClause(String sortRule) {
         String[] parts = sortRule.split("_");
-        String field1 = mapField(parts[0]);
-        String direction1 = mapDirection(parts[1]);
-        String field2 = mapField(parts[2]);
-        String direction2 = mapDirection(parts[3]);
+        String field1 = Utils.mapField(parts[0]);
+        String direction1 = Utils.mapDirection(parts[1]);
+        String field2 = Utils.mapField(parts[2]);
+        String direction2 = Utils.mapDirection(parts[3]);
 
         return String.format("ORDER BY %s %s, %s %s", field1, direction1, field2, direction2);
     }
 
-    /**
-     * Maps the provided field (e.g., "title", "rating") to the corresponding SQL field.
-     *
-     * @param field The field to map.
-     * @return The corresponding SQL field (e.g., "m.title", "r.rating").
-     */
-    private String mapField(String field) {
-        switch (field) {
-            case "title":
-                return "m.title";
-            case "rating":
-                return "r.rating";
-            default:
-                throw new IllegalArgumentException("Invalid sorting field: " + field);
-        }
-    }
-
-    /**
-     * Maps the provided sorting direction (e.g., "asc", "desc") to the corresponding SQL keyword.
-     *
-     * @param direction The sorting direction to map.
-     * @return The corresponding SQL keyword ("ASC" or "DESC").
-     */
-    private String mapDirection(String direction) {
-        switch (direction) {
-            case "asc":
-                return "ASC";
-            case "desc":
-                return "DESC";
-            default:
-                throw new IllegalArgumentException("Invalid sorting direction: " + direction);
-        }
-    }
 }

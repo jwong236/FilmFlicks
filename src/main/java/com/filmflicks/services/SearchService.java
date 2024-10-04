@@ -1,6 +1,7 @@
 package com.filmflicks.services;
 
 import com.filmflicks.models.Movie;
+import com.filmflicks.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,9 +62,6 @@ public class SearchService {
             int offset = (page - 1) * pageSize;
 
             String fullQuery = buildFullQuery(whereClause, pageSize, offset, sortRule);
-            System.out.println("WHERE CLAUSE: " + whereClause);
-            System.out.println("Full Query: " + fullQuery);
-            System.out.println("Parameters: " + parameters);
 
             return executeSearchQuery(connection, fullQuery, parameters);
         } catch (SQLException e) {
@@ -113,34 +111,12 @@ public class SearchService {
         if (sortRule == null || sortRule.isEmpty()) return "";
         String[] parts = sortRule.split("_");
         if (parts.length != 4) return "";
-        String field1 = mapField(parts[0]);
-        String direction1 = mapDirection(parts[1]);
-        String field2 = mapField(parts[2]);
-        String direction2 = mapDirection(parts[3]);
+        String field1 = Utils.mapField(parts[0]);
+        String direction1 = Utils.mapDirection(parts[1]);
+        String field2 = Utils.mapField(parts[2]);
+        String direction2 = Utils.mapDirection(parts[3]);
 
         return String.format("ORDER BY %s %s, %s %s", field1, direction1, field2, direction2);
-    }
-
-    private String mapField(String field) {
-        switch (field) {
-            case "title":
-                return "m.title";
-            case "rating":
-                return "r.rating";
-            default:
-                throw new IllegalArgumentException("Invalid sorting field: " + field);
-        }
-    }
-
-    private String mapDirection(String direction) {
-        switch (direction) {
-            case "asc":
-                return "ASC";
-            case "desc":
-                return "DESC";
-            default:
-                throw new IllegalArgumentException("Invalid sorting direction: " + direction);
-        }
     }
 
     /**

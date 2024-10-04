@@ -1,6 +1,3 @@
-package com.filmflicks.models;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class Movie {
@@ -12,32 +9,13 @@ public class Movie {
     private double rating;
     private int numVotes;
 
-    public Movie() {
-        this.title = "";
-        this.year = 0;
-        this.director = "";
-        this.genres = new ArrayList<>();
-        this.stars = new ArrayList<>();
-        this.rating = 0.0;
-        this.numVotes = 0;
-    }
-
-    public Movie(String title, int year, String director) {
-        this.title = (title != null) ? title : "";
-        this.year = (year > 0) ? year : 0;
-        this.director = (director != null) ? director : "";
-        this.genres = new ArrayList<>();
-        this.stars = new ArrayList<>();
-        this.rating = 0.0;
-        this.numVotes = 0;
-    }
-
+    // Getters and Setters for each field
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
-        this.title = (title != null) ? title : "";
+        this.title = title;
     }
 
     public int getYear() {
@@ -45,7 +23,7 @@ public class Movie {
     }
 
     public void setYear(int year) {
-        this.year = (year > 0) ? year : 0;
+        this.year = year;
     }
 
     public String getDirector() {
@@ -53,7 +31,7 @@ public class Movie {
     }
 
     public void setDirector(String director) {
-        this.director = (director != null) ? director : "";
+        this.director = director;
     }
 
     public List<String> getGenres() {
@@ -86,17 +64,5 @@ public class Movie {
 
     public void setNumVotes(int numVotes) {
         this.numVotes = numVotes;
-    }
-
-    public void addStar(String star) {
-        if (star != null && !star.trim().isEmpty()) {
-            this.stars.add(star);
-        }
-    }
-
-    public void addGenre(String genre) {
-        if (genre != null && !genre.trim().isEmpty()) {
-            this.genres.add(genre);
-        }
     }
 }
