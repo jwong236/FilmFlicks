@@ -1,6 +1,7 @@
 package com.filmflicks.controllers;
 
 import com.filmflicks.models.Movie;
+import com.filmflicks.models.Star;
 import com.filmflicks.services.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class SearchController {
@@ -38,5 +40,27 @@ public class SearchController {
             @RequestParam(defaultValue = "") String sortRule) {
 
         return searchService.searchMovies(title, director, star, year, page, pageSize, sortRule);
+    }
+
+    /**
+     * Retrieves detailed information about a single movie by its title.
+     *
+     * @param title Title of the movie.
+     * @return Optional containing the Movie object with details if found.
+     */
+    @GetMapping("/single-movie")
+    public Optional<Movie> getSingleMovie(@RequestParam String title) {
+        return searchService.getSingleMovieByTitle(title);
+    }
+
+    /**
+     * Retrieves detailed information about a single star by name and the movies they've appeared in.
+     *
+     * @param name Name of the star/actor/actress.
+     * @return Optional containing star details if found.
+     */
+    @GetMapping("/single-star")
+    public Optional<Star> getSingleStar(@RequestParam String name) {
+        return searchService.getStarDetails(name);
     }
 }
