@@ -47,7 +47,6 @@ public class BrowseService {
                 "WHERE g.name = ? " +
                 "GROUP BY m.id, m.title, m.year, m.director, r.rating, r.numVotes " +
                 getOrderByClause(sortRule) + " LIMIT ? OFFSET ?";
-
         return executeMovieQuery(query, genre, page, pageSize);
     }
 
