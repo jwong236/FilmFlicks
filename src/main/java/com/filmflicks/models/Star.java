@@ -9,6 +9,10 @@ public class Star {
     private String birthYear;
     private List<String> movies;
 
+    public Star() {
+        this.movies = new ArrayList<>();
+    }
+
     public Star(String name) {
         this.name = name;
         this.movies = new ArrayList<>();
@@ -44,3 +48,4 @@ public class Star {
         }
     }
 }
+
