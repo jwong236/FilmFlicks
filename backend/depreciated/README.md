@@ -1,1 +1,0 @@
-The files in this directory are for the initial version of this project, which used Tomcat. The logic has been refined and transitioned to SpringBoot
