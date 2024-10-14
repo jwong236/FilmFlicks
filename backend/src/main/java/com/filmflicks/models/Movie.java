@@ -1,35 +1,61 @@
 package com.filmflicks.models;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
+@Entity
+@Table(name = "movies")
 public class Movie {
+    @Id
+    private String id;
     private String title;
-    private int year;
+    private Integer year;
     private String director;
-    private List<String> genres;
-    private List<String> stars;
-    private double rating;
-    private int numVotes;
 
+    // Many-to-Many relationship with Star
+    @ManyToMany
+    @JoinTable(
+            name = "stars_in_movies",
+            joinColumns = @JoinColumn(name = "movieId"),
+            inverseJoinColumns = @JoinColumn(name = "starId")
+    )
+    @JsonManagedReference
+    private Set<Star> stars = new HashSet<>();
+
+    // Many-to-Many relationship with Genre
+    @ManyToMany
+    @JoinTable(
+            name = "genres_in_movies",
+            joinColumns = @JoinColumn(name = "movieId"),
+            inverseJoinColumns = @JoinColumn(name = "genreId")
+    )
+    @JsonManagedReference
+    private Set<Genre> genres = new HashSet<>();
+
+    // One-to-One relationship with Rating
+    @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL)
+    private Rating rating;
+
+    // Constructors
     public Movie() {
-        this.title = "";
-        this.year = 0;
-        this.director = "";
-        this.genres = new ArrayList<>();
-        this.stars = new ArrayList<>();
-        this.rating = 0.0;
-        this.numVotes = 0;
     }
 
-    public Movie(String title, int year, String director) {
-        this.title = (title != null) ? title : "";
-        this.year = (year > 0) ? year : 0;
-        this.director = (director != null) ? director : "";
-        this.genres = new ArrayList<>();
-        this.stars = new ArrayList<>();
-        this.rating = 0.0;
-        this.numVotes = 0;
+    public Movie(String id, String title, Integer year, String director) {
+        this.id = id;
+        this.title = title;
+        this.year = year;
+        this.director = director;
+    }
+
+    // Getters and Setters
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -37,15 +63,15 @@ public class Movie {
     }
 
     public void setTitle(String title) {
-        this.title = (title != null) ? title : "";
+        this.title = title;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
-        this.year = (year > 0) ? year : 0;
+    public void setYear(Integer year) {
+        this.year = year;
     }
 
     public String getDirector() {
@@ -53,50 +79,30 @@ public class Movie {
     }
 
     public void setDirector(String director) {
-        this.director = (director != null) ? director : "";
+        this.director = director;
     }
 
-    public List<String> getGenres() {
-        return genres;
-    }
-
-    public void setGenres(List<String> genres) {
-        this.genres = genres;
-    }
-
-    public List<String> getStars() {
+    public Set<Star> getStars() {
         return stars;
     }
 
-    public void setStars(List<String> stars) {
+    public void setStars(Set<Star> stars) {
         this.stars = stars;
     }
 
-    public double getRating() {
+    public Set<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(Set<Genre> genres) {
+        this.genres = genres;
+    }
+
+    public Rating getRating() {
         return rating;
     }
 
-    public void setRating(double rating) {
+    public void setRating(Rating rating) {
         this.rating = rating;
-    }
-
-    public int getNumVotes() {
-        return numVotes;
-    }
-
-    public void setNumVotes(int numVotes) {
-        this.numVotes = numVotes;
-    }
-
-    public void addStar(String star) {
-        if (star != null && !star.trim().isEmpty()) {
-            this.stars.add(star);
-        }
-    }
-
-    public void addGenre(String genre) {
-        if (genre != null && !genre.trim().isEmpty()) {
-            this.genres.add(genre);
-        }
     }
 }

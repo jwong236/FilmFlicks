@@ -12,15 +12,15 @@ CREATE TABLE movies (
 CREATE TABLE stars (
   id VARCHAR(36) NOT NULL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
-  birthYear INTEGER DEFAULT NULL
+  birth_year INTEGER DEFAULT NULL
 );
 
 CREATE TABLE stars_in_movies (
-  starId VARCHAR(36) NOT NULL,
-  movieId VARCHAR(36) NOT NULL,
-  FOREIGN KEY (starId) REFERENCES stars(id),
-  FOREIGN KEY (movieId) REFERENCES movies(id),
-  PRIMARY KEY (starId, movieId)
+  star_id VARCHAR(36) NOT NULL,
+  movie_id VARCHAR(36) NOT NULL,
+  FOREIGN KEY (star_id) REFERENCES stars(id),
+  FOREIGN KEY (movie_id) REFERENCES movies(id),
+  PRIMARY KEY (star_id, movie_id)
 );
 
 CREATE TABLE genres (
@@ -29,57 +29,55 @@ CREATE TABLE genres (
 );
 
 CREATE TABLE genres_in_movies (
-  genreId INTEGER NOT NULL,
-  movieId VARCHAR(36) NOT NULL,
-  FOREIGN KEY (genreId) REFERENCES genres(id),
-  FOREIGN KEY (movieId) REFERENCES movies(id),
-  PRIMARY KEY (genreId, movieId)
+  genre_id INTEGER NOT NULL,
+  movie_id VARCHAR(36) NOT NULL,
+  FOREIGN KEY (genre_id) REFERENCES genres(id),
+  FOREIGN KEY (movie_id) REFERENCES movies(id),
+  PRIMARY KEY (genre_id, movie_id)
 );
 
-CREATE TABLE creditcards (
+CREATE TABLE credit_cards (
   id VARCHAR(20) NOT NULL PRIMARY KEY,
-  firstName VARCHAR(50) NOT NULL,
-  lastName VARCHAR(50) NOT NULL,
+  first_name VARCHAR(50) NOT NULL,
+  last_name VARCHAR(50) NOT NULL,
   expiration DATE NOT NULL
 );
 
 CREATE TABLE customers (
   id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  firstName VARCHAR(50) NOT NULL,
-  lastName VARCHAR(50) NOT NULL,
-  ccId VARCHAR(20) NOT NULL,
+  first_name VARCHAR(50) NOT NULL,
+  last_name VARCHAR(50) NOT NULL,
+  cc_id VARCHAR(20) NOT NULL,
   address VARCHAR(200) NOT NULL,
   email VARCHAR(50) NOT NULL,
-  password VARCHAR(20) NOT NULL,
-  FOREIGN KEY (ccId) REFERENCES creditcards(id)
+  password VARCHAR(255) NOT NULL,
+  FOREIGN KEY (cc_id) REFERENCES credit_cards(id)
 );
 
 CREATE TABLE sales (
   id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  customerId INTEGER NOT NULL,
-  movieId VARCHAR(10) NOT NULL,
-  saleDate DATE NOT NULL,
-  FOREIGN KEY (customerId) REFERENCES customers(id),
-  FOREIGN KEY (movieId) REFERENCES movies(id)
+  customer_id INTEGER NOT NULL,
+  movie_id VARCHAR(36) NOT NULL,
+  sale_date DATE NOT NULL,
+  FOREIGN KEY (customer_id) REFERENCES customers(id),
+  FOREIGN KEY (movie_id) REFERENCES movies(id)
 );
 
 CREATE TABLE ratings (
-  movieId VARCHAR(10) NOT NULL,
+  movie_id VARCHAR(36) NOT NULL,
   rating FLOAT NOT NULL,
-  numVotes INTEGER NOT NULL,
-  FOREIGN KEY (movieId) REFERENCES movies(id)
+  num_votes INTEGER NOT NULL,
+  FOREIGN KEY (movie_id) REFERENCES movies(id)
 );
 
-
 CREATE TABLE movie_prices (
-    movieId VARCHAR(10) NOT NULL PRIMARY KEY,
+    movie_id VARCHAR(36) NOT NULL PRIMARY KEY,
     price DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (movieId) REFERENCES movies(id)
+    FOREIGN KEY (movie_id) REFERENCES movies(id)
 );
 
 CREATE TABLE employees (
-                           email VARCHAR(50) PRIMARY KEY,
-                           password VARCHAR(20) NOT NULL,
-                           fullname VARCHAR(100)
+    email VARCHAR(50) PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100)
 );
-INSERT INTO employees (email, password, fullname) VALUES ('classta@email.edu', 'classta', 'TA CS122B');

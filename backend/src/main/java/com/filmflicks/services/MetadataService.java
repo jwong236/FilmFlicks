@@ -3,22 +3,38 @@ package com.filmflicks.services;
 import com.filmflicks.models.TableMetadata;
 import com.filmflicks.models.Genre;
 import com.filmflicks.models.Movie;
+import com.filmflicks.repositories.GenreRepository;
+import com.filmflicks.repositories.MovieRepository;
+import com.filmflicks.repositories.StarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class MetadataService {
 
+    private static final Logger logger = LoggerFactory.getLogger(MetadataService.class);
+
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private GenreRepository genreRepository;
+
+    @Autowired
+    private MovieRepository movieRepository;
+
+    @Autowired
+    private StarRepository starRepository;
 
     /**
      * Retrieves a list of all genres
@@ -26,47 +42,21 @@ public class MetadataService {
      * @return A list of all genres
      */
     public List<Genre> getAllGenres() {
-        List<Genre> genres = new ArrayList<>();
-
-        try (Connection connection = dataSource.getConnection()) {
-            String query = "SELECT * FROM genres";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                genres.add(new Genre(id, name));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return genres;
+        return genreRepository.findAll();
     }
 
     /**
-     * Retrieves a list of all directors
+     * Retrieves a list of all distinct directors
      *
      * @return A list of all directors
      */
     public List<String> getAllDirectors() {
-        List<String> directors = new ArrayList<>();
-
-        try (Connection connection = dataSource.getConnection()) {
-            String query = "SELECT DISTINCT director FROM movies";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
-            while (resultSet.next()) {
-                String director = resultSet.getString("director");
-                directors.add(director);
-            }
+        try {
+            return movieRepository.findDistinctDirectors();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error while fetching directors", e);
+            return new ArrayList<>();
         }
-
-        return directors;
     }
 
     /**
@@ -75,22 +65,12 @@ public class MetadataService {
      * @return A list of all stars
      */
     public List<String> getAllStars() {
-        List<String> stars = new ArrayList<>();
-
-        try (Connection connection = dataSource.getConnection()) {
-            String query = "SELECT DISTINCT s.name FROM stars s";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
-            while (resultSet.next()) {
-                String star = resultSet.getString("name");
-                stars.add(star);
-            }
+        try {
+            return starRepository.findAllStarNames();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error while fetching stars", e);
+            return new ArrayList<>();
         }
-
-        return stars;
     }
 
     /**
@@ -99,60 +79,13 @@ public class MetadataService {
      * @return A list of top-rated movies
      */
     public List<Movie> getTopRatedMovies() {
-        List<Movie> topMovies = new ArrayList<>();
-
-        try (Connection connection = dataSource.getConnection()) {
-            String query = "SELECT m.id, m.title, m.year, m.director, r.rating, " +
-                    "(SELECT GROUP_CONCAT(g.name SEPARATOR ', ') FROM genres g " +
-                    "JOIN genres_in_movies gm ON gm.genreId = g.id " +
-                    "WHERE gm.movieId = m.id) AS genres, " +
-                    "(SELECT GROUP_CONCAT(s.name SEPARATOR ', ') FROM stars s " +
-                    "JOIN stars_in_movies sm ON sm.starId = s.id " +
-                    "WHERE sm.movieId = m.id) AS stars " +
-                    "FROM movies m " +
-                    "JOIN ratings r ON m.id = r.movieId " +
-                    "ORDER BY r.rating DESC LIMIT 20";
-
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
-            while (resultSet.next()) {
-                String title = resultSet.getString("title");
-                int year = resultSet.getInt("year");
-                String director = resultSet.getString("director");
-                double rating = resultSet.getDouble("rating");
-
-                String genresString = resultSet.getString("genres");
-                String starsString = resultSet.getString("stars");
-
-                // Create movie object with title, year, and director
-                Movie movie = new Movie(title, year, director);
-                movie.setRating(rating);
-
-                // Add genres to the movie
-                if (genresString != null && !genresString.isEmpty()) {
-                    for (String genre : genresString.split(", ")) {
-                        movie.addGenre(genre);
-                    }
-                }
-
-                // Add stars to the movie
-                if (starsString != null && !starsString.isEmpty()) {
-                    for (String star : starsString.split(", ")) {
-                        movie.addStar(star);
-                    }
-                }
-
-                topMovies.add(movie);
-            }
-
+        try {
+            return movieRepository.findTopRatedMovies(PageRequest.of(0, 20)).getContent();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error while fetching top-rated movies", e);
+            return new ArrayList<>();
         }
-
-        return topMovies;
     }
-
 
     /**
      * Retrieves database metadata including table names and column details
@@ -161,32 +94,47 @@ public class MetadataService {
      */
     public List<TableMetadata> getDatabaseMetadata() {
         List<TableMetadata> metadataList = new ArrayList<>();
-        String query = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'moviedb' ORDER BY TABLE_NAME, ORDINAL_POSITION";
+        String query = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? ORDER BY TABLE_NAME, ORDINAL_POSITION";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query);
-             ResultSet resultSet = statement.executeQuery()) {
+             PreparedStatement statement = connection.prepareStatement(query)) {
 
-            TableMetadata currentTable = null;
-            String currentTableName = "";
+            statement.setString(1, "moviedb"); // Make the schema configurable if needed
 
-            while (resultSet.next()) {
-                String tableName = resultSet.getString("TABLE_NAME");
-                if (!tableName.equals(currentTableName)) {
-                    if (currentTable != null) {
-                        metadataList.add(currentTable);
-                    }
-                    currentTableName = tableName;
-                    currentTable = new TableMetadata(tableName);
-                }
-                currentTable.addColumn(resultSet.getString("COLUMN_NAME"), resultSet.getString("DATA_TYPE"));
-            }
-            if (currentTable != null) {
-                metadataList.add(currentTable);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                metadataList = mapResultSetToTableMetadata(resultSet);
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error while fetching database metadata", e);
+        }
+        return metadataList;
+    }
+
+    /**
+     * Maps the ResultSet to a list of TableMetadata objects
+     *
+     * @param resultSet The ResultSet containing table metadata
+     * @return A list of TableMetadata objects
+     */
+    private List<TableMetadata> mapResultSetToTableMetadata(ResultSet resultSet) throws Exception {
+        List<TableMetadata> metadataList = new ArrayList<>();
+        TableMetadata currentTable = null;
+        String currentTableName = "";
+
+        while (resultSet.next()) {
+            String tableName = resultSet.getString("TABLE_NAME");
+            if (!tableName.equals(currentTableName)) {
+                if (currentTable != null) {
+                    metadataList.add(currentTable);
+                }
+                currentTableName = tableName;
+                currentTable = new TableMetadata(tableName);
+            }
+            currentTable.addColumn(resultSet.getString("COLUMN_NAME"), resultSet.getString("DATA_TYPE"));
+        }
+        if (currentTable != null) {
+            metadataList.add(currentTable);
         }
 
         return metadataList;

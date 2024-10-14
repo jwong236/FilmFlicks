@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, useTheme, Typography } from "@mui/material";
 import Navbar from '../components/Navbar';
@@ -6,18 +6,12 @@ import Background from '../components/Background.jsx';
 import SplitSearchBar from '../components/SplitSearchBar.jsx';
 import BrowseGenres from '../components/BrowseGenres';
 import BrowseCharacters from '../components/BrowseCharacters';
-
-import axios from 'axios';
-
-const URL = import.meta.env.VITE_URL;
+import { useGenres } from '../hooks/useGenres';
 
 export default function Homepage() {
-    const [genre, setGenre] = useState("");
-    const [character, setCharacter] = useState("");
     const navigate = useNavigate();
     const theme = useTheme();
-    const [genres, setGenres] = useState(["loading..."]);
-
+    const { genres, error } = useGenres(navigate);
 
     const handleGenreClick = (genre) => {
         navigate('/movielist', { state: { genre } });
@@ -26,27 +20,6 @@ export default function Homepage() {
     const handleCharacterClick = (character) => {
         navigate('/movielist', { state: { character } });
     };
-
-    useEffect(() => {
-        const fetchGenres = async () => {
-            try {
-                const gArray = await axios.get(`${URL}/homepageGenres`, {
-                    withCredentials: true
-                });
-                const tempArray = gArray.data.map(elem => elem.name);
-                console.log(tempArray);
-                setGenres(tempArray);
-            } catch (error) {
-                if (error.response && error.response.status === 401) {
-                    console.log("Unauthorized access: Redirecting to login page");
-                    navigate('/login'); // Redirect on specific status code (401)
-                } else {
-                    console.error("Error fetching genres:", error); // Log other errors
-                }
-            }
-        };
-        fetchGenres();
-    }, [navigate]);
 
     const characters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
         "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*"];

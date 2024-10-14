@@ -1,21 +1,44 @@
 package com.filmflicks.models;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
+@Entity
+@Table(name = "stars")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Star {
-
+    @Id
+    private String id;
     private String name;
-    private String birthYear;
-    private List<String> movies;
 
+    private Integer birth_year;
+
+    // Many-to-Many relationship with Movie (inverse side)
+    @ManyToMany(mappedBy = "stars")
+    @JsonBackReference
+    private Set<Movie> movies = new HashSet<>();
+
+    // Constructors
     public Star() {
-        this.movies = new ArrayList<>();
     }
 
-    public Star(String name) {
+    public Star(String id, String name, Integer birth_year) {
+        this.id = id;
         this.name = name;
-        this.movies = new ArrayList<>();
+        this.birth_year = birth_year;
+    }
+
+    // Getters and Setters
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -26,26 +49,19 @@ public class Star {
         this.name = name;
     }
 
-    public String getBirthYear() {
-        return birthYear;
+    public Integer getBirthYear() {
+        return birth_year;
     }
 
-    public void setBirthYear(String birthYear) {
-        this.birthYear = birthYear;
+    public void setBirthYear(Integer birth_year) {
+        this.birth_year = birth_year;
     }
 
-    public List<String> getMovies() {
+    public Set<Movie> getMovies() {
         return movies;
     }
 
-    public void setMovies(List<String> movies) {
+    public void setMovies(Set<Movie> movies) {
         this.movies = movies;
     }
-
-    public void addMovie(String movie) {
-        if (movie != null && !movie.trim().isEmpty()) {
-            this.movies.add(movie);
-        }
-    }
 }
-
