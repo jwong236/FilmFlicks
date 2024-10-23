@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -34,8 +35,8 @@ public class MetadataController {
     }
 
     @GetMapping("/top-rated")
-    public List<Movie> getTopRatedMovies() {
-        return metadataService.getTopRatedMovies();
+    public List<Movie> getTopRatedMovies(@RequestParam(defaultValue = "20") int size) {
+        return metadataService.getTopRatedMovies(size);
     }
 
     @GetMapping("/database-metadata")

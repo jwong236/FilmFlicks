@@ -78,9 +78,9 @@ public class MetadataService {
      *
      * @return A list of top-rated movies
      */
-    public List<Movie> getTopRatedMovies() {
+    public List<Movie> getTopRatedMovies(int size) {
         try {
-            return movieRepository.findTopRatedMovies(PageRequest.of(0, 20)).getContent();
+            return movieRepository.findTopRatedMovies(PageRequest.of(0, size)).getContent();
         } catch (Exception e) {
             logger.error("Error while fetching top-rated movies", e);
             return new ArrayList<>();
