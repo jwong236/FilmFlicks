@@ -3,6 +3,8 @@ package com.filmflicks.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.servlet.http.HttpSession;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -37,6 +39,16 @@ public class TestController {
         } catch (Exception e) {
             return "Database connection failed: " + e.getMessage();
         }
+    }
+
+    // Endpoint to print the contents of the current session
+    @GetMapping("/test-session")
+    public String testSession(HttpSession session) {
+        StringBuilder sessionContents = new StringBuilder("Session Contents:\n");
+        session.getAttributeNames().asIterator().forEachRemaining(attributeName ->
+                sessionContents.append(attributeName).append(": ").append(session.getAttribute(attributeName)).append("\n")
+        );
+        return sessionContents.toString();
     }
 
 }
