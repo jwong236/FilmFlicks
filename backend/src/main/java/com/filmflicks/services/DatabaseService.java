@@ -1,9 +1,6 @@
 package com.filmflicks.services;
 
-import com.filmflicks.models.Movie;
-import com.filmflicks.models.Star;
 import com.filmflicks.repositories.MovieRepository;
-import com.filmflicks.repositories.StarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,80 +10,68 @@ public class DatabaseService {
     @Autowired
     private MovieRepository movieRepository;
 
-    @Autowired
-    private StarRepository starRepository;
-
     /**
-     * Inserts a movie using the stored procedure in MovieRepository.
+     * Adds a basic movie to the database.
      *
-     * @param movie The movie object containing details to insert.
-     * @return Success or error message.
+     * @param title The title of the movie.
+     * @param year The release year of the movie.
+     * @param director The director of the movie.
+     * @return Success message or error.
      */
-    public String insertMovie(Movie movie) {
-        try {
-            // Call the stored procedure in the repository
-            String result = movieRepository.addMovie(
-                    movie.getTitle(),
-                    movie.getYear(),
-                    movie.getDirector(),
-                    movie.getStars().isEmpty() ? null : movie.getStars().iterator().next().getName(),
-                    movie.getGenres().isEmpty() ? null : movie.getGenres().iterator().next().getName()
-            );
-            return "{\"status\": \"success\", \"message\": \"" + result + "\"}";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"status\": \"error\", \"message\": \"Database error: " + e.getMessage() + "\"}";
-        }
+    public String addMovieBasic(String title, Integer year, String director) {
+        return movieRepository.addMovieBasic(title, year, director);
     }
 
     /**
-     * Inserts a star using the stored procedure in StarRepository.
+     * Adds stars linked to a movie.
      *
-     * @param star The star object containing details to insert.
-     * @return Success or error message.
+     * @param movieId The ID of the movie.
+     * @param starNames Comma-separated star names.
+     * @param starBirthYears Comma-separated star birth years.
+     * @return Success message or error.
      */
-    public String insertStar(Star star) {
-        try {
-            Integer birthYear = star.getBirthYear() != null ? star.getBirthYear() : 0;
-            String result = starRepository.addStar(star.getName(), birthYear);
-            return "{\"status\": \"success\", \"message\": \"" + result + "\"}";
-        } catch (NumberFormatException e) {
-            return "{\"status\": \"error\", \"message\": \"Invalid birth year format.\"}";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"status\": \"error\", \"message\": \"Database error: " + e.getMessage() + "\"}";
-        }
+    public String addMovieStars(String movieId, String starNames, String starBirthYears) {
+        return movieRepository.addMovieStars(movieId, starNames, starBirthYears);
     }
 
     /**
-     * Deletes a movie using JPA.
+     * Adds genres linked to a movie.
+     *
+     * @param movieId The ID of the movie.
+     * @param genreNames Comma-separated genre names.
+     * @return Success message or error.
+     */
+    public String addMovieGenres(String movieId, String genreNames) {
+        return movieRepository.addMovieGenres(movieId, genreNames);
+    }
+
+    /**
+     * Deletes a basic movie from the database.
      *
      * @param movieId The ID of the movie to delete.
-     * @return Success or error message.
+     * @return Success message or error.
      */
-    public String deleteMovie(String movieId) {
-        try {
-            movieRepository.deleteById(movieId);
-            return "{\"status\": \"success\", \"message\": \"Movie deleted successfully.\"}";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"status\": \"error\", \"message\": \"Database error: " + e.getMessage() + "\"}";
-        }
+    public String deleteMovieBasic(String movieId) {
+        return movieRepository.deleteMovieBasic(movieId);
     }
 
     /**
-     * Deletes a star using JPA.
+     * Deletes stars linked to a movie.
      *
-     * @param starId The ID of the star to delete.
-     * @return Success or error message.
+     * @param movieId The ID of the movie.
+     * @return Success message or error.
      */
-    public String deleteStar(String starId) {
-        try {
-            starRepository.deleteById(starId);
-            return "{\"status\": \"success\", \"message\": \"Star deleted successfully.\"}";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"status\": \"error\", \"message\": \"Database error: " + e.getMessage() + "\"}";
-        }
+    public String deleteMovieStars(String movieId) {
+        return movieRepository.deleteMovieStars(movieId);
+    }
+
+    /**
+     * Deletes genres linked to a movie.
+     *
+     * @param movieId The ID of the movie.
+     * @return Success message or error.
+     */
+    public String deleteMovieGenres(String movieId) {
+        return movieRepository.deleteMovieGenres(movieId);
     }
 }

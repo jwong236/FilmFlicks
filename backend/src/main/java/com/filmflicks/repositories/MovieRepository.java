@@ -11,17 +11,44 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, String>, JpaSpecificationExecutor<Movie> {
 
-    @Procedure(name = "add_movie")
-    String addMovie(
-            @Param("title") String title,
-            @Param("year") int year,
-            @Param("director") String director,
-            @Param("star_name") String starName,
-            @Param("genre_name") String genreName
+    @Procedure(procedureName = "add_movie_basic")
+    String addMovieBasic(
+            @Param("movie_title") String title,
+            @Param("movie_year") int year,
+            @Param("movie_director") String director
+    );
+
+    @Procedure(procedureName = "add_movie_stars")
+    String addMovieStars(
+            @Param("movie_id") String movieId,
+            @Param("star_names") String starNames,  // Comma-separated list of star names
+            @Param("star_birth_years") String starBirthYears  // Comma-separated list of birth years
+    );
+
+    @Procedure(procedureName = "add_movie_genres")
+    String addMovieGenres(
+            @Param("movie_id") String movieId,
+            @Param("genre_names") String genreNames  // Comma-separated list of genre names
+    );
+
+    @Procedure(procedureName = "delete_movie_basic")
+    String deleteMovieBasic(
+            @Param("movie_id") String movieId
+    );
+
+    @Procedure(procedureName = "delete_movie_stars")
+    String deleteMovieStars(
+            @Param("movie_id") String movieId
+    );
+
+    @Procedure(procedureName = "delete_movie_genres")
+    String deleteMovieGenres(
+            @Param("movie_id") String movieId
     );
 
     // ====================================

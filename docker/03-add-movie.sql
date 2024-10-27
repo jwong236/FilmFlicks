@@ -1,70 +1,123 @@
+-- Drop the procedure if it already exists
 USE moviedb;
+DROP PROCEDURE IF EXISTS add_movie_basic;
 DELIMITER $$
 
-CREATE PROCEDURE add_movie(
-    IN movieTitle VARCHAR(255),
-    IN movieYear YEAR,
-    IN movieDirector VARCHAR(255),
-    IN starName VARCHAR(255),
-    IN starBirthYear YEAR,
-    IN genreName VARCHAR(255),
-    OUT newMovieId CHAR(9),
-    OUT newStarId CHAR(9),
-    OUT newGenreId INT,
-    OUT outputMessage VARCHAR(255)
+CREATE PROCEDURE add_movie_basic(
+    IN movie_title VARCHAR(255),
+    IN movie_year YEAR,
+    IN movie_director VARCHAR(255),
+    OUT output_message VARCHAR(255)
 )
-    proc_label: BEGIN
-    DECLARE existingMovieId CHAR(9);
-    DECLARE existingStarId CHAR(9);
-    DECLARE existingGenreId INT;
-    DECLARE baseMessage VARCHAR(255) DEFAULT 'Movie added successfully';
+BEGIN
+    DECLARE existing_movie_id CHAR(9);
+    DECLARE new_movie_id CHAR(9);
 
     -- Check for existing movie
-SELECT id INTO existingMovieId FROM movies
-WHERE title = movieTitle AND year = movieYear AND director = movieDirector;
+    SELECT id INTO existing_movie_id FROM movies
+    WHERE title = movie_title AND year = movie_year AND director = movie_director;
 
-IF existingMovieId IS NOT NULL THEN
-        SET outputMessage = 'Error: Movie already exists';
-        LEAVE proc_label;
-END IF;
+    IF existing_movie_id IS NOT NULL THEN
+        -- Set error message if the movie already exists
+        SET output_message = 'Error: Movie already exists';
+    ELSE
+        -- Generate new movie ID
+        SELECT CONCAT('tt', LPAD(IFNULL(MAX(CAST(SUBSTRING(id, 3) AS UNSIGNED)), 0) + 1, 7, '0'))
+        INTO new_movie_id FROM movies;
 
-    -- Generate new movie ID
-SELECT CONCAT('tt', LPAD(IFNULL(MAX(CAST(SUBSTRING(id, 3) AS UNSIGNED)), 0) + 1, 7, '0')) INTO newMovieId FROM movies;
+        -- Insert the new movie
+        INSERT INTO movies (id, title, year, director) VALUES (new_movie_id, movie_title, movie_year, movie_director);
 
--- Insert new movie
-INSERT INTO movies (id, title, year, director) VALUES (newMovieId, movieTitle, movieYear, movieDirector);
+        -- Set success message that includes the new movie ID
+        SET output_message = CONCAT('Movie added successfully with ID: ', new_movie_id);
+    END IF;
+END$$
 
--- Check for existing star
-SELECT id INTO existingStarId FROM stars
-WHERE name = starName AND (birthYear = starBirthYear OR (birthYear IS NULL AND starBirthYear IS NULL));
+DELIMITER ;
 
-IF existingStarId IS NULL THEN
-        -- Generate new star ID
-SELECT CONCAT('nm', LPAD(IFNULL(MAX(CAST(SUBSTRING(id, 3) AS UNSIGNED)), 0) + 1, 7, '0')) INTO newStarId FROM stars;
-INSERT INTO stars (id, name, birthYear) VALUES (newStarId, starName, starBirthYear);
-ELSE
-        SET newStarId = existingStarId;
-        SET baseMessage = CONCAT(baseMessage, ' with existing star');
-END IF;
 
-    -- Check for existing genre
-SELECT id INTO existingGenreId FROM genres WHERE name = genreName;
 
-IF existingGenreId IS NULL THEN
-        -- Generate new genre ID
-SELECT IFNULL(MAX(id), 0) + 1 INTO newGenreId FROM genres;
-INSERT INTO genres (id, name) VALUES (newGenreId, genreName);
-ELSE
-        SET newGenreId = existingGenreId;
-        SET baseMessage = IF(LOCATE('existing star', baseMessage) > 0, CONCAT(baseMessage, ' and existing genre'), CONCAT(baseMessage, ' with existing genre'));
-END IF;
 
-    -- Link movie with star and genre
-INSERT INTO stars_in_movies (starId, movieId) VALUES (newStarId, newMovieId);
-INSERT INTO genres_in_movies (genreId, movieId) VALUES (newGenreId, newMovieId);
+-- Drop the procedure if it already exists
+DROP PROCEDURE IF EXISTS add_movie_stars;
+DELIMITER $$
 
--- Set the output message
-SET outputMessage = baseMessage;
-END $$
+CREATE PROCEDURE add_movie_stars(
+    IN movie_id CHAR(9),
+    IN star_names TEXT, -- Comma-separated star names
+    IN star_birth_years TEXT, -- Comma-separated star birth years
+    OUT output_message VARCHAR(255)
+)
+BEGIN
+    DECLARE star_name VARCHAR(255);
+    DECLARE star_birth_year YEAR;
+    DECLARE star_id CHAR(9);
+    DECLARE current_index INT DEFAULT 1;
+
+    -- Loop through each star in the input
+    WHILE current_index <= CHAR_LENGTH(star_names) - CHAR_LENGTH(REPLACE(star_names, ',', '')) + 1 DO
+        SET star_name = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(star_names, ',', current_index), ',', -1));
+        SET star_birth_year = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(star_birth_years, ',', current_index), ',', -1)) AS UNSIGNED);
+
+        -- Check if the star exists
+        SET star_id = NULL;
+        SELECT id INTO star_id FROM stars
+        WHERE name = star_name AND (birth_year = star_birth_year OR (birth_year IS NULL AND star_birth_year IS NULL));
+
+        -- If the star does not exist, return an error message
+        IF star_id IS NULL THEN
+            SET output_message = CONCAT('Error: Star "', star_name, '" with birth year "', star_birth_year, '" does not exist');
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = output_message;
+        END IF;
+
+        -- Link the star with the movie
+        INSERT INTO stars_in_movies (star_id, movie_id) VALUES (star_id, movie_id);
+
+        SET current_index = current_index + 1;
+    END WHILE;
+
+    -- Set the output message
+    SET output_message = 'Stars linked to movie successfully';
+END$$
+
+DELIMITER ;
+
+-- Drop the procedure if it already exists
+DROP PROCEDURE IF EXISTS add_movie_genres;
+DELIMITER $$
+
+CREATE PROCEDURE add_movie_genres(
+    IN movie_id CHAR(9),
+    IN genre_names TEXT, -- Comma-separated genre names
+    OUT output_message VARCHAR(255)
+)
+BEGIN
+    DECLARE genre_name VARCHAR(255);
+    DECLARE genre_id INT;
+    DECLARE current_index INT DEFAULT 1;
+
+    -- Loop through each genre in the input
+    WHILE current_index <= CHAR_LENGTH(genre_names) - CHAR_LENGTH(REPLACE(genre_names, ',', '')) + 1 DO
+        SET genre_name = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(genre_names, ',', current_index), ',', -1));
+
+        -- Check if the genre exists
+        SET genre_id = NULL;
+        SELECT id INTO genre_id FROM genres WHERE name = genre_name;
+
+        -- If the genre does not exist, return an error message
+        IF genre_id IS NULL THEN
+            SET output_message = CONCAT('Error: Genre "', genre_name, '" does not exist');
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = output_message;
+        END IF;
+
+        -- Link the genre with the movie
+        INSERT INTO genres_in_movies (genre_id, movie_id) VALUES (genre_id, movie_id);
+
+        SET current_index = current_index + 1;
+    END WHILE;
+
+    -- Set the output message
+    SET output_message = 'Genres linked to movie successfully';
+END$$
 
 DELIMITER ;
