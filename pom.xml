@@ -39,6 +39,14 @@
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
 
+    <!-- Spring Boot Starter Test for testing purposes -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
     <!-- MySQL Driver -->
     <dependency>
       <groupId>mysql</groupId>
@@ -53,19 +61,7 @@
       <artifactId>jackson-databind</artifactId>
     </dependency>
 
-    <!-- Spring Boot Starter for Thymeleaf (optional if you are using templates) -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-thymeleaf</artifactId>
-    </dependency>
 
-    <!-- Spring Boot Starter Test for testing purposes -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 
   <build>
     <finalName>FilmFlicks</finalName>

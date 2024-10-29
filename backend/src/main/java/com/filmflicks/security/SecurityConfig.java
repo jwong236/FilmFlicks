@@ -1,8 +1,9 @@
-package com.filmflicks.configs;
+package com.filmflicks.security;
 
-import com.filmflicks.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -13,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -27,20 +27,37 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        /*
+        SecutityFilterChain order of operations
+        1. Session management
+        2. Authentication
+        3. Authorization
+        4. CSRF Protection
+        5. Others (CORS, Exception handling, headers etc)
+        */
         http
-                .addFilter(new SecurityContextPersistenceFilter()) // Deprecated but I can't find an alternative that works
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for testing; enable in production
+                // 1. Ensure sessions are created when required
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // Ensure sessions are created when required
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/error", "/css/**", "/js/**").permitAll() // Allow access to login and error pages, plus static resources
-                        .anyRequest().authenticated() // All other requests require authentication
-                )
-                .formLogin(AbstractHttpConfigurer::disable)
-                .logout(LogoutConfigurer::permitAll) // Allow logout without authentication
-                .userDetailsService(userDetailsService); // Use the custom user details service
 
+                // 2. Authentication
+                .formLogin(form -> form
+                        .loginProcessingUrl("/login")
+                        .successHandler(new CustomAuthSuccessHandler())
+                )
+                .authenticationProvider(authenticationProvider())
+
+                // 3. Authorization
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/login", "/error", "/css/**", "/js/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+
+                // 4. CSRF Protection (Enable in production)
+                .csrf(AbstractHttpConfigurer::disable)
+                .logout(LogoutConfigurer::permitAll);
         return http.build();
     }
 
@@ -52,6 +69,15 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
 }
