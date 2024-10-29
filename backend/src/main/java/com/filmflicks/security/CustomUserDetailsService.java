@@ -24,7 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        System.out.println("Attempting to find user by email: " + email);
 
         // 1. Find customer using email
         Customer customer = customerRepository.findByEmail(email)
@@ -33,28 +32,21 @@ public class CustomUserDetailsService implements UserDetailsService {
                     return new UsernameNotFoundException("User not found with email: " + email);
                 });
 
-        System.out.println("User found: " + customer.getEmail());
 
         // 2. Check if the password is already encrypted
         if (!customer.getPassword().startsWith("$2a$")) {
-            System.out.println("Password is not encrypted, encrypting now...");
 
             // 2a. If the password is not encrypted, encrypt it now
             String encryptedPassword = passwordEncoder.encode(customer.getPassword());
-            System.out.println("Encrypted password: " + encryptedPassword);
 
             // 2b. Set our customer object to the new encrypted password
             customer.setPassword(encryptedPassword);
 
             // 2c. Save the new encrypted password to the database
             customerRepository.save(customer);
-            System.out.println("Password encrypted and saved for user: " + customer.getEmail());
-        } else {
-            System.out.println("Password is already encrypted.");
         }
 
         // 3. Return a UserDetails object containing the customer's email and password
-        System.out.println("Returning UserDetails object for user: " + customer.getEmail());
         return User.builder()
                 .username(customer.getEmail())
                 .password(customer.getPassword())
