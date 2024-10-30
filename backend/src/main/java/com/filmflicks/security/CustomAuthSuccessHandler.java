@@ -1,5 +1,6 @@
 package com.filmflicks.security;
 
+import com.filmflicks.models.ShoppingCart;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +25,12 @@ public class CustomAuthSuccessHandler implements AuthenticationSuccessHandler {
 
         // Set session attribute
         session.setAttribute("userEmail", email);
+
+        // Create empty shopping cart
+        ShoppingCart shoppingCart = new ShoppingCart();
+
+        // Set as session attribute
+        session.setAttribute("shoppingCart", shoppingCart);
 
         // Redirect to homepage or any specific page
         response.sendRedirect("/");

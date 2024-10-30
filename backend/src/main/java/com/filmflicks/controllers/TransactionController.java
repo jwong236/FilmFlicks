@@ -1,56 +1,72 @@
 package com.filmflicks.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.filmflicks.models.ShoppingCart;
+import com.filmflicks.models.ShoppingCart.CartItem;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/shopping-cart")
-public class PurchaseController {
+@RequestMapping("/transaction")
+public class TransactionController {
 
-    private final ObjectMapper objectMapper;
+    @GetMapping("/shopping-cart")
+    public Map<String, Object> getShoppingCart(HttpSession session) {
+        ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
+        Map<String, Object> response = new HashMap<>();
 
-    public PurchaseController(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
-    @GetMapping
-    public HashMap<String, Object> getShoppingCart(HttpSession session) throws IOException {
-
-        // Check if session exists and retrieve movieMap
-        HashMap<String, MovieSession> movieMap = (HashMap<String, MovieSession>) session.getAttribute("movieMap");
-        HashMap<String, Object> movieMapJson = new HashMap<>();
-
-        if (movieMap != null) {
-            System.out.println("Session and map exist");
-
-            // Process each movie entry in movieMap
-            for (String title : movieMap.keySet()) {
-                MovieSession movieObj = movieMap.get(title);
-                int quantity = movieObj.getQuantity();
-                String movieId = movieObj.getId();
-                double price = movieObj.getPrice();
-                double totalPrice = price * quantity;
-
-                // Create a new JSON-like structure for the movie session
-                HashMap<String, Object> movieSessionJson = new HashMap<>();
-                movieSessionJson.put("id", movieId);
-                movieSessionJson.put("quantity", quantity);
-                movieSessionJson.put("price", price);
-                movieSessionJson.put("totalPrice", totalPrice);
-
-                movieMapJson.put(title, movieSessionJson);
-            }
-            System.out.println("New movie map JSON: " + movieMapJson);
-            return movieMapJson;
+        if (shoppingCart != null) {
+            Map<String, CartItem> cartItems = shoppingCart.getCartItems();
+            response.put("cartItems", cartItems);
+            response.put("totalPrice", shoppingCart.getTotalPrice());
         } else {
-            System.out.println("Session doesn't have anything in the shopping cart");
-            return new HashMap<>();  // Return an empty JSON object if the cart is empty
+            response.put("message", "Session doesn't have anything in the shopping cart");
+            response.put("cartItems", Map.of());
+            response.put("totalPrice", 0.0);
         }
+
+        return response;
     }
+
+    @PostMapping("/shopping-cart/add")
+    public Map<String, Object> addToShoppingCart(@RequestParam String title, @RequestParam double price, @RequestParam int quantity, HttpSession session) {
+        ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
+        Map<String, Object> response = new HashMap<>();
+
+        if (shoppingCart == null) {
+            shoppingCart = new ShoppingCart();
+            session.setAttribute("shoppingCart", shoppingCart);
+        }
+
+        shoppingCart.addItem(title, price, quantity);
+        response.put("success", true);
+        response.put("message", "Item added to shopping cart successfully.");
+
+        return response;
+    }
+
+    @DeleteMapping("/shopping-cart/remove")
+    public Map<String, Object> removeFromShoppingCart(@RequestParam String title, @RequestParam int quantity, HttpSession session) {
+        ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
+        Map<String, Object> response = new HashMap<>();
+
+        if (shoppingCart != null) {
+            shoppingCart.removeItem(title, quantity);
+            response.put("success", true);
+            response.put("message", "Item removed from shopping cart successfully.");
+        } else {
+            response.put("success", false);
+            response.put("message", "Shopping cart is empty.");
+        }
+
+        return response;
+    }
+
 }

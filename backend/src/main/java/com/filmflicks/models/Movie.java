@@ -42,6 +42,11 @@ public class Movie {
     public Movie() {
     }
 
+    public Movie(String id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
     public Movie(String id, String title, Integer year, String director) {
         this.id = id;
         this.title = title;
