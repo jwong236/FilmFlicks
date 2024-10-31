@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {Box, Button, useTheme, Container, Snackbar} from "@mui/material";
-import MovieCard from "../components/MovieCard.jsx";
-import HomeButton from "../components/HomeButton.jsx";
+import MovieCard from "../components/components(deprecated)/MovieCard.jsx";
+import HomeButton from "../components/components(deprecated)/HomeButton.jsx";
 import popcorn from '../assets/popcorn.png'
 
 const URL = import.meta.env.VITE_URL;

@@ -1,3 +1,4 @@
+/*
 public class Email {
     private final String email;
     private final String customerId;
@@ -14,3 +15,4 @@ public class Email {
         return this.email;
     }
 }
+*/

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import HomeButton from "../components/HomeButton.jsx";
-import StarCard from "../components/StarCard.jsx";
+import HomeButton from "../components/components(deprecated)/HomeButton.jsx";
+import StarCard from "../components/components(deprecated)/StarCard.jsx";
 import {Box}  from '@mui/material'
 import popcorn from "../assets/popcorn.png";
 

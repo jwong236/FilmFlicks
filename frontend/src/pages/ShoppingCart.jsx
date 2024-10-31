@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { Box } from "@mui/material";
-import Navbar from '../components/Navbar';
-import Background from '../components/Background.jsx';
-import ShoppingCartCard from '../components/ShoppingCartCard.jsx';
+import Navbar from '../components/components(deprecated)/Navbar.jsx';
+import Background from '../components/universal/Background.jsx';
+import ShoppingCartCard from '../components/components(deprecated)/ShoppingCartCard.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const URL = import.meta.env.VITE_URL;

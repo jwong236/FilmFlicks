@@ -4,9 +4,9 @@ import HomeIcon from '@mui/icons-material/Home';
 import ListIcon from '@mui/icons-material/List';
 import StarIcon from '@mui/icons-material/Star';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import singlepopcorntransparent from '../assets/singlepopcorntransparent.png';
+import singlepopcorntransparent from '../../assets/singlepopcorntransparent.png';
 import {Box} from "@mui/material";
-import theme from "../theme/index.js";
+import theme from "../../theme/index.js";
 import FullTextSearch from "./FullTextSearch.jsx";
 
 function Navbar() {

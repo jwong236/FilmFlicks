@@ -1,3 +1,4 @@
+/*
 public class CastXML {
 
     private final String actorId;
@@ -37,4 +38,4 @@ public class CastXML {
         return "ActorId:" + getActorId() + ", " +
                 "MovieId:" + getMovieId() + ", ";
     }
-}
+}*/

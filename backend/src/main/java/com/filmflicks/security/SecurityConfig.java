@@ -11,12 +11,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.session.SimpleRedirectSessionInformationExpiredStrategy;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -37,22 +40,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
         http
+                // 0. Only apply to requests with /admin
                 .securityMatcher("/admin/**")
+
+                // 1. CORS Configuration
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Set CORS configuration source
+
+                // 2. Session Management
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                         .sessionFixation()
                         .newSession()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
+
+                // 3. Authentication Configuration
                 .authenticationProvider(adminAuthenticationProvider())
                 .formLogin(form -> form
                         .loginProcessingUrl("/admin/login")
                         .successHandler(new AdminAuthSuccessHandler(employeeRepository))
                 )
+
+                // 4. Authorization Rules
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/admin/login", "/css/**", "/js/**").permitAll()
                         .anyRequest().hasRole("ADMIN")
                 )
+
+                // 5. Logout Handling
                 .logout(logout -> logout
                         .logoutUrl("/admin/logout")
                         .invalidateHttpSession(true)
@@ -64,31 +79,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain userSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Session Management
+                // 1. CORS Configuration
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Set CORS configuration source
+
+                // 2. Session Management
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                         .sessionFixation()
                         .newSession()
                 )
 
-                // 2. CSRF Protection (Disable for non-browser clients or APIs)
+                // 3. CSRF Protection (Disable for non-browser clients or APIs)
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // 3. Authentication Configuration
+                // 4. Authentication Configuration
                 .authenticationProvider(userAuthenticationProvider())
                 .formLogin(form -> form
                         .loginProcessingUrl("/login")
                         .successHandler(new CustomAuthSuccessHandler(customerRepository))
                 )
 
-                // 4. Authorization Rules
+                // 5. Authorization Rules
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/login", "/error", "/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
-                // 5. Logout Handling
+                // 6. Logout Handling
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .invalidateHttpSession(true)
@@ -97,6 +115,20 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Allow only frontend
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allowed HTTP methods
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // Allowed headers
+        configuration.setAllowCredentials(true); // Allow credentials like cookies or HTTP sessions
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
 
 
     @Bean
@@ -124,6 +156,4 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
-
-
 }

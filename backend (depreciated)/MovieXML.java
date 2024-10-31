@@ -1,3 +1,4 @@
+/*
 import java.util.UUID;
 
 public class MovieXML {
@@ -52,4 +53,4 @@ public class MovieXML {
                 "Director:" + getDirector() + ", " +
                 "Genre:" + getGenre();
     }
-}
+}*/

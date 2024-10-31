@@ -1,3 +1,4 @@
+/*
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,16 +8,20 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+*/
 /**
  * Servlet Filter implementation class LoginFilter
- */
+ *//*
+
 @WebFilter(filterName = "Cors", urlPatterns = "/*")
 public class Cors implements Filter {
     private final ArrayList<String> allowedURIs = new ArrayList<>();
 
-    /**
+    */
+/**
      * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
-     */
+     *//*
+
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -53,4 +58,4 @@ public class Cors implements Filter {
 
 
 
-}
+}*/

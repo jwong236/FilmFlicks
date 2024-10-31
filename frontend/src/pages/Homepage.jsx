@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, useTheme, Typography } from "@mui/material";
-import Navbar from '../components/Navbar';
-import Background from '../components/Background.jsx';
-import SplitSearchBar from '../components/SplitSearchBar.jsx';
-import BrowseGenres from '../components/BrowseGenres';
-import BrowseCharacters from '../components/BrowseCharacters';
+import Navbar from '../components/components(deprecated)/Navbar.jsx';
+import Background from '../components/universal/Background.jsx';
+import SplitSearchBar from '../components/components(deprecated)/SplitSearchBar.jsx';
+import BrowseGenres from '../components/components(deprecated)/BrowseGenres.jsx';
+import BrowseCharacters from '../components/components(deprecated)/BrowseCharacters.jsx';
 import { useGenres } from '../hooks/useGenres';
 
 export default function Homepage() {

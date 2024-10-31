@@ -1,3 +1,4 @@
+/*
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import javax.net.ssl.HttpsURLConnection;
@@ -58,4 +59,4 @@ public class RecaptchaVerifyUtils {
         throw new Exception("recaptcha verification failed: response is " + responseMap);
     }
 
-}
+}*/

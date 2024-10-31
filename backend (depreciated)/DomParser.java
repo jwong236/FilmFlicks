@@ -1,3 +1,4 @@
+/*
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -190,10 +191,12 @@ public class DomParser {
         }
     }
 
-    /**
+    */
+/**
      * It takes an employee Element, reads the values in, creates
      * an Employee object for return
-     */
+     *//*
+
     private MovieXML parseMovie(Element element) {
 
         // for each <employee> element get text or int values of
@@ -218,12 +221,14 @@ public class DomParser {
         return new MovieXML(title, year, director, genre);
     }
 
-    /**
+    */
+/**
      * It takes an XML element and the tag name, look for the tag and get
      * the text content
      * i.e for <Employee><Name>John</Name></Employee> xml snippet if
      * the Element points to employee node and tagName is name it will return John
-     */
+     *//*
+
     private String getTextValue(Element element, String tagName) {
         String textVal = null;
         NodeList nodeList = element.getElementsByTagName(tagName);
@@ -257,9 +262,11 @@ public class DomParser {
         }
         return true;
     }
-    /**
+    */
+/**
      * Calls getTextValue and returns a int value
-     */
+     *//*
+
     private int getIntValue(Element ele, String tagName) {
         // in production application you would catch the exception
 
@@ -278,10 +285,12 @@ public class DomParser {
         }
     }
 
-    /**
+    */
+/**
      * Iterate through the list and print the
      * content to console
-     */
+     *//*
+
     private void printData() {
         PrintWriter writer = null;
 
@@ -327,4 +336,4 @@ public class DomParser {
         domParser.runExample();
     }
 
-}
+}*/

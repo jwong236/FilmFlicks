@@ -1,7 +1,9 @@
+/*
 import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 
+*/
 /*
 
 The SQL command to create the table ft.
@@ -13,13 +15,16 @@ CREATE TABLE ft (
     PRIMARY KEY (entryID),
     FULLTEXT (entry)) ENGINE=MyISAM;
 
-*/
+*//*
 
+
+*/
 /*
 
 Note: Please change the username, password and the name of the datbase.
 
-*/
+*//*
+
 
 public class StarInsert {
 
@@ -156,3 +161,4 @@ public class StarInsert {
 }
 
 
+*/

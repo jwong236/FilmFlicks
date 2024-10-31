@@ -1,3 +1,4 @@
+/*
 public class GenreObjects{
     private  int id;
     private  String genreName;
@@ -14,4 +15,4 @@ public class GenreObjects{
     public String getName(){
         return this.genreName;
     }
-}
+}*/

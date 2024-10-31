@@ -1,3 +1,4 @@
+/*
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -78,7 +79,8 @@ public class StarServlet extends HttpServlet {
             connection.close();
 
         } catch (Exception e) {
-            /*
+            */
+/*
              * After you deploy the WAR file through tomcat manager webpage,
              *   there's no console to see the print messages.
              * Tomcat append all the print messages to the file: tomcat_directory/logs/catalina.out
@@ -86,7 +88,8 @@ public class StarServlet extends HttpServlet {
              * To view the last n lines (for example, 100 lines) of messages you can use:
              *   tail -100 catalina.out
              * This can help you debug your program after deploying it on AWS.
-             */
+             *//*
+
             request.getServletContext().log("Error: ", e);
 
             out.println("<body>");
@@ -104,3 +107,4 @@ public class StarServlet extends HttpServlet {
 
 
 }
+*/

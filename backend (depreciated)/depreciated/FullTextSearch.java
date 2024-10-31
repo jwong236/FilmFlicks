@@ -1,3 +1,4 @@
+/*
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -218,3 +219,4 @@ public class FullTextSearch extends HttpServlet {
         return movies;
     }
 }
+*/

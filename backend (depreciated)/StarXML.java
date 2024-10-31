@@ -1,3 +1,4 @@
+/*
 import java.util.UUID;
 
 public class StarXML {
@@ -35,4 +36,4 @@ public class StarXML {
                 "ID:" + getId() + ", " +
                 "Year:" + String.valueOf(getBirthYear());
     }
-}
+}*/

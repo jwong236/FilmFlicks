@@ -45,7 +45,6 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
-  </dependencies>
 
     <!-- MySQL Driver -->
     <dependency>
@@ -60,8 +59,7 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
-
-
+  </dependencies>
 
   <build>
     <finalName>FilmFlicks</finalName>

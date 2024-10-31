@@ -1,3 +1,4 @@
+/*
 public class DeleteObject {
     private String title;
     private String quantity;
@@ -59,3 +60,4 @@ public class DeleteObject {
         this.totalPrice = totalPrice;
     }
 }
+*/

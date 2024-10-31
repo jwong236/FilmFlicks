@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button } from "@mui/material";
-import Navbar from "../components/Navbar.jsx";
-import Background from "../components/Background.jsx";
-import DashboardLoginCard from "../components/DashboardLoginCard.jsx";
-import DashboardAddMovieCard from "../components/DashboardAddMovieCard.jsx";
+import Navbar from "../components/components(deprecated)/Navbar.jsx";
+import Background from "../components/universal/Background.jsx";
+import DashboardLoginCard from "../components/components(deprecated)/DashboardLoginCard.jsx";
+import DashboardAddMovieCard from "../components/components(deprecated)/DashboardAddMovieCard.jsx";
 
 export default function Dashboard(){
 

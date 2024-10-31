@@ -1,3 +1,4 @@
+/*
 //import com.google.gson.JsonArray;
 //import com.google.gson.JsonObject;
 
@@ -148,7 +149,8 @@ public class SingleStar extends HttpServlet {
 
 
         } catch (Exception e) {
-            /*
+            */
+/*
              * After you deploy the WAR file through tomcat manager webpage,
              *   there's no console to see the print messages.
              * Tomcat append all the print messages to the file: tomcat_directory/logs/catalina.out
@@ -156,7 +158,8 @@ public class SingleStar extends HttpServlet {
              * To view the last n lines (for example, 100 lines) of messages you can use:
              *   tail -100 catalina.out
              * This can help you debug your program after deploying it on AWS.
-             */
+             *//*
+
             request.getServletContext().log("Error: ", e);
 
 
@@ -171,4 +174,4 @@ public class SingleStar extends HttpServlet {
 
 
 
-}
+}*/

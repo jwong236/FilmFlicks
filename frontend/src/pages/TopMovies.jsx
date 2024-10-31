@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import NavBar from '../components/Navbar.jsx';
-import Background from '../components/Background.jsx';
-import MovieCard from '../components/MovieCard';
+import NavBar from '../components/components(deprecated)/Navbar.jsx';
+import Background from '../components/universal/Background.jsx';
+import MovieCard from '../components/components(deprecated)/MovieCard.jsx';
 import {useNavigate} from 'react-router-dom';
 
 const URL = import.meta.env.VITE_URL;

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Typography, Snackbar, useTheme } from "@mui/material";
 import { useNavigate, useLocation } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Background from '../components/Background.jsx';
+import Navbar from '../components/components(deprecated)/Navbar.jsx';
+import Background from '../components/universal/Background.jsx';
 import axios from 'axios';
-import MovieListTable from "../components/MovieListTable.jsx";
-import SplitSearchBar from "../components/SplitSearchBar.jsx";
-import MoviesPerPageDropdown from "../components/MoviesPerPageDropdown.jsx";
-import SortByDropdown from "../components/SortByDropdown.jsx";
+import MovieListTable from "../components/components(deprecated)/MovieListTable.jsx";
+import SplitSearchBar from "../components/components(deprecated)/SplitSearchBar.jsx";
+import MoviesPerPageDropdown from "../components/components(deprecated)/MoviesPerPageDropdown.jsx";
+import SortByDropdown from "../components/components(deprecated)/SortByDropdown.jsx";
 
 const URL = import.meta.env.VITE_URL;
 

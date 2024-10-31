@@ -1,3 +1,4 @@
+/*
 public class User {
     private String email;
     private String password;
@@ -37,3 +38,4 @@ public class User {
     }
 
 }
+*/
