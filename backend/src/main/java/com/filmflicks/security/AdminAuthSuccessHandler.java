@@ -1,30 +1,29 @@
 package com.filmflicks.security;
 
-import com.filmflicks.models.Customer;
-import com.filmflicks.models.ShoppingCart;
-import com.filmflicks.repositories.CustomerRepository;  // Import CustomerRepository
+import com.filmflicks.models.Employee;
+import com.filmflicks.repositories.EmployeeRepository;  // Import EmployeeRepository
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class CustomAuthSuccessHandler implements AuthenticationSuccessHandler {
+public class AdminAuthSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final CustomerRepository customerRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public CustomAuthSuccessHandler(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    public AdminAuthSuccessHandler(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
@@ -35,27 +34,18 @@ public class CustomAuthSuccessHandler implements AuthenticationSuccessHandler {
         // Retrieve or create session
         HttpSession session = request.getSession();
 
-        // Get authenticated user's email
+        // Get authenticated user’s email
         String email = authentication.getName();
 
-        // Retrieve customer metadata by email
-        Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Customer not found with email: " + email));
+        // Retrieve admin metadata by email
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Admin not found with email: " + email));
 
-        // Store required customer metadata in the session
-        Map<String, Object> customerSessionData = new HashMap<>();
-        customerSessionData.put("id", customer.getId());
-        customerSessionData.put("firstName", customer.getFirstName());
-        customerSessionData.put("lastName", customer.getLastName());
-        customerSessionData.put("ccId", customer.getCcId());
-        customerSessionData.put("address", customer.getAddress());
-        customerSessionData.put("email", customer.getEmail());
-
-        session.setAttribute("customer", customerSessionData);
-
-        // Create empty shopping cart and set it in the session
-        ShoppingCart shoppingCart = new ShoppingCart();
-        session.setAttribute("shoppingCart", shoppingCart);
+        // Set full employee metadata as session attribute
+        Map<String, Object> employeeSessionData = new HashMap<>();
+        employeeSessionData.put("email", employee.getEmail());
+        employeeSessionData.put("fullName", employee.getFullName());
+        session.setAttribute("employee", employeeSessionData);
 
         // Set response type as JSON
         response.setContentType("application/json");

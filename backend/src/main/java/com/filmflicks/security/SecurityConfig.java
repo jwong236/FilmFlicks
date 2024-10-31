@@ -1,5 +1,7 @@
 package com.filmflicks.security;
 
+import com.filmflicks.repositories.CustomerRepository;
+import com.filmflicks.repositories.EmployeeRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -14,52 +16,88 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.session.SimpleRedirectSessionInformationExpiredStrategy;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
+    private final AdminUserDetailsService adminUserDetailsService;
+    private final CustomerRepository customerRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, AdminUserDetailsService adminUserDetailsService, CustomerRepository customerRepository, EmployeeRepository employeeRepository) {
         this.userDetailsService = userDetailsService;
+        this.adminUserDetailsService = adminUserDetailsService;
+        this.customerRepository = customerRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        /*
-        SecutityFilterChain order of operations
-        1. Session management
-        2. Authentication
-        3. Authorization
-        4. CSRF Protection
-        5. Others (CORS, Exception handling, headers etc)
-        */
+    public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Ensure sessions are created when required
+                .securityMatcher("/admin/**")
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .sessionFixation()
+                        .newSession()
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .authenticationProvider(adminAuthenticationProvider())
+                .formLogin(form -> form
+                        .loginProcessingUrl("/admin/login")
+                        .successHandler(new AdminAuthSuccessHandler(employeeRepository))
+                )
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/admin/login", "/css/**", "/js/**").permitAll()
+                        .anyRequest().hasRole("ADMIN")
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/admin/logout")
+                        .invalidateHttpSession(true)
+                        .permitAll()
+                );
+        return http.build();
+    }
+
+    @Bean
+    public SecurityFilterChain userSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                // 1. Session Management
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .sessionFixation()
+                        .newSession()
                 )
 
-                // 2. Authentication
+                // 2. CSRF Protection (Disable for non-browser clients or APIs)
+                .csrf(AbstractHttpConfigurer::disable)
+
+                // 3. Authentication Configuration
+                .authenticationProvider(userAuthenticationProvider())
                 .formLogin(form -> form
                         .loginProcessingUrl("/login")
-                        .successHandler(new CustomAuthSuccessHandler())
+                        .successHandler(new CustomAuthSuccessHandler(customerRepository))
                 )
-                .authenticationProvider(authenticationProvider())
 
-                // 3. Authorization
+                // 4. Authorization Rules
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/login", "/error", "/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
-                // 4. CSRF Protection (Enable in production)
-                .csrf(AbstractHttpConfigurer::disable)
-                .logout(LogoutConfigurer::permitAll);
+                // 5. Logout Handling
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .invalidateHttpSession(true)
+                        .permitAll()
+                );
+
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -72,12 +110,20 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
+    public AuthenticationProvider userAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService); // Use UserDetailsService for users
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
+
+    @Bean
+    public AuthenticationProvider adminAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(adminUserDetailsService); // Use UserDetailsService for admins
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
 
 }
