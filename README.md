@@ -33,6 +33,11 @@ To set up the project:
 - **Deployment**: AWS
 - **Additional Tools**: Docker for containerization, JMeter for stress testing, Kubernetes for scalability
 
+## Database Schema
+![moviedb-db](https://github.com/user-attachments/assets/6fe36319-70c4-44a6-b022-b6421b8088bf)
+
+
+
 ## Transition to Spring Boot and JPA
 This project initially used Tomcat, JDBC and servlets for backend functionality, but refactoring to Spring Boot and JPA has introduced a more modular and efficient architecture. The following enhancements are being incorporated:
 
