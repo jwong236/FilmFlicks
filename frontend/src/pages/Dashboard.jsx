@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button } from "@mui/material";
-import Navbar from "../components/components(deprecated)/Navbar.jsx";
-import Background from "../components/universal/Background.jsx";
+import Navbar from "../components/common/Navbar.jsx";
+import Background from "../components/components(deprecated)/Background.jsx";
 import DashboardLoginCard from "../components/components(deprecated)/DashboardLoginCard.jsx";
 import DashboardAddMovieCard from "../components/components(deprecated)/DashboardAddMovieCard.jsx";
 

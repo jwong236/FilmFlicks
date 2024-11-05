@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from "@mui/material";
-import Navbar from "../components/components(deprecated)/Navbar.jsx";
-import Background from "../components/universal/Background.jsx";
+import Navbar from "../components/common/Navbar.jsx";
+import Background from "../components/components(deprecated)/Background.jsx";
 import ConfirmationCard from "../components/components(deprecated)/ConfirmationCard.jsx";
 import { useLocation } from 'react-router-dom';
 

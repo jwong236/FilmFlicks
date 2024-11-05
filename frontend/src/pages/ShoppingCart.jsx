@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Box } from "@mui/material";
-import Navbar from '../components/components(deprecated)/Navbar.jsx';
-import Background from '../components/universal/Background.jsx';
+import Navbar from '../components/common/Navbar.jsx';
+import Background from '../components/components(deprecated)/Background.jsx';
 import ShoppingCartCard from '../components/components(deprecated)/ShoppingCartCard.jsx';
 import { useNavigate } from 'react-router-dom';
 

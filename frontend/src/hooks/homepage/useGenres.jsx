@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const URL = import.meta.env.VITE_URL;
+const URL = import.meta.env.VITE_BACKEND_URL;
 
 export const useGenres = (navigate) => {
     const [genres, setGenres] = useState(["loading..."]);
-
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -15,6 +14,7 @@ export const useGenres = (navigate) => {
                 const response = await axios.get(`${URL}/metadata/genres`, {
                     withCredentials: true
                 });
+                console.log(response)
                 const tempArray = response.data.map(elem => elem.name);
                 setGenres(tempArray);
             } catch (error) {

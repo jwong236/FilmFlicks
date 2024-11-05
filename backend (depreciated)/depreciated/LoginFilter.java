@@ -56,7 +56,7 @@ public class LoginFilter implements Filter {
         allowedURIs.add("main.jsx");
         allowedURIs.add("/fabFlix/");
         allowedURIs.add("index.html");
-        allowedURIs.add("index.js");
+        allowedURIs.add("theme.js");
         allowedURIs.add("/login");
         allowedURIs.add("/subtract");
         allowedURIs.add("/employeeLogin");

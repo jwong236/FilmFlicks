@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Typography, Snackbar, useTheme } from "@mui/material";
 import { useNavigate, useLocation } from 'react-router-dom';
-import Navbar from '../components/components(deprecated)/Navbar.jsx';
-import Background from '../components/universal/Background.jsx';
+import Navbar from '../components/common/Navbar.jsx';
+import Background from '../components/components(deprecated)/Background.jsx';
 import axios from 'axios';
 import MovieListTable from "../components/components(deprecated)/MovieListTable.jsx";
 import SplitSearchBar from "../components/components(deprecated)/SplitSearchBar.jsx";

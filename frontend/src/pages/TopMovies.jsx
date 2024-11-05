@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import NavBar from '../components/components(deprecated)/Navbar.jsx';
-import Background from '../components/universal/Background.jsx';
+import NavBar from '../components/common/Navbar.jsx';
+import Background from '../components/components(deprecated)/Background.jsx';
 import MovieCard from '../components/components(deprecated)/MovieCard.jsx';
 import {useNavigate} from 'react-router-dom';
 

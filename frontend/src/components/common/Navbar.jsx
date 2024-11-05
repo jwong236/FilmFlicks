@@ -6,8 +6,8 @@ import StarIcon from '@mui/icons-material/Star';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import singlepopcorntransparent from '../../assets/singlepopcorntransparent.png';
 import {Box} from "@mui/material";
-import theme from "../../theme/index.js";
-import FullTextSearch from "./FullTextSearch.jsx";
+import theme from "../../theme/theme.js";
+import FullTextSearch from "../components(deprecated)/FullTextSearch.jsx";
 
 function Navbar() {
     const navbarStyle = {

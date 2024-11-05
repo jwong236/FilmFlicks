@@ -5,13 +5,13 @@
 import { createTheme, ThemeProvider, CssBaseline, Box } from '@mui/material';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import theme from './theme'
+import theme from './theme/theme.js'
 
 import TopMovies from './pages/TopMovies';
 import SingleMovie from './pages/SingleMovie';
 import SingleStar from './pages/SingleStar';
 
-import Login from './pages/Login';
+import Login from './pages/LoginPage.jsx';
 import Homepage from './pages/Homepage';
 import MovieList from './pages/MovieList';
 
