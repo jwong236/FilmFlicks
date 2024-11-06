@@ -6,7 +6,19 @@ import { Box } from '@mui/material';
 
 function PageLayout({ children, sx, ...props }) {
     return (
-        <FullHeightContainer sx={{ flexDirection: 'column', ...sx }} {...props}>
+        <FullHeightContainer
+            sx={{
+                flexDirection: 'column',
+                minHeight: '100vh',
+                width: '100vw',
+                backgroundImage: `url(${popcorn})`,
+                backgroundSize: '100% auto',
+                backgroundRepeat: 'repeat-y',
+                backgroundPosition: 'center 4rem',
+                ...sx,
+            }}
+            {...props}
+        >
             <Navbar />
             <Box
                 sx={{
@@ -14,9 +26,7 @@ function PageLayout({ children, sx, ...props }) {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    backgroundImage: `url(${popcorn})`,
-                    backgroundSize: 'cover',
-                    backgroundRepeat: 'no-repeat',
+                    paddingTop: '4rem',
                 }}
             >
                 {children}

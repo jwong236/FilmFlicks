@@ -5,9 +5,9 @@ import ListIcon from '@mui/icons-material/List';
 import StarIcon from '@mui/icons-material/Star';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import singlepopcorntransparent from '../../assets/singlepopcorntransparent.png';
-import {Box} from "@mui/material";
-import theme from "../../theme/theme.js";
-import FullTextSearch from "../components(deprecated)/FullTextSearch.jsx";
+import { Box } from '@mui/material';
+import theme from '../../theme/theme.js';
+import FullTextSearch from '../components(deprecated)/FullTextSearch.jsx';
 
 function Navbar() {
     const navbarStyle = {
@@ -15,6 +15,10 @@ function Navbar() {
         alignItems: 'center',
         background: theme.palette.info.light,
         padding: '10px 20px',
+        position: 'fixed',
+        top: 0,
+        width: '100vw',
+        zIndex: 1000
     };
 
     const navIconsStyle = {
@@ -24,12 +28,11 @@ function Navbar() {
         flexDirection: 'column',
         alignItems: 'center',
         marginRight: '1rem',
-
     };
 
     return (
         <nav style={navbarStyle}>
-            <Link to="/" >
+            <Link to="/">
                 <Box
                     sx={{
                         width: 40,
@@ -40,7 +43,7 @@ function Navbar() {
                         },
                         backgroundSize: 'contain',
                         backgroundRepeat: 'no-repeat',
-                        marginRight: '20px'
+                        marginRight: '20px',
                     }}
                 />
             </Link>
@@ -57,7 +60,7 @@ function Navbar() {
             <Link to="/shoppingcart" style={navIconsStyle}>
                 <ShoppingCartIcon /> Checkout
             </Link>
-            <FullTextSearch sx={{ marginLeft: 'auto' }}/>
+            <FullTextSearch sx={{ marginLeft: 'auto' }} />
         </nav>
     );
 }

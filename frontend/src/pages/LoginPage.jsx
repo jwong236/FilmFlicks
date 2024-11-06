@@ -1,20 +1,18 @@
-// src/pages/LoginPage.jsx
 import React from 'react';
 import { Box } from "@mui/material";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { useLoginState } from "../hooks/login/useLoginState";
-import { useLogin } from "../hooks/login/useLogin.jsx"
-import LeftPanel from "../components/login/LeftPanel.jsx";
-import RightPanel from "../components/login/RightPanel.jsx";
+import { useLoginPageHooks } from '../hooks/useLoginPageHooks.jsx'
+import LeftPanel from "../components/loginpage/LeftPanel.jsx";
+import RightPanel from "../components/loginpage/RightPanel.jsx";
 
 export default function LoginPage() {
-    const navigate = useNavigate(); // Initialize navigate
-
-    const { email, setEmail, password, setPassword, result, setResult } = useLoginState();
-    const { login } = useLogin(setResult, navigate); // Pass navigate to the hook
+    const {
+        email, setEmail,
+        password, setPassword,
+        result, login
+    } = useLoginPageHooks();
 
     const handleLogin = async () => {
-        await login(email, password);
+        await login();
     };
 
     return (

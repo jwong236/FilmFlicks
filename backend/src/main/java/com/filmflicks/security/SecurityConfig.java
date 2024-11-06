@@ -18,6 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 
@@ -61,6 +63,13 @@ public class SecurityConfig {
                         .successHandler(new AdminAuthSuccessHandler(employeeRepository))
                 )
 
+                .exceptionHandling()
+                .defaultAuthenticationEntryPointFor(
+                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                        request -> request.getRequestURI().startsWith("/admin")
+                )
+                .and()
+
                 // 4. Authorization Rules
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/admin/login", "/css/**", "/js/**").permitAll()
@@ -98,6 +107,13 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .successHandler(new CustomAuthSuccessHandler(customerRepository))
                 )
+
+                .exceptionHandling()
+                .defaultAuthenticationEntryPointFor(
+                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                        request -> !request.getRequestURI().startsWith("/admin")
+                )
+                .and()
 
                 // 5. Authorization Rules
                 .authorizeHttpRequests(authorize -> authorize

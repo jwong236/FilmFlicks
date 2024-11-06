@@ -1,9 +1,16 @@
 import axios from 'axios';
+import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const URL = import.meta.env.VITE_BACKEND_URL;
 
-export const useLogin = (setResult, navigate) => {
-    const login = async (email, password) => {
+export const useLoginPageHooks = () => {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [result, setResult] = useState('');
+
+    const login = async () => {
         try {
             const loginData = new URLSearchParams();
             loginData.append('username', email);
@@ -26,5 +33,10 @@ export const useLogin = (setResult, navigate) => {
         }
     };
 
-    return { login };
+    return {
+        email, setEmail,
+        password, setPassword,
+        result, setResult,
+        login
+    };
 };
