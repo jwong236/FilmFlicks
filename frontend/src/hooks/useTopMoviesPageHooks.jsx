@@ -13,7 +13,7 @@ export const useTopMoviesPageHooks = () => {
         const fetchMovieData = async () => {
             try {
                 const response = await axios.get(`${URL}/metadata/top-rated?size=20`, {
-                    withCredentials: true
+                    withCredentials: true,
                 });
                 if (mounted && response.status === 200) {
                     setMovieData(response.data);
@@ -33,5 +33,11 @@ export const useTopMoviesPageHooks = () => {
         };
     }, [navigate]);
 
-    return { movieData, navigate };
+    const handleNavigate = (movieTitle) => {
+        navigate(`/singlemovie?title=${encodeURIComponent(movieTitle)}`);
+    };
+
+
+
+    return { movieData, handleNavigate };
 };

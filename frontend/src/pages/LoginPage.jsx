@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from "@mui/material";
-import { useLoginPageHooks } from '../hooks/useLoginPageHooks.jsx'
+import { useLoginPageHooks } from '../hooks/useLoginPageHooks.jsx';
 import LeftPanel from "../components/loginpage/LeftPanel.jsx";
 import RightPanel from "../components/loginpage/RightPanel.jsx";
 
@@ -8,12 +8,8 @@ export default function LoginPage() {
     const {
         email, setEmail,
         password, setPassword,
-        result, login
+        result, handleLogin,
     } = useLoginPageHooks();
-
-    const handleLogin = async () => {
-        await login();
-    };
 
     return (
         <Box

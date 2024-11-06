@@ -31,6 +31,7 @@ const theme = createTheme(colorTheme, {
                         fontWeight: 'bold',
                         fontSize: '1.2rem',
                         borderRadius: 15,
+                        boxShadow: 'none',
                         '&:hover': {
                             backgroundColor: colorTheme.palette.primary.main,
                             transform: 'scale(1.05)',

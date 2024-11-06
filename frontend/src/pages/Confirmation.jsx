@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Typography } from "@mui/material";
-import Navbar from "../components/common/Navbar.jsx";
+import Navbar from "../components/common/navbar/Navbar.jsx";
 import Background from "../components/components(deprecated)/Background.jsx";
-import ConfirmationCard from "../components/components(deprecated)/ConfirmationCard.jsx";
+import ConfirmationCard from "../components/components(deprecated)/confirmationcard/ConfirmationCard.jsx";
 import { useLocation } from 'react-router-dom';
 
 export default function Confirmation() {

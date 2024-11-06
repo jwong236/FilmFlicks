@@ -156,16 +156,12 @@ const FullTextSearch = ({ sx }) => {
                 }}
             />
             <Button
+                variant="contained"
+                color="primary"
                 onClick={handleFullSearch}
                 sx={{
-                    backgroundColor: '#FF907E',
-                    color: theme.palette.secondary.light,
-                    fontWeight: 'bold',
                     fontSize: '1rem',
-                    '&:hover': {
-                        backgroundColor: theme.palette.primary.main,
-                        transform: 'scale(1.05)'
-                    }
+                    borderRadius: 1
                 }}>
                 Search
             </Button>

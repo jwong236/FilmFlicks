@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react'
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import HomeButton from "../components/components(deprecated)/HomeButton.jsx";
 import StarCard from "../components/components(deprecated)/StarCard.jsx";
 import {Box}  from '@mui/material'
 import popcorn from "../assets/popcorn.png";
 
-const URL = import.meta.env.VITE_URL;
+const URL = import.meta.env.VITE_BACKEND_URL;
 
 function SingleStar() {
     const [starData, setStarData] = useState({

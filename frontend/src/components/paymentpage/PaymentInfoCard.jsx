@@ -1,20 +1,17 @@
 import React from 'react';
 import { Box, Button, TextField, Typography } from "@mui/material";
 
-export default function PaymentInfoCard({ firstName, lastName, creditCardNumber, expirationDate, setCreditCardNumber,
-                                            setFirstName, setLastName, setExpirationDate, total, handlePlaceOrder, sx, results }) {
-    const textFieldStyle = {
-        paddingBottom: '2%',
-        width: '100%',
-    };
+export default function PaymentInfoCard({ paymentInfo, setPaymentInfo, total, handlePlaceOrder, sx, results }) {
+    const textFieldStyle = { paddingBottom: '2%', width: '100%' };
 
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD'
-        }).format(amount);
-    };
+    const formatCurrency = (amount) => new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(amount);
 
+    const handleChange = (field) => (e) => {
+        setPaymentInfo((prev) => ({ ...prev, [field]: e.target.value }));
+    };
 
     return (
         <Box sx={{
@@ -26,42 +23,42 @@ export default function PaymentInfoCard({ firstName, lastName, creditCardNumber,
             padding: '1rem 3rem 1rem 3rem',
             ...sx
         }}>
-            <Typography variant='h4' sx={{ alignSelf: 'center', marginBottom: '30px', marginTop: '30px'}}>
+            <Typography variant='h4' sx={{ alignSelf: 'center', marginBottom: '30px', marginTop: '30px' }}>
                 Payment Details
             </Typography>
             <Typography>Card Number</Typography>
             <TextField
                 type="text"
-                value={creditCardNumber}
-                onChange={(e) => setCreditCardNumber(e.target.value)}
+                value={paymentInfo.creditCardNumber}
+                onChange={handleChange('creditCardNumber')}
                 sx={textFieldStyle}
             />
             <Typography>First Name</Typography>
             <TextField
                 type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                value={paymentInfo.firstName}
+                onChange={handleChange('firstName')}
                 sx={textFieldStyle}
             />
             <Typography>Last Name</Typography>
             <TextField
                 type="text"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                value={paymentInfo.lastName}
+                onChange={handleChange('lastName')}
                 sx={textFieldStyle}
             />
             <Typography>Expiration Date</Typography>
             <TextField
                 type="date"
-                value={expirationDate}
-                onChange={(e) => setExpirationDate(e.target.value)}
+                value={paymentInfo.expirationDate}
+                onChange={handleChange('expirationDate')}
                 sx={textFieldStyle}
                 InputLabelProps={{ shrink: true }}
             />
-            <Typography sx={{ alignSelf: 'flex-center', marginTop: 'auto', marginBottom: 2, fontSize: '20px'}}>
+            <Typography sx={{ alignSelf: 'flex-center', marginTop: 'auto', marginBottom: 2, fontSize: '20px' }}>
                 {results}
             </Typography>
-            <Typography sx={{ alignSelf: 'flex-end', marginTop: 'auto', marginBottom: 2, fontSize: '25px'}}>
+            <Typography sx={{ alignSelf: 'flex-end', marginTop: 'auto', marginBottom: 2, fontSize: '25px' }}>
                 Total: {formatCurrency(total)}
             </Typography>
             <Button
@@ -72,10 +69,9 @@ export default function PaymentInfoCard({ firstName, lastName, creditCardNumber,
                     color: 'secondary.light',
                     fontWeight: 'bold',
                     fontSize: '1.2rem',
-                    '&:hover': {
-                        backgroundColor: 'primary.main',
-                    }
-                }}>
+                    '&:hover': { backgroundColor: 'primary.main' }
+                }}
+            >
                 Place Order
             </Button>
         </Box>

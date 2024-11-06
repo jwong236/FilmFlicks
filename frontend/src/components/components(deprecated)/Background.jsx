@@ -11,8 +11,7 @@ const Background = ({ children, sx }) => {
             backgroundColor: '#f1f1f1',
             backgroundImage: `url(${popcorn})`,
             backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
-            ...sx
+            backgroundRepeat: 'no-repeat',            ...sx
         }}>
             {children}
         </Box>

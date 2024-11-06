@@ -1,37 +1,38 @@
 import React from 'react';
-import FullHeightContainer from './FullHeightContainer.jsx';
-import Navbar from './Navbar.jsx';
+import Navbar from './navbar/Navbar.jsx';
 import popcorn from '../../assets/popcorn.png';
 import { Box } from '@mui/material';
 
 function PageLayout({ children, sx, ...props }) {
     return (
-        <FullHeightContainer
+        <Box
             sx={{
+                display: 'flex',
                 flexDirection: 'column',
-                minHeight: '100vh',
                 width: '100vw',
+                maxWidth: '100%',
+                minHeight: '100vh',
                 backgroundImage: `url(${popcorn})`,
-                backgroundSize: '100% auto',
+                backgroundSize: '100%',
                 backgroundRepeat: 'repeat-y',
                 backgroundPosition: 'center 4rem',
-                ...sx,
             }}
             {...props}
         >
             <Navbar />
             <Box
                 sx={{
-                    flexGrow: 1,
                     display: 'flex',
-                    justifyContent: 'center',
+                    flexGrow: 1,
+                    flexDirection: 'column',
                     alignItems: 'center',
-                    paddingTop: '4rem',
+                    justifyContent: 'center',
+                    ...sx,
                 }}
             >
                 {children}
             </Box>
-        </FullHeightContainer>
+        </Box>
     );
 }
 

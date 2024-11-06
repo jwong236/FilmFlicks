@@ -12,7 +12,7 @@ export default function CharacterList({ characters, onCharacterClick }) {
         fontSize: '1.2rem',
         backgroundColor: '#F8EFD3',
         '&:hover': {
-            backgroundColor: theme.palette.secondary.dark // Background color on hover
+            backgroundColor: theme.palette.secondary.dark
         }
     };
 

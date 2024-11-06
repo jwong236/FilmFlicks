@@ -8,31 +8,27 @@ import { useNavigate } from 'react-router-dom';
 export default function MovieListTable({ data, handleAdd }) {
     const theme = useTheme();
     const navigate = useNavigate();
+
     const handleGenreClick = (genre) => {
         navigate('/movielist', { state: { genre } });
     };
-    const headerStyle = {
-        color: 'white'
-    };
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{ margin: '1rem' }}>
             <Table>
-                <TableHead sx={{backgroundColor: theme.palette.info.main}}>
+                <TableHead sx={{ backgroundColor: theme.palette.info.main }}>
                     <TableRow>
-                        <TableCell sx={headerStyle}>Title</TableCell>
-                        <TableCell sx={headerStyle} align="right">Year</TableCell>
-                        <TableCell sx={headerStyle} align="right">Director</TableCell>
-                        <TableCell sx={headerStyle} align="right">Genres</TableCell>
-                        <TableCell sx={headerStyle} align="right">Stars</TableCell>
-                        <TableCell sx={headerStyle} align="right">Rating</TableCell>
-                        <TableCell sx={headerStyle} align="center">Cart</TableCell>
+                        {['Title', 'Year', 'Director', 'Genres', 'Stars', 'Rating', 'Cart'].map((header) => (
+                            <TableCell key={header} align={header === 'Title' ? 'left' : 'right'} sx={{ color: 'white' }}>
+                                {header}
+                            </TableCell>
+                        ))}
                     </TableRow>
                 </TableHead>
                 <TableBody sx={{ backgroundColor: theme.palette.secondary.light }}>
-                    {data.map((movie, index) => (
-                        <TableRow key={index}>
-                            <TableCell component="th" scope="row">
+                    {data.map((movie) => (
+                        <TableRow key={movie.id}>
+                            <TableCell>
                                 <Link to={`/singlemovie?title=${encodeURIComponent(movie.title)}`} style={{ color: theme.palette.primary.main, textDecoration: 'none' }}>
                                     {movie.title}
                                 </Link>
@@ -41,29 +37,29 @@ export default function MovieListTable({ data, handleAdd }) {
                             <TableCell align="right">{movie.director}</TableCell>
                             <TableCell align="right">
                                 {movie.genres.map((genre, index) => (
-                                    <React.Fragment key={index}>
+                                    <React.Fragment key={genre.id}>
                                         <span
-                                            onClick={() => handleGenreClick(genre)}
+                                            onClick={() => handleGenreClick(genre.name)}
                                             style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
                                         >
-                                            {genre}
+                                            {genre.name}
                                         </span>
                                         {index < movie.genres.length - 1 ? ', ' : ''}
                                     </React.Fragment>
                                 ))}
                             </TableCell>
                             <TableCell align="right">
-                                {movie.stars.map((star, idx) => (
-                                    <React.Fragment key={idx}>
-                                        <Link to={`/singlestar?name=${encodeURIComponent(star)}`} style={{ color: theme.palette.primary.main, textDecoration: 'none' }}>
-                                            {star}
+                                {movie.stars.map((star, index) => (
+                                    <React.Fragment key={star.id}>
+                                        <Link to={`/singlestar?name=${encodeURIComponent(star.name)}`} style={{ color: theme.palette.primary.main, textDecoration: 'none' }}>
+                                            {star.name}
                                         </Link>
-                                        {idx < movie.stars.length - 1 ? ', ' : ''}
+                                        {index < movie.stars.length - 1 ? ', ' : ''}
                                     </React.Fragment>
                                 ))}
                             </TableCell>
-                            <TableCell align="right">{movie.rating}</TableCell>
-                            <TableCell align="right">
+                            <TableCell align="right">{movie.rating ?? 'N/A'}</TableCell>
+                            <TableCell align="center">
                                 <Button
                                     sx={{
                                         backgroundColor: theme.palette.primary.main,
@@ -72,7 +68,8 @@ export default function MovieListTable({ data, handleAdd }) {
                                             backgroundColor: theme.palette.primary.dark
                                         }
                                     }}
-                                    onClick={() => handleAdd(movie)}>
+                                    onClick={() => handleAdd(movie)}
+                                >
                                     Add
                                 </Button>
                             </TableCell>

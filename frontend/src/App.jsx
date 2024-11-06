@@ -7,21 +7,21 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import theme from './theme/theme.js'
 
-import SingleMovie from './pages/SingleMovie';
 import SingleStar from './pages/SingleStar';
 
 import Homepage from './pages/Homepage';
-import MovieList from './pages/MovieList';
+import MovieListPage from './pages/MovieListPage.jsx';
 
 
-import ShoppingCart from './pages/ShoppingCart';
-import PaymentInfo from './pages/PaymentInfo';
+import ShoppingCart from './pages/ShoppingCartPage.jsx';
+import PaymentInfo from './pages/PaymentPage.jsx';
 import Confirmation from './pages/Confirmation';
 
 import Dashboard from './pages/Dashboard.jsx';
 import HomePage from "./pages/Homepage";
 import TopMoviesPage from "./pages/TopMoviesPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import SingleMoviePage from "./pages/SingleMoviePage.jsx";
 
 function App() {
     return (
@@ -31,12 +31,12 @@ function App() {
                     <Route path="/" element={<Homepage />} />
 
                     <Route path="/topmovies" element={<TopMoviesPage />} />
-                    <Route path="/singlemovie" element={<SingleMovie />} />
+                    <Route path="/singlemovie" element={<SingleMoviePage />} />
                     <Route path="/singlestar" element={<SingleStar />} />
 
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/homepage" element={<HomePage />} />
-                    <Route path="/movielist" element={<MovieList />} />
+                    <Route path="/movielist" element={<MovieListPage />} />
 
                     <Route path="/shoppingcart" element={<ShoppingCart />} />
                     <Route path="/paymentinfo" element={<PaymentInfo />} />

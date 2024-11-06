@@ -10,7 +10,7 @@ export const useLoginPageHooks = () => {
     const [password, setPassword] = useState('');
     const [result, setResult] = useState('');
 
-    const login = async () => {
+    const handleLogin = async () => {
         try {
             const loginData = new URLSearchParams();
             loginData.append('username', email);
@@ -20,12 +20,14 @@ export const useLoginPageHooks = () => {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                withCredentials: true
+                withCredentials: true,
             });
 
             if (response.status === 200 && response.data.status === "success") {
                 setResult('Login Successful!');
                 navigate('/homepage');
+            } else {
+                setResult('Login failed');
             }
         } catch (error) {
             console.error("Login failed:", error);
@@ -36,7 +38,7 @@ export const useLoginPageHooks = () => {
     return {
         email, setEmail,
         password, setPassword,
-        result, setResult,
-        login
+        result,
+        handleLogin,
     };
 };

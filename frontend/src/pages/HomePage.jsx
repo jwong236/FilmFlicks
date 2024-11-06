@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from "@mui/material";
-import SplitSearchBar from '../components/components(deprecated)/SplitSearchBar.jsx';
+import SplitSearchBar from '../components/homepage/SplitSearchBar.jsx';
 import GenreList from '../components/homepage/GenreList.jsx';
 import CharacterList from "../components/homepage/CharacterList.jsx";
 import PageLayout from '../components/common/PageLayout.jsx';
