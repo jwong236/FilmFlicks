@@ -1,6 +1,7 @@
 package com.filmflicks.services;
 
 import com.filmflicks.repositories.MovieRepository;
+import com.filmflicks.repositories.StarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,9 @@ public class DatabaseService {
 
     @Autowired
     private MovieRepository movieRepository;
+
+    @Autowired
+    private StarRepository starRepository;
 
     /**
      * Adds a basic movie to the database.
@@ -74,4 +78,27 @@ public class DatabaseService {
     public String deleteMovieGenres(String movieId) {
         return movieRepository.deleteMovieGenres(movieId);
     }
+
+    /**
+     * Adds a star to the database.
+     *
+     * @param name      The name of the star.
+     * @param birthYear The birth year of the star.
+     * @return Success message or error.
+     */
+    public String addStar(String name, int birthYear) {
+        return starRepository.addStar(name, birthYear);
+    }
+
+    /**
+     * Deletes a star from the database by their ID.
+     *
+     * @param starId The ID of the star to delete.
+     * @return Success message or error.
+     */
+    public String deleteStar(String starId) {
+        return starRepository.deleteStar(starId);
+    }
+
+
 }

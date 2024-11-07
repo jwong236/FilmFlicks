@@ -14,8 +14,13 @@ import java.util.Optional;
 public interface StarRepository extends JpaRepository<Star, String> {
 
     // Call stored procedure for adding a star
-    @Procedure(name = "add_star")
-    String addStar(@Param("name") String name, @Param("birth_year") int birthYear);
+    @Procedure(procedureName = "add_star")
+    String addStar(@Param("star_name") String name, @Param("birth_year") int birthYear);
+
+    // Call stored procedure for deleting a star
+    @Procedure(procedureName = "delete_star")
+    String deleteStar(@Param("star_id") String starId);
+
 
     // Find all distinct star names
     @Query("SELECT DISTINCT s.name FROM Star s")

@@ -81,4 +81,28 @@ public class DatabaseController {
     public String deleteMovieGenres(@RequestParam String movieId) {
         return databaseService.deleteMovieGenres(movieId);
     }
+
+    /**
+     * Adds a star to the database.
+     *
+     * @param name      The name of the star.
+     * @param birthYear The birth year of the star.
+     * @return Success message or error message if the star already exists.
+     */
+    @PostMapping("/star/add")
+    public String addStar(@RequestParam String name, @RequestParam int birthYear) {
+        return databaseService.addStar(name, birthYear);
+    }
+
+    /**
+     * Deletes a star from the database by their ID.
+     *
+     * @param starId The ID of the star to delete.
+     * @return Success message or error message if the star does not exist.
+     */
+    @DeleteMapping("/star/delete")
+    public String deleteStar(@RequestParam String starId) {
+        return databaseService.deleteStar(starId);
+    }
+
 }

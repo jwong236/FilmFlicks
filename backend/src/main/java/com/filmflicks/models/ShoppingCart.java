@@ -46,6 +46,11 @@ public class ShoppingCart implements Serializable {
         return cartItems;
     }
 
+    // Clear all items from the cart
+    public void clear() {
+        cartItems.clear();
+    }
+
     // Inner class to represent an item in the cart
     public static class CartItem implements Serializable {
         private static final long serialVersionUID = 1L;

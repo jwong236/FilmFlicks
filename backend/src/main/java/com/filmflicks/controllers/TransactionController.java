@@ -1,21 +1,54 @@
 package com.filmflicks.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import com.filmflicks.models.CreditCard;
+import com.filmflicks.repositories.CreditCardRepository;
 import com.filmflicks.models.ShoppingCart;
-import com.filmflicks.models.ShoppingCart.CartItem;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/transaction")
 public class TransactionController {
+
+    @Autowired
+    private CreditCardRepository creditCardRepository;
+
+    @PostMapping("/payment")
+    public ResponseEntity<?> processPayment(@RequestBody CreditCard creditCard, HttpSession session) {
+        ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
+
+        if (shoppingCart == null || shoppingCart.getCartItems().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No items in shopping cart");
+        }
+
+        if (creditCard == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid credit card information");
+        }
+
+        Optional<CreditCard> optionalCreditCard = creditCardRepository.findById(creditCard.getId());
+
+        if (optionalCreditCard.isPresent()) {
+            CreditCard existingCreditCard = optionalCreditCard.get();
+            if (!existingCreditCard.getFirstName().equals(creditCard.getFirstName()) ||
+                    !existingCreditCard.getLastName().equals(creditCard.getLastName()) ||
+                    !existingCreditCard.getExpiration().equals(creditCard.getExpiration())) {
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Invalid credit card information");
+            }
+
+            // Process payment and clear the shopping cart
+            shoppingCart.clear();
+            session.setAttribute("shoppingCart", shoppingCart);
+            return ResponseEntity.ok("Payment processed successfully and shopping cart cleared");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Invalid credit card information");
+        }
+    }
 
     @GetMapping("/shopping-cart")
     public Map<String, Object> getShoppingCart(HttpSession session) {
@@ -23,7 +56,7 @@ public class TransactionController {
         Map<String, Object> response = new HashMap<>();
 
         if (shoppingCart != null) {
-            Map<String, CartItem> cartItems = shoppingCart.getCartItems();
+            Map<String, ShoppingCart.CartItem> cartItems = shoppingCart.getCartItems();
             response.put("cartItems", cartItems);
             response.put("totalPrice", shoppingCart.getTotalPrice());
         } else {
@@ -68,5 +101,4 @@ public class TransactionController {
 
         return response;
     }
-
 }
