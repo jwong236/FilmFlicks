@@ -2,17 +2,9 @@ import React from 'react';
 import PageLayout from '../components/common/PageLayout.jsx';
 import FullHeightContainer from '../components/common/FullHeightContainer.jsx';
 import ShoppingCartCard from '../components/shoppingcartpage/ShoppingCartCard.jsx';
-import { useShoppingCartPageHooks } from '../hooks/useShoppingCartPageHooks.jsx';
 
 export default function ShoppingCartPage() {
-    const {
-        cartData,
-        total,
-        incrementItem,
-        decrementItem,
-        deleteItem,
-        handleProceedToPayment
-    } = useShoppingCartPageHooks();
+
 
     return (
         <PageLayout>
@@ -28,14 +20,7 @@ export default function ShoppingCartPage() {
                     padding: '20px'
                 }}
             >
-                <ShoppingCartCard
-                    cartData={cartData}
-                    totalAmount={total}
-                    onDeleteItem={deleteItem}
-                    onProceedToPayment={handleProceedToPayment}
-                    onIncrementItem={incrementItem}
-                    onDecrementItem={decrementItem}
-                />
+                <ShoppingCartCard />
             </FullHeightContainer>
         </PageLayout>
     );

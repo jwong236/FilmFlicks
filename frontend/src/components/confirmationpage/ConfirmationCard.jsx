@@ -1,38 +1,36 @@
 import React from 'react';
 import { Box, Typography, Button } from "@mui/material";
+import { useNavigate, useLocation } from 'react-router-dom';
 import ConfirmationCardTable from "./ConfirmationCardTable.jsx";
-import { useNavigate } from 'react-router-dom';
 
-export default function ConfirmationCard({ data, sx }) {
+export default function ConfirmationCard() {
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const grandTotal = data.reduce((acc, item) => acc + item.total, 0);
+    const { cartData = [], total = 0, saleData = []} = location.state || {};
 
     const handleBackClick = () => {
         navigate('/');
     };
 
     return (
-        <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            backgroundColor: 'secondary.light',
-            color: 'secondary.contrastText',
-            borderRadius: '15px',
-            padding: '1rem 3rem 1rem 3rem',
-            alignItems: 'center',
-            ...sx
-        }}>
-            <Typography variant='h4' sx={{
-                color: 'primary.main',
-                fontWeight: 'bold',
-                padding: '1rem'
-            }}>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                backgroundColor: 'secondary.light',
+                color: 'secondary.contrastText',
+                borderRadius: '15px',
+                padding: '1rem 3rem',
+                alignItems: 'center',
+            }}
+        >
+            <Typography variant='h4' sx={{ color: 'primary.main', fontWeight: 'bold', padding: '1rem' }}>
                 Confirmation
             </Typography>
-            <ConfirmationCardTable data={data} />
+            <ConfirmationCardTable cartData={cartData} saleData = {saleData} />
             <Typography variant="h6" sx={{ marginY: '20px', fontWeight: 'bold', color: 'primary.main' }}>
-                Grand Total: ${grandTotal.toFixed(2)}
+                Grand Total: ${total}
             </Typography>
             <Button
                 onClick={handleBackClick}
@@ -43,8 +41,9 @@ export default function ConfirmationCard({ data, sx }) {
                     backgroundColor: 'info.light',
                     '&:hover': {
                         backgroundColor: 'info.dark',
-                    }
-                }}>
+                    },
+                }}
+            >
                 Back To Homepage
             </Button>
         </Box>

@@ -20,15 +20,18 @@ public class TransactionController {
     private CreditCardRepository creditCardRepository;
 
     @PostMapping("/payment")
-    public ResponseEntity<?> processPayment(@RequestBody CreditCard creditCard, HttpSession session) {
+    public ResponseEntity<Map<String, Object>> processPayment(@RequestBody CreditCard creditCard, HttpSession session) {
         ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
+        Map<String, Object> response = new HashMap<>();
 
         if (shoppingCart == null || shoppingCart.getCartItems().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No items in shopping cart");
+            response.put("error", "No items in shopping cart");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         if (creditCard == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid credit card information");
+            response.put("error", "Invalid credit card information");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         Optional<CreditCard> optionalCreditCard = creditCardRepository.findById(creditCard.getId());
@@ -38,17 +41,21 @@ public class TransactionController {
             if (!existingCreditCard.getFirstName().equals(creditCard.getFirstName()) ||
                     !existingCreditCard.getLastName().equals(creditCard.getLastName()) ||
                     !existingCreditCard.getExpiration().equals(creditCard.getExpiration())) {
-                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Invalid credit card information");
+                response.put("error", "Invalid credit card information");
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
             }
 
             // Process payment and clear the shopping cart
             shoppingCart.clear();
             session.setAttribute("shoppingCart", shoppingCart);
-            return ResponseEntity.ok("Payment processed successfully and shopping cart cleared");
+            response.put("message", "Payment processed successfully and shopping cart cleared");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Invalid credit card information");
+            response.put("error", "Invalid credit card information");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
         }
     }
+
 
     @GetMapping("/shopping-cart")
     public Map<String, Object> getShoppingCart(HttpSession session) {
@@ -101,4 +108,6 @@ public class TransactionController {
 
         return response;
     }
+
+
 }

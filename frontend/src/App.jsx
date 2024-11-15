@@ -15,7 +15,7 @@ import MovieListPage from './pages/MovieListPage.jsx';
 
 import ShoppingCart from './pages/ShoppingCartPage.jsx';
 import PaymentInfo from './pages/PaymentPage.jsx';
-import Confirmation from './pages/Confirmation';
+import ConfirmationPage from './pages/ConfirmationPage.jsx';
 
 import Dashboard from './pages/Dashboard.jsx';
 import HomePage from "./pages/Homepage";
@@ -40,7 +40,7 @@ function App() {
 
                     <Route path="/shoppingcart" element={<ShoppingCart />} />
                     <Route path="/paymentinfo" element={<PaymentInfo />} />
-                    <Route path="/confirmation" element={<Confirmation />} />
+                    <Route path="/confirmation" element={<ConfirmationPage />} />
 
                     <Route path="/_dashboard" element = {<Dashboard />} />
                 </Routes>

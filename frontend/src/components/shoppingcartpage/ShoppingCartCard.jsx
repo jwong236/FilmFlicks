@@ -1,16 +1,17 @@
 import React from 'react';
 import { Box, Typography } from "@mui/material";
 import ShoppingCartList from "./ShoppingCartList.jsx";
+import {useShoppingCartPageHooks} from "../../hooks/useShoppingCartPageHooks.jsx";
 
-export default function ShoppingCartCard({
-                                             sx,
-                                             cartData,
-                                             totalAmount,
-                                             onDeleteItem,
-                                             onProceedToPayment,
-                                             onIncrementItem,
-                                             onDecrementItem
-                                         }) {
+export default function ShoppingCartCard() {
+    const {
+        cartData,
+        total,
+        incrementItem,
+        decrementItem,
+        deleteItem,
+        handleProceedToPayment
+    } = useShoppingCartPageHooks();
     return (
         <Box
             sx={{
@@ -22,7 +23,6 @@ export default function ShoppingCartCard({
                 color: 'secondary.light',
                 borderRadius: '15px',
                 padding: '1rem',
-                ...sx
             }}
         >
             <Typography
@@ -34,11 +34,11 @@ export default function ShoppingCartCard({
             {cartData && cartData.length > 0 ? (
                 <ShoppingCartList
                     cartData={cartData}
-                    totalAmount={totalAmount}
-                    onDeleteItem={onDeleteItem}
-                    onProceedToPayment={onProceedToPayment}
-                    onIncrementItem={onIncrementItem}
-                    onDecrementItem={onDecrementItem}
+                    totalAmount={total}
+                    onDeleteItem={deleteItem}
+                    onProceedToPayment={handleProceedToPayment}
+                    onIncrementItem={incrementItem}
+                    onDecrementItem={decrementItem}
                 />
             ) : (
                 <Typography variant="h6" sx={{ color: 'text.secondary', paddingTop: '2rem' }}>

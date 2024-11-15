@@ -1,7 +1,7 @@
 package com.filmflicks.models;
 
 import jakarta.persistence.*;
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "credit_cards")
@@ -10,7 +10,7 @@ public class CreditCard {
     private String id;
     private String first_name;
     private String last_name;
-    private Date expiration;
+    private LocalDate expiration;
 
     public CreditCard() {
     }
@@ -39,11 +39,11 @@ public class CreditCard {
         this.last_name = last_name;
     }
 
-    public Date getExpiration() {
+    public LocalDate getExpiration() {
         return expiration;
     }
 
-    public void setExpiration(Date expiration) {
+    public void setExpiration(LocalDate expiration) {
         this.expiration = expiration;
     }
 }
