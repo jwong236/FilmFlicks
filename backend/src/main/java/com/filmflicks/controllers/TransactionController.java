@@ -19,6 +19,7 @@ public class TransactionController {
     @Autowired
     private CreditCardRepository creditCardRepository;
 
+    // Process payment
     @PostMapping("/payment")
     public ResponseEntity<Map<String, Object>> processPayment(@RequestBody CreditCard creditCard, HttpSession session) {
         ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
@@ -56,7 +57,7 @@ public class TransactionController {
         }
     }
 
-
+    // Get shopping cart
     @GetMapping("/shopping-cart")
     public Map<String, Object> getShoppingCart(HttpSession session) {
         ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
@@ -75,8 +76,9 @@ public class TransactionController {
         return response;
     }
 
+    // Add to shopping cart
     @PostMapping("/shopping-cart/add")
-    public Map<String, Object> addToShoppingCart(@RequestParam String title, @RequestParam double price, @RequestParam int quantity, HttpSession session) {
+    public Map<String, Object> addToShoppingCart(@RequestParam String id, @RequestParam String title, @RequestParam double price, @RequestParam int quantity, HttpSession session) {
         ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
         Map<String, Object> response = new HashMap<>();
 
@@ -85,20 +87,21 @@ public class TransactionController {
             session.setAttribute("shoppingCart", shoppingCart);
         }
 
-        shoppingCart.addItem(title, price, quantity);
+        shoppingCart.addItem(id, title, price, quantity);
         response.put("success", true);
         response.put("message", "Item added to shopping cart successfully.");
 
         return response;
     }
 
+    // Remove from shopping cart
     @DeleteMapping("/shopping-cart/remove")
-    public Map<String, Object> removeFromShoppingCart(@RequestParam String title, @RequestParam int quantity, HttpSession session) {
+    public Map<String, Object> removeFromShoppingCart(@RequestParam String id, @RequestParam int quantity, HttpSession session) {
         ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
         Map<String, Object> response = new HashMap<>();
 
         if (shoppingCart != null) {
-            shoppingCart.removeItem(title, quantity);
+            shoppingCart.removeItem(id, quantity);
             response.put("success", true);
             response.put("message", "Item removed from shopping cart successfully.");
         } else {
@@ -108,6 +111,4 @@ public class TransactionController {
 
         return response;
     }
-
-
 }

@@ -37,7 +37,7 @@ export const useMovieListPageHooks = () => {
             });
 
             const formattedMovies = response.data.map(movie => ({
-                id: movie.id,
+                id: movie.id, // This will now hold values like "tt0094859"
                 title: movie.title,
                 year: movie.year,
                 director: movie.director,
@@ -57,17 +57,10 @@ export const useMovieListPageHooks = () => {
         }
     };
 
-    const handleNextClick = () => {
-        setPageData(prev => ({ ...prev, pageNumber: prev.pageNumber + 1 }));
-    };
-
-    const handlePrevClick = () => {
-        setPageData(prev => ({ ...prev, pageNumber: prev.pageNumber > 1 ? prev.pageNumber - 1 : 1 }));
-    };
-
     const addToShoppingCart = async (movie) => {
         try {
-            const response = await fetch(`${URL}/transaction/shopping-cart/add?title=${encodeURIComponent(movie.title)}&price=${movie.price ?? 10}&quantity=1`, {
+            // Use `id` (string) and other details
+            const response = await fetch(`${URL}/transaction/shopping-cart/add?id=${encodeURIComponent(movie.id)}&title=${encodeURIComponent(movie.title)}&price=${movie.price ?? 10}&quantity=1`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include'
@@ -82,7 +75,7 @@ export const useMovieListPageHooks = () => {
             console.error('Error adding to cart: ', error);
             setSnackbar({ open: true, message: "Failed to add movie to cart." });
         }
-    }; // IMPORTANT: price is arbitrarily set to 10 in this hook! All movies will be priced at 10 until I populate the database with movie prices
+    };
 
     const closeSnackbar = () => {
         setSnackbar({ open: false, message: "" });
@@ -94,6 +87,14 @@ export const useMovieListPageHooks = () => {
 
     const setSortRule = (rule) => {
         setPageData(prev => ({ ...prev, sortRule: rule }));
+    };
+
+    const handleNextClick = () => {
+        setPageData(prev => ({ ...prev, pageNumber: prev.pageNumber + 1 }));
+    };
+
+    const handlePrevClick = () => {
+        setPageData(prev => ({ ...prev, pageNumber: prev.pageNumber > 1 ? prev.pageNumber - 1 : 1 }));
     };
 
     return {
@@ -108,3 +109,4 @@ export const useMovieListPageHooks = () => {
         closeSnackbar,
     };
 };
+

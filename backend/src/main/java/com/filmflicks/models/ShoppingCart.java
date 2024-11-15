@@ -7,6 +7,7 @@ import java.util.Map;
 public class ShoppingCart implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    // Use `id` (String) as the key for cartItems
     private Map<String, CartItem> cartItems = new HashMap<>();
 
     // Constructors
@@ -14,22 +15,22 @@ public class ShoppingCart implements Serializable {
     }
 
     // Add an item to the cart
-    public void addItem(String title, double price, int quantity) {
-        CartItem cartItem = cartItems.get(title);
+    public void addItem(String id, String title, double price, int quantity) {
+        CartItem cartItem = cartItems.get(id);
         if (cartItem != null) {
             cartItem.setQuantity(cartItem.getQuantity() + quantity);
         } else {
-            cartItems.put(title, new CartItem(title, price, quantity));
+            cartItems.put(id, new CartItem(id, title, price, quantity));
         }
     }
 
-    // Remove a quantity of an item from the cart by title
-    public void removeItem(String title, int quantity) {
-        CartItem cartItem = cartItems.get(title);
+    // Remove a quantity of an item from the cart by ID
+    public void removeItem(String id, int quantity) {
+        CartItem cartItem = cartItems.get(id);
         if (cartItem != null) {
             int currentQuantity = cartItem.getQuantity();
             if (currentQuantity <= quantity) {
-                cartItems.remove(title);
+                cartItems.remove(id);
             } else {
                 cartItem.setQuantity(currentQuantity - quantity);
             }
@@ -55,18 +56,24 @@ public class ShoppingCart implements Serializable {
     public static class CartItem implements Serializable {
         private static final long serialVersionUID = 1L;
 
+        private String id; // Changed `id` to String
         private String title;
         private double price;
         private int quantity;
 
         // Constructors
-        public CartItem(String title, double price, int quantity) {
+        public CartItem(String id, String title, double price, int quantity) {
+            this.id = id;
             this.title = title;
             this.price = price;
             this.quantity = quantity;
         }
 
         // Getters and Setters
+        public String getId() {
+            return id;
+        }
+
         public String getTitle() {
             return title;
         }

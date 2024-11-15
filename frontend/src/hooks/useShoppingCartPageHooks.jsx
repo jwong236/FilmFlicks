@@ -21,8 +21,10 @@ export const useShoppingCartPageHooks = () => {
                     navigate('/login');
                 } else {
                     const data = await response.json();
-                    const formattedCartData = Object.entries(data.cartItems).map(([title, item]) => ({
-                        title,
+
+                    const formattedCartData = Object.entries(data.cartItems).map(([id, item]) => ({
+                        id,
+                        title: item.title,
                         quantity: item.quantity,
                         price: item.price,
                         totalPrice: item.totalPrice,
@@ -47,12 +49,10 @@ export const useShoppingCartPageHooks = () => {
 
     const incrementItem = async (movie) => {
         try {
-            const randomPrice = 10 // Arbitrary price for now
-
-
-            // Use the random price in the fetch URL
             const response = await fetch(
-                `${URL}/transaction/shopping-cart/add?title=${encodeURIComponent(movie.title)}&price=${randomPrice}&quantity=1`,
+                `${URL}/transaction/shopping-cart/add?id=${encodeURIComponent(movie.id)}&title=${encodeURIComponent(
+                    movie.title
+                )}&price=${movie.price}&quantity=1`,
                 {
                     method: 'POST',
                     credentials: 'include',
@@ -64,36 +64,46 @@ export const useShoppingCartPageHooks = () => {
             } else if (response.ok) {
                 setCartData((prev) =>
                     prev.map((item) =>
-                        item.title === movie.title
-                            ? { ...item, quantity: item.quantity + 1, totalPrice: (item.quantity + 1) * randomPrice }
+                        item.id === movie.id
+                            ? {
+                                ...item,
+                                quantity: item.quantity + 1,
+                                totalPrice: (item.quantity + 1) * item.price,
+                            }
                             : item
                     )
                 );
-                setTotal((prev) => prev + randomPrice);
+                setTotal((prev) => prev + movie.price);
             }
         } catch (error) {
             console.error('Error incrementing cart quantity:', error);
         }
     };
 
-
     const decrementItem = async (movie) => {
         try {
             if (movie.quantity === 1) {
                 await deleteItem(movie);
             } else {
-                const response = await fetch(`${URL}/transaction/shopping-cart/remove?title=${encodeURIComponent(movie.title)}&quantity=1`, {
-                    method: 'DELETE',
-                    credentials: 'include',
-                });
+                const response = await fetch(
+                    `${URL}/transaction/shopping-cart/remove?id=${encodeURIComponent(movie.id)}&quantity=1`,
+                    {
+                        method: 'DELETE',
+                        credentials: 'include',
+                    }
+                );
 
                 if (response.status === 401) {
                     navigate('/login');
                 } else if (response.ok) {
                     setCartData((prev) =>
                         prev.map((item) =>
-                            item.title === movie.title
-                                ? { ...item, quantity: item.quantity - 1, totalPrice: (item.quantity - 1) * item.price }
+                            item.id === movie.id
+                                ? {
+                                    ...item,
+                                    quantity: item.quantity - 1,
+                                    totalPrice: (item.quantity - 1) * item.price,
+                                }
                                 : item
                         )
                     );
@@ -107,15 +117,18 @@ export const useShoppingCartPageHooks = () => {
 
     const deleteItem = async (movie) => {
         try {
-            const response = await fetch(`${URL}/transaction/shopping-cart/remove?title=${encodeURIComponent(movie.title)}&quantity=${movie.quantity}`, {
-                method: 'DELETE',
-                credentials: 'include',
-            });
+            const response = await fetch(
+                `${URL}/transaction/shopping-cart/remove?id=${encodeURIComponent(movie.id)}&quantity=${movie.quantity}`,
+                {
+                    method: 'DELETE',
+                    credentials: 'include',
+                }
+            );
 
             if (response.status === 401) {
                 navigate('/login');
             } else if (response.ok) {
-                setCartData((prev) => prev.filter((item) => item.title !== movie.title));
+                setCartData((prev) => prev.filter((item) => item.id !== movie.id));
                 setTotal((prev) => prev - movie.totalPrice);
             }
         } catch (error) {

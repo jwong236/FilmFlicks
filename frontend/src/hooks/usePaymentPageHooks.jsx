@@ -34,27 +34,54 @@ export const usePaymentPageHooks = () => {
                 return;
             }
 
-            /*// Step 2: Fetch sale data from the /sale/add endpoint
-            const saleResponse = await fetch(`${URL}/sale/add`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cartData }), // Pass cartData for the sale
+            // Step 2: Fetch customer data from the session
+            const sessionResponse = await fetch(`${URL}/metadata/session`, {
                 credentials: 'include',
             });
 
-            if (!saleResponse.ok) {
-                const errorData = await saleResponse.json();
-                setResults(errorData.error || "Failed to retrieve sale data.");
+            if (!sessionResponse.ok) {
+                if (sessionResponse.status === 401) {
+                    navigate('/login');
+                } else {
+                    const errorData = await sessionResponse.json();
+                    setResults(errorData.error || "Failed to retrieve customer data.");
+                }
                 return;
             }
 
-            const saleData = await saleResponse.json(); // Sale data returned from the endpoint*/
+            const sessionData = await sessionResponse.json();
+            const customerId = sessionData.customer?.id;
 
-            // Step 3: Navigate to confirmation page with cartData, total, and saleData
-            const saleData = [
-                { id: 1, customer_id: 101, movie_id: 5, sale_date: "2024-01-01" },
-                { id: 2, customer_id: 101, movie_id: 6, sale_date: "2024-01-01" }
-            ];
+            if (!customerId) {
+                setResults("Customer information is missing in the session.");
+                return;
+            }
+
+            // Step 3: Create sales for each item in the cart
+            const saleData = [];
+            const currentDate = new Date().toISOString().split("T")[0]; // Format as YYYY-MM-DD
+
+            for (const item of cartData) {
+                const saleResponse = await fetch(
+                    `${URL}/database/sale/add?customerId=${customerId}&movieId=${encodeURIComponent(item.id)}&saleDate=${currentDate}`,
+                    {
+                        method: 'POST',
+                        credentials: 'include',
+                    }
+                );
+
+
+                if (!saleResponse.ok) {
+                    const errorData = await saleResponse.json();
+                    setResults(errorData.error || "Failed to create sale.");
+                    return;
+                }
+
+                const sale = await saleResponse.json();
+                saleData.push(sale);
+            }
+
+            // Step 4: Navigate to confirmation page with cartData, total, and saleData
             navigate('/confirmation', { state: { cartData, total, saleData } });
         } catch (error) {
             setResults(
@@ -64,6 +91,7 @@ export const usePaymentPageHooks = () => {
             );
         }
     };
+
 
     return { paymentInfo, setPaymentInfo, handlePlaceOrder, results };
 };

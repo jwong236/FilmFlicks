@@ -41,14 +41,4 @@ public class TestController {
         }
     }
 
-    // Endpoint to print the contents of the current session
-    @GetMapping("/test-session")
-    public String testSession(HttpSession session) {
-        StringBuilder sessionContents = new StringBuilder("Session Contents:\n");
-        session.getAttributeNames().asIterator().forEachRemaining(attributeName ->
-                sessionContents.append(attributeName).append(": ").append(session.getAttribute(attributeName)).append("\n")
-        );
-        return sessionContents.toString();
-    }
-
 }
