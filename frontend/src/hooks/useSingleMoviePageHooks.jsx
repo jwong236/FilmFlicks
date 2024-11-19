@@ -5,6 +5,7 @@ const URL = import.meta.env.VITE_BACKEND_URL;
 
 export const useSingleMoviePageHooks = () => {
     const [movieData, setMovieData] = useState({
+        id: "",
         title: "default title",
         year: "default year",
         director: "default director",
@@ -35,8 +36,8 @@ export const useSingleMoviePageHooks = () => {
                 } else if (response.ok) {
                     const jsonData = await response.json();
                     if (mounted && jsonData) {
-                        // Map the response to match the state structure
                         setMovieData({
+                            id: jsonData.id,
                             title: jsonData.title,
                             year: jsonData.year,
                             director: jsonData.director,
@@ -53,7 +54,9 @@ export const useSingleMoviePageHooks = () => {
             }
         }
 
-        fetchMovieData();
+        if (title) {
+            fetchMovieData();
+        }
 
         return () => {
             mounted = false;
@@ -62,29 +65,22 @@ export const useSingleMoviePageHooks = () => {
 
     const addToShoppingCart = async (movie) => {
         try {
-            const response = await fetch(`${URL}/add`, {
+            const response = await fetch(`${URL}/transaction/shopping-cart/add?id=${encodeURIComponent(movie.id)}&title=${encodeURIComponent(movie.title)}&price=${movie.price ?? 10}&quantity=1`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ "movieTitle": movie.title }),
+                credentials: 'include'
             });
 
             if (response.status === 401) {
                 navigate('/login');
-            } else if (response.ok) {
-                setSnackbarMessage("Movie added successfully!");
-                setOpenSnackbar(true);
             } else {
-                throw new Error('Failed to add movie');
+                setOpenSnackbar(true);
+                setSnackbarMessage("Movie added successfully!");
             }
         } catch (error) {
             console.error('Error adding to cart: ', error);
-            setSnackbarMessage("Failed to add movie to cart.");
             setOpenSnackbar(true);
-        } finally {
-            setTimeout(() => {
-                setOpenSnackbar(false);
-            }, 3000);
+            setSnackbarMessage("Failed to add movie to cart.");
         }
     };
 

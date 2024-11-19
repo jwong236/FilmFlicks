@@ -3,7 +3,7 @@ import Navbar from './navbar/Navbar.jsx';
 import popcorn from '../../assets/popcorn.png';
 import { Box } from '@mui/material';
 
-function PageLayout({ children, sx, ...props }) {
+function PageLayout({ children, sx, showNavbar = true, ...props }) {
     return (
         <Box
             sx={{
@@ -19,7 +19,7 @@ function PageLayout({ children, sx, ...props }) {
             }}
             {...props}
         >
-            <Navbar />
+            {showNavbar && <Navbar />}
             <Box
                 sx={{
                     display: 'flex',

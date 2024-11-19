@@ -26,6 +26,6 @@ public interface StarRepository extends JpaRepository<Star, String> {
     @Query("SELECT DISTINCT s.name FROM Star s")
     List<String> findAllStarNames();
 
-    // Find star by exact name (case-insensitive)
-    Optional<Star> findByNameIgnoreCase(String name);
+    @Query("SELECT s FROM Star s LEFT JOIN FETCH s.movies WHERE LOWER(s.name) = LOWER(:name)")
+    Optional<Star> findByNameIgnoreCase(@Param("name") String name);
 }

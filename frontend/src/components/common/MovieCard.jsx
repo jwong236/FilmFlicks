@@ -2,7 +2,7 @@ import {Box, Card, CardHeader, CardContent, Chip, Typography, Link as MuiLink} f
 import { Link as RouterLink } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 
-export default function MovieCard(props) { // title, year, director, genres, stars, rating
+export default function MovieCard(props) {
     const navigate = useNavigate();
     const bull = (
         <Box

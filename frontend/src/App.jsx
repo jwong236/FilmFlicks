@@ -7,7 +7,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import theme from './theme/theme.js'
 
-import SingleStar from './pages/SingleStar';
+import SingleStarPage from './pages/SingleStarPage.jsx';
 
 import Homepage from './pages/Homepage';
 import MovieListPage from './pages/MovieListPage.jsx';
@@ -17,7 +17,7 @@ import ShoppingCart from './pages/ShoppingCartPage.jsx';
 import PaymentInfo from './pages/PaymentPage.jsx';
 import ConfirmationPage from './pages/ConfirmationPage.jsx';
 
-import Dashboard from './pages/Dashboard.jsx';
+import DashboardPage from './pages/DashboardPage.jsx';
 import HomePage from "./pages/Homepage";
 import TopMoviesPage from "./pages/TopMoviesPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
@@ -32,7 +32,7 @@ function App() {
 
                     <Route path="/topmovies" element={<TopMoviesPage />} />
                     <Route path="/singlemovie" element={<SingleMoviePage />} />
-                    <Route path="/singlestar" element={<SingleStar />} />
+                    <Route path="/singlestar" element={<SingleStarPage />} />
 
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/homepage" element={<HomePage />} />
@@ -42,7 +42,7 @@ function App() {
                     <Route path="/paymentinfo" element={<PaymentInfo />} />
                     <Route path="/confirmation" element={<ConfirmationPage />} />
 
-                    <Route path="/_dashboard" element = {<Dashboard />} />
+                    <Route path="/_dashboard" element = {<DashboardPage />} />
                 </Routes>
         </ThemeProvider>
     );

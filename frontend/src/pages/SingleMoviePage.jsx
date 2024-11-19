@@ -38,7 +38,7 @@ export default function SingleMoviePage() {
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={addToShoppingCart}
+                        onClick={() => addToShoppingCart(movieData)}
                         sx={{
                             marginTop: '2rem',
                             width: '100%',

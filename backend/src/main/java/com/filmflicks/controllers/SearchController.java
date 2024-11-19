@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class SearchController {
@@ -60,7 +63,27 @@ public class SearchController {
      * @return Optional containing star details if found.
      */
     @GetMapping("/single-star")
-    public Optional<Star> getSingleStar(@RequestParam String name) {
-        return searchService.getStarDetails(name);
+    public ResponseEntity<Map<String, Object>> getSingleStar(@RequestParam String name) {
+        Optional<Star> starOptional = searchService.getStarDetails(name);
+
+        if (starOptional.isPresent()) {
+            Star star = starOptional.get();
+
+            // Manually construct the response
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", star.getId());
+            response.put("name", star.getName());
+            response.put("birth_year", star.getBirthYear());
+
+            // Fetch movie titles separately
+            List<String> movieTitles = star.getMovies().stream()
+                    .map(Movie::getTitle)
+                    .collect(Collectors.toList());
+            response.put("movies", movieTitles);
+
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }

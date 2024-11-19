@@ -5,8 +5,8 @@ import PageLayout from '../components/common/PageLayout.jsx';
 import FullHeightContainer from '../components/common/FullHeightContainer.jsx';
 import MovieListTable from '../components/movielistpage/MovieListTable.jsx';
 import SplitSearchBar from '../components/homepage/SplitSearchBar.jsx';
-import MoviesPerPageDropdown from '../components/components(deprecated)/MoviesPerPageDropdown.jsx';
-import SortByDropdown from '../components/components(deprecated)/SortByDropdown.jsx';
+import MoviesPerPageDropdown from '../components/movielistpage/MoviesPerPageDropdown.jsx';
+import SortByDropdown from '../components/movielistpage/SortByDropdown.jsx';
 import { useMovieListPageHooks } from '../hooks/useMovieListPageHooks';
 
 export default function MovieList() {

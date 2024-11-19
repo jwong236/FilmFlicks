@@ -29,7 +29,7 @@ import java.util.Map;
 
 // This annotation maps this Java Servlet Class to a URL
 @WebServlet("/singlestar")
-public class SingleStar extends HttpServlet {
+public class SingleStarPage extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // Create a dataSource which registered in web.
