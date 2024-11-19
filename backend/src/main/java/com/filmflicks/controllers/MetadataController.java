@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -40,18 +39,6 @@ public class MetadataController {
     @GetMapping("/top-rated")
     public List<Movie> getTopRatedMovies(@RequestParam(defaultValue = "20") int size) {
         return metadataService.getTopRatedMovies(size);
-    }
-
-    @GetMapping("/session")
-    public Map<String, Object> getSessionContents(HttpSession session) {
-        Map<String, Object> sessionContents = new HashMap<>();
-
-        session.getAttributeNames().asIterator().forEachRemaining(attributeName -> {
-            Object attributeValue = session.getAttribute(attributeName);
-            sessionContents.put(attributeName, attributeValue);
-        });
-
-        return sessionContents;
     }
 
     @GetMapping("/database-metadata")

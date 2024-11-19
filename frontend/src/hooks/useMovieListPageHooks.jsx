@@ -1,4 +1,3 @@
-
 // useMovieListPageHooks.js (in hooks directory)
 import { useState } from 'react';
 import axios from 'axios';
@@ -11,15 +10,19 @@ export const useMovieListPageHooks = () => {
         sortRule: "title_asc_rating_asc",
         movies: []
     });
+
     const [snackbar, setSnackbar] = useState({ open: false, message: "" });
     const navigate = useNavigate();
     const URL = import.meta.env.VITE_BACKEND_URL;
 
     const fetchMovies = async (locationState) => {
         try {
+            const URL = import.meta.env.VITE_BACKEND_URL;
+
             let endpoint = `${URL}`;
             let params = { page: pageData.pageNumber, pageSize: pageData.pageSize, sortRule: pageData.sortRule };
 
+            // Check if character, genre, or title exists in locationState
             if (locationState?.character) {
                 endpoint += `/browse/character`;
                 params = { character: locationState.character, ...params };
@@ -29,15 +32,50 @@ export const useMovieListPageHooks = () => {
             } else if (locationState?.title) {
                 endpoint += `/search`;
                 params = { title: locationState.title, ...params };
+            } else {
+                // Fetch previous request if no valid params exist
+                const previousRequestResponse = await axios.get(`${URL}/session/stored-request/get`, {
+                    withCredentials: true
+                });
+
+                if (previousRequestResponse.status !== 200 || !previousRequestResponse.data) {
+                    throw new Error("No previous request found in session.");
+                }
+
+                const { endpoint: storedEndpoint, params: storedParams } = previousRequestResponse.data;
+
+                if (!storedEndpoint || !storedParams) {
+                    throw new Error("No valid previous request found in session.");
+                }
+
+                endpoint = storedEndpoint;
+                params = storedParams;
             }
 
+            // Add the request to the session
+            await axios.post(
+                `${URL}/session/stored-request/add`,
+                null,
+                {
+                    params: { endpoint, ...params },
+                    withCredentials: true
+                }
+            );
+
+            // Get session contents for debugging
+            const sessionContents = await axios.get(`${URL}/session/`, {
+                withCredentials: true
+            });
+
+            // Fetch the movies using the determined endpoint and params
             const response = await axios.get(endpoint, {
                 params,
                 withCredentials: true
             });
 
+            // Format and set the movies in the state
             const formattedMovies = response.data.map(movie => ({
-                id: movie.id, // This will now hold values like "tt0094859"
+                id: movie.id,
                 title: movie.title,
                 year: movie.year,
                 director: movie.director,
@@ -53,9 +91,13 @@ export const useMovieListPageHooks = () => {
                 navigate('/login');
             } else {
                 console.error("Error fetching movie list:", error);
+                setSnackbar({ open: true, message: "Failed to load movies. Please try again later." });
             }
         }
     };
+
+
+
 
     const addToShoppingCart = async (movie) => {
         try {
@@ -109,4 +151,3 @@ export const useMovieListPageHooks = () => {
         closeSnackbar,
     };
 };
-

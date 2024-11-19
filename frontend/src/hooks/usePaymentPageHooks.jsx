@@ -35,7 +35,7 @@ export const usePaymentPageHooks = () => {
             }
 
             // Step 2: Fetch customer data from the session
-            const sessionResponse = await fetch(`${URL}/metadata/session`, {
+            const sessionResponse = await fetch(`${URL}/session/`, {
                 credentials: 'include',
             });
 
