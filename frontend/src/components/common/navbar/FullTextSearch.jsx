@@ -3,7 +3,7 @@ import { Box, TextField, Button, InputAdornment, useTheme, Autocomplete, Circula
 import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 
-const URL = import.meta.env.VITE_URL;
+const URL = 'http://localhost:8080';
 
 const FullTextSearch = ({ sx }) => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -15,15 +15,13 @@ const FullTextSearch = ({ sx }) => {
     const navigate = useNavigate();
 
     const fetchSuggestions = async (query) => {
-        console.log("Autocomplete query initiated for: ", query);
         const cachedSuggestions = localStorage.getItem(query);
         if (cachedSuggestions) {
-            console.log("Autocomplete using cached results: ", JSON.parse(cachedSuggestions));
             setSuggestions(JSON.parse(cachedSuggestions));
         } else {
             setLoading(true);
             try {
-                const response = await fetch(`${URL}/fullTextSearch?title=${encodeURIComponent(query)}&userPage=1&userPageSize=10&sortRule=title_asc_rating_asc`, {
+                const response = await fetch(`${URL}/search?title=${encodeURIComponent(query)}&page=1&pageSize=3&sortRule=rating_desc_title_asc`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include'
@@ -31,7 +29,6 @@ const FullTextSearch = ({ sx }) => {
                 const data = await response.json();
                 const titles = data.map(item => item.title);
                 localStorage.setItem(query, JSON.stringify(titles));
-                console.log("Autocomplete using new results: ", JSON.stringify(titles));
                 setSuggestions(titles);
             } catch (error) {
                 console.error("Error fetching suggestions:", error);
@@ -39,11 +36,10 @@ const FullTextSearch = ({ sx }) => {
                 setLoading(false);
             }
         }
-        console.log("Used suggestion list: ", suggestions);
     };
 
     useEffect(() => {
-        if (searchQuery.length >= 3) {
+        if (searchQuery.length >= 1) {
             const delayDebounceFn = setTimeout(() => {
                 fetchSuggestions(searchQuery);
             }, 300);
@@ -54,7 +50,6 @@ const FullTextSearch = ({ sx }) => {
 
     const handleFullSearch = () => {
         if (!inputValue) {
-            console.log('Search field is empty. No action taken.');
             return;
         }
         navigate('/movielist', { state: { title: inputValue, year: null, director: null, star: null } });
@@ -99,7 +94,7 @@ const FullTextSearch = ({ sx }) => {
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                     setHighlightedIndex(-1);
-                    if (newInputValue.length >= 3) {
+                    if (newInputValue.length >= 1) {
                         setSearchQuery(newInputValue);
                     }
                 }}
