@@ -5,6 +5,7 @@ import com.filmflicks.models.ShoppingCart;
 import com.filmflicks.repositories.CustomerRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,12 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-public class AuthController {
+public class CustomerAuthController {
 
     private final AuthenticationManager authenticationManager;
     private final CustomerRepository customerRepository;
 
-    public AuthController(AuthenticationManager authenticationManager, CustomerRepository customerRepository) {
+    public CustomerAuthController(@Qualifier("userAuthenticationManager") AuthenticationManager authenticationManager, CustomerRepository customerRepository) {
         this.authenticationManager = authenticationManager;
         this.customerRepository = customerRepository;
     }
@@ -41,6 +42,12 @@ public class AuthController {
                 ));
             }
 
+            // Invalidate the existing session if there is one
+            HttpSession existingSession = request.getSession(false);
+            if (existingSession != null) {
+                existingSession.invalidate();
+            }
+
             // Authenticate user
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)
@@ -50,9 +57,9 @@ public class AuthController {
             SecurityContext securityContext = SecurityContextHolder.getContext();
             securityContext.setAuthentication(authentication);
 
-            // Store SecurityContext in the session
-            HttpSession session = request.getSession(true);
-            session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+            // Create a new session
+            HttpSession newSession = request.getSession(true);
+            newSession.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 
             // Retrieve customer data
             Customer customer = customerRepository.findByEmail(email)
@@ -66,11 +73,11 @@ public class AuthController {
             customerSessionData.put("ccId", customer.getCcId());
             customerSessionData.put("address", customer.getAddress());
             customerSessionData.put("email", customer.getEmail());
-            session.setAttribute("customer", customerSessionData);
+            newSession.setAttribute("customer", customerSessionData);
 
             // Initialize and store a shopping cart in the session
             ShoppingCart shoppingCart = new ShoppingCart();
-            session.setAttribute("shoppingCart", shoppingCart);
+            newSession.setAttribute("shoppingCart", shoppingCart);
 
             // Prepare JSON response
             Map<String, Object> jsonResponse = new HashMap<>();

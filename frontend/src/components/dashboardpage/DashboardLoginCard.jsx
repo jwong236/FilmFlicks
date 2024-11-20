@@ -4,12 +4,13 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 const URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
-    const [credentials, setCredentials] = useState({ username: "", password: "" });
+    const [credentials, setCredentials] = useState({ email: "", password: "" });
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         const fetchSessionData = async () => {
             try {
-                const response = await fetch(`${URL}/metadata/session`, {
+                const response = await fetch(`${URL}/session/`, {
                     method: 'GET',
                     credentials: 'include',
                 });
@@ -34,15 +35,16 @@ export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setCredentials((prev) => ({ ...prev, [name]: value }));
+        setErrorMessage("");
     };
 
     const handleLogin = async () => {
         try {
             const response = await fetch(`${URL}/admin/login`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: new URLSearchParams(credentials).toString(),
+                body: JSON.stringify(credentials),
             });
 
             if (response.ok) {
@@ -50,9 +52,12 @@ export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
                 setIsLoggedIn(true);
                 setEmployeeName(data.fullname);
             } else {
-                console.error('Login failed');
+                const errorData = await response.json();
+                setErrorMessage(errorData.message || "Login failed");
+                console.error('Login failed:', errorData);
             }
         } catch (error) {
+            setErrorMessage("An error occurred during login.");
             console.error('Error:', error);
         }
     };
@@ -75,13 +80,14 @@ export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
             >
                 Employee Log In
             </Typography>
-            <Typography variant="h7" sx={{ color: 'secondary.light' }}>
-                Username
+            <Typography variant="h7" sx={{ color: 'secondary.light', marginTop: '1rem' }}>
+                Email
             </Typography>
             <TextField
-                name="username"
-                value={credentials.username}
+                name="email"
+                value={credentials.email}
                 onChange={handleInputChange}
+                placeholder="Enter your email"
             />
             <Typography
                 variant="h7"
@@ -94,7 +100,17 @@ export default function DashboardLoginCard({ setIsLoggedIn, setEmployeeName }) {
                 name="password"
                 value={credentials.password}
                 onChange={handleInputChange}
+                placeholder="Enter your password"
             />
+            {errorMessage && (
+                <Typography
+                    variant="body2"
+                    color="error"
+                    sx={{ marginTop: '0.5rem' }}
+                >
+                    {errorMessage}
+                </Typography>
+            )}
             <Button onClick={handleLogin} variant="contained" sx={{ marginTop: '1rem' }}>
                 Login
             </Button>

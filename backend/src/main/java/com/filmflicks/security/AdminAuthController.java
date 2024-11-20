@@ -4,6 +4,7 @@ import com.filmflicks.models.Employee;
 import com.filmflicks.repositories.EmployeeRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,7 +24,7 @@ public class AdminAuthController {
     private final AuthenticationManager authenticationManager;
     private final EmployeeRepository employeeRepository;
 
-    public AdminAuthController(AuthenticationManager authenticationManager, EmployeeRepository employeeRepository) {
+    public AdminAuthController(@Qualifier("adminAuthenticationManager") AuthenticationManager authenticationManager, EmployeeRepository employeeRepository) {
         this.authenticationManager = authenticationManager;
         this.employeeRepository = employeeRepository;
     }
@@ -41,6 +42,12 @@ public class AdminAuthController {
                 ));
             }
 
+            // Invalidate the existing session if there is one
+            HttpSession existingSession = request.getSession(false);
+            if (existingSession != null) {
+                existingSession.invalidate();
+            }
+
             // Authenticate admin user
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)
@@ -50,9 +57,9 @@ public class AdminAuthController {
             SecurityContext securityContext = SecurityContextHolder.getContext();
             securityContext.setAuthentication(authentication);
 
-            // Store SecurityContext in the session
-            HttpSession session = request.getSession(true);
-            session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+            // Create a new session
+            HttpSession newSession = request.getSession(true);
+            newSession.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 
             // Retrieve admin metadata
             Employee employee = employeeRepository.findByEmail(email)
@@ -62,7 +69,7 @@ public class AdminAuthController {
             Map<String, Object> employeeSessionData = new HashMap<>();
             employeeSessionData.put("email", employee.getEmail());
             employeeSessionData.put("fullName", employee.getFullName());
-            session.setAttribute("employee", employeeSessionData);
+            newSession.setAttribute("employee", employeeSessionData);
 
             // Prepare JSON response
             Map<String, Object> jsonResponse = new HashMap<>();
