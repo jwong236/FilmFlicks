@@ -12,13 +12,14 @@ export const useLoginPageHooks = () => {
 
     const handleLogin = async () => {
         try {
-            const loginData = new URLSearchParams();
-            loginData.append('username', email);
-            loginData.append('password', password);
+            const loginData = {
+                email,
+                password
+            };
 
             const response = await axios.post(`${URL}/login`, loginData, {
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
                 withCredentials: true,
             });

@@ -3,21 +3,35 @@ package com.filmflicks.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "customers")
+@Table(name = "customers") // Matches the table name in your database
 public class Customer {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment primary key
     private Integer id;
-    private String first_name;
-    private String last_name;
-    private String cc_id;
+
+    @Column(name = "first_name", nullable = false) // Maps to the "first_name" column in the table
+    private String firstName;
+
+    @Column(name = "last_name", nullable = false) // Maps to the "last_name" column in the table
+    private String lastName;
+
+    @Column(name = "cc_id", nullable = false) // Maps to the "cc_id" column in the table
+    private String ccId;
+
+    @Column(nullable = false) // Maps to the "address" column (defaults to the field name)
     private String address;
+
+    @Column(nullable = false, unique = true) // Email must be unique
     private String email;
+
+    @Column(nullable = false) // Password cannot be null
     private String password;
 
     public Customer() {
     }
 
+    // Getters and Setters
     public Integer getId() {
         return id;
     }
@@ -27,27 +41,27 @@ public class Customer {
     }
 
     public String getFirstName() {
-        return first_name;
+        return firstName;
     }
 
-    public void setFirstName(String first_name) {
-        this.first_name = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
-        return last_name;
+        return lastName;
     }
 
-    public void setLastName(String last_name) {
-        this.last_name = last_name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getCcId() {
-        return cc_id;
+        return ccId;
     }
 
-    public void setCcId(String cc_id) {
-        this.cc_id = cc_id;
+    public void setCcId(String ccId) {
+        this.ccId = ccId;
     }
 
     public String getAddress() {

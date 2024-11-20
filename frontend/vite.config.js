@@ -3,16 +3,24 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   server: {
-    host: 'local', // Only bind to localhost
-    port: 5173, // Specify the port
+    host: 'local',
+    port: 5173,
   },
   plugins: [react()],
   optimizeDeps: {
     include: [
       '@mui/material',
       '@emotion/react',
-      '@emotion/styled'
-    ]
-  }
+      '@emotion/styled',
+    ],
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name]-[hash][extname]',
+      },
+    },
+  },
 });
-

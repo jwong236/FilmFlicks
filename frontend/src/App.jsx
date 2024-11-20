@@ -9,7 +9,7 @@ import theme from './theme/theme.js'
 
 import SingleStarPage from './pages/SingleStarPage.jsx';
 
-import Homepage from './pages/Homepage';
+import HomePage from './pages/HomePage.jsx';
 import MovieListPage from './pages/MovieListPage.jsx';
 
 
@@ -18,7 +18,6 @@ import PaymentInfo from './pages/PaymentPage.jsx';
 import ConfirmationPage from './pages/ConfirmationPage.jsx';
 
 import DashboardPage from './pages/DashboardPage.jsx';
-import HomePage from "./pages/Homepage";
 import TopMoviesPage from "./pages/TopMoviesPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import SingleMoviePage from "./pages/SingleMoviePage.jsx";
@@ -28,7 +27,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <CssBaseline />
                 <Routes>
-                    <Route path="/" element={<Homepage />} />
+                    <Route path="/" element={<HomePage />} />
 
                     <Route path="/topmovies" element={<TopMoviesPage />} />
                     <Route path="/singlemovie" element={<SingleMoviePage />} />

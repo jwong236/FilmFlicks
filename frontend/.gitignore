@@ -31,3 +31,7 @@ inconsistentCast.txt
 
 consistentMovies.txt
 inconsistentMovies.txt
+
+.env
+.env.development
+.env.production

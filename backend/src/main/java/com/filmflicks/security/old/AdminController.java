@@ -1,3 +1,4 @@
+/*
 package com.filmflicks.security;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,3 +19,4 @@ public class AdminController {
         return "Welcome to the admin dashboard!";
     }
 }
+*/

@@ -1,26 +1,64 @@
-version: '3.3'
+version: '3.8'
 
 services:
+  # Backend Service
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: filmflicks-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../backend/src/main/resources/application-secret.properties:/app/config/application-secret.properties
+    depends_on:
+      moviedb:
+        condition: service_healthy
+    networks:
+      - app_network
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: filmflicks-frontend
+    ports:
+      - "3000:80"
+    env_file:
+      - ../frontend/.env.production
+    networks:
+      - app_network
+
+  # Database Service
   moviedb:
     image: mysql:8.0
+    container_name: filmflicks-moviedb
     restart: always
     environment:
-      MYSQL_DATABASE: 'moviedb'
-      MYSQL_USER: 'admin'
-      MYSQL_PASSWORD: 'andy'
-      MYSQL_ROOT_PASSWORD: 'andy'
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: moviedb
     ports:
-      - '3307:3306'
-    expose:
-      - '3306'
+      - '3306:3306'
     volumes:
       - ./01-create-table.sql:/docker-entrypoint-initdb.d/01-create-table.sql
       - ./02-add-star.sql:/docker-entrypoint-initdb.d/02-add-star.sql
       - ./03-add-movie.sql:/docker-entrypoint-initdb.d/03-add-movie.sql
+      - ./04-delete-movie.sql:/docker-entrypoint-initdb.d/04-delete-movie.sql
+      - ./05-delete-star.sql:/docker-entrypoint-initdb.d/05-delete-star.sql
       - ./06-movie-data.sql:/docker-entrypoint-initdb.d/06-movie-data.sql
-
       - my-db:/var/lib/mysql
-    command: ["--general-log=ON"]
+    command: ["--general-log=ON", "--general-log-file=/var/lib/mysql/general.log", "--log-error=/var/lib/mysql/error.log"]
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "--silent" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
 
 volumes:
   my-db:
+
+networks:
+  app_network:

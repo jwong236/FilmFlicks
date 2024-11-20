@@ -163,4 +163,6 @@ buildNumber.properties
 movie-data.sql
 node_modules/
 
+/docker/.env
+
 /backend/src/main/resources/application-secret.properties
