@@ -7,25 +7,25 @@ import jakarta.persistence.*;
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment primary key
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "first_name", nullable = false) // Maps to the "first_name" column in the table
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false) // Maps to the "last_name" column in the table
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "cc_id", nullable = false) // Maps to the "cc_id" column in the table
+    @Column(name = "cc_id", nullable = false)
     private String ccId;
 
-    @Column(nullable = false) // Maps to the "address" column (defaults to the field name)
+    @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false, unique = true) // Email must be unique
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false) // Password cannot be null
+    @Column(nullable = false)
     private String password;
 
     public Customer() {
