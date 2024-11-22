@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/session")
+@RequestMapping("/api/session")
 public class SessionController {
 
     // Add stored endpoint and params to the session

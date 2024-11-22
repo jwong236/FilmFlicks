@@ -1,7 +1,7 @@
 package com.filmflicks.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
 import java.util.HashSet;
@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "stars")
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Star {
     @Id
     private String id;
