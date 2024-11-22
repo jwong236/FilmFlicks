@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/metadata")
+@RequestMapping("/api/metadata")
 public class MetadataController {
 
     @Autowired

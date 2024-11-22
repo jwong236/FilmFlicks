@@ -29,7 +29,7 @@ public class CustomerAuthController {
         this.customerRepository = customerRepository;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> loginData, HttpServletRequest request) {
         try {
             String email = loginData.get("email");
